@@ -5,46 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ihya Ramadhan 1447H | Surau Seri Putra</title>
     <style>
-        /* Prayer Times Widget */
-        .solat-container {
-            background: var(--glass);
-            margin: 0 auto 25px;
-            padding: 15px;
-            border-radius: 20px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            color: var(--text-main);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            border: 1px solid var(--gold);
-        }
-
-        .solat-item {
-            text-align: center;
-        }
-
-        .solat-label {
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            font-weight: bold;
-            color: var(--secondary);
-        }
-
-        .solat-time {
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
-
-        .solat-title {
-            grid-column: span 4;
-            text-align: center;
-            font-size: 0.75rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: var(--primary);
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
         :root {
             --primary: #4a135a;
             --secondary: #880e4f;
@@ -69,21 +29,9 @@
             padding-bottom: 80px;
         }
 
-            body::before {
-                content: "";
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-image: radial-gradient(circle at 10% 10%, rgba(212, 175, 55, 0.1) 1px, transparent 1px);
-                background-size: 50px 50px;
-                z-index: -1;
-            }
-
         .header-section {
             text-align: center;
-            padding: 50px 20px 30px;
+            padding: 40px 20px 20px;
         }
 
             .header-section h1 {
@@ -100,6 +48,71 @@
             padding: 0 15px;
         }
 
+        /* Prayer Times Styling */
+        .solat-container {
+            background: var(--glass);
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            color: var(--text-main);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid var(--gold);
+        }
+
+        .solat-title {
+            grid-column: span 3;
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--primary);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .solat-item {
+            text-align: center;
+            padding: 8px 5px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .solat-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+
+        .solat-time {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Highlight Current Prayer */
+        .active-prayer {
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid var(--gold);
+            transform: scale(1.02);
+        }
+
+            .active-prayer .solat-label {
+                color: var(--secondary);
+            }
+
+            .active-prayer .solat-time {
+                color: var(--primary);
+                font-size: 0.95rem;
+            }
+
+        /* Schedule Cards */
         .day-card {
             background: var(--glass);
             margin-bottom: 20px;
@@ -107,7 +120,6 @@
             overflow: hidden;
             color: var(--text-main);
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border: 1px solid rgba(212, 175, 55, 0.2);
         }
 
         .day-header {
@@ -151,29 +163,16 @@
             align-items: center;
         }
 
-            .activity-item:last-child {
-                border-bottom: none;
-            }
-
-        .icon-box {
-            font-size: 1.2rem;
-            width: 30px;
-            text-align: center;
-            opacity: 0.8;
-        }
-
         .act-details strong {
             display: block;
             font-size: 0.65rem;
             color: var(--secondary);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .act-text {
             font-size: 0.95rem;
             font-weight: 600;
-            color: #333;
         }
 
         .entry-img {
@@ -191,14 +190,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 1px solid rgba(212, 175, 55, 0.15);
-        }
-
-        .host-label {
-            font-size: 0.6rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: bold;
         }
 
         .host-name {
@@ -207,13 +198,12 @@
             font-size: 0.9rem;
         }
 
-        /* Shared Modal Styling */
+        /* Modals & Buttons */
         .modal {
             display: none;
             position: fixed;
             inset: 0;
             background: rgba(45, 11, 58, 0.95);
-            backdrop-filter: blur(10px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -226,72 +216,35 @@
             max-width: 420px;
             border-radius: 28px;
             padding: 30px;
-            color: var(--text-main);
-            max-height: 85vh;
-            overflow-y: auto;
             border: 2px solid var(--gold);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-
-            .modal-content h2 {
-                color: var(--primary);
-                font-family: 'Georgia', serif;
-                margin-bottom: 15px;
-                font-size: 1.5rem;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-
-        label {
-            font-size: 0.65rem;
-            font-weight: 800;
-            color: var(--secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-            display: block;
-            margin-top: 10px;
         }
 
         input, select {
             width: 100%;
-            padding: 12px 16px;
-            margin-bottom: 12px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 12px;
-            font-size: 0.95rem;
-            background: white;
-            color: var(--text-main);
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .secondary-btn {
-            flex: 1;
             padding: 12px;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            color: var(--text-muted);
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 10px;
         }
 
         .primary-btn {
-            flex: 2;
-            padding: 12px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             border: none;
+            padding: 12px;
             border-radius: 12px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(74, 19, 90, 0.3);
+            width: 100%;
+        }
+
+        .secondary-btn {
+            background: #eee;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            width: 100%;
+            cursor: pointer;
         }
 
         .admin-fab {
@@ -299,7 +252,6 @@
             bottom: 20px;
             right: 20px;
             background: var(--primary);
-            color: white;
             width: 50px;
             height: 50px;
             border-radius: 50%;
@@ -307,7 +259,6 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             border: 2px solid var(--gold);
             z-index: 99;
         }
@@ -326,13 +277,16 @@
 
     <div class="container">
         <div id="prayerSection" class="solat-container hidden">
-            <div class="solat-title">WAKTU SOLAT HARI INI</div>
-            <div class="solat-item"><div class="solat-label">Imsak</div><div class="solat-time" id="t-imsak">-</div></div>
-            <div class="solat-item"><div class="solat-label">Subuh</div><div class="solat-time" id="t-subuh">-</div></div>
-            <div class="solat-item"><div class="solat-label">Zohor</div><div class="solat-time" id="t-zohor">-</div></div>
-            <div class="solat-item"><div class="solat-label">Asar</div><div class="solat-time" id="t-asar">-</div></div>
-            <div class="solat-item"><div class="solat-label">Maghrib</div><div class="solat-time" id="t-maghrib" style="color:#d32f2f">-</div></div>
-            <div class="solat-item"><div class="solat-label">Isyak</div><div class="solat-time" id="t-isyak">-</div></div>
+            <div class="solat-title">
+                <span>WAKTU SOLAT</span>
+                <span id="hijriDisplay" style="color:var(--secondary)"></span>
+            </div>
+            <div class="solat-item" id="item-imsak"><div class="solat-label">Imsak</div><div class="solat-time" id="t-imsak">-</div></div>
+            <div class="solat-item" id="item-subuh"><div class="solat-label">Subuh</div><div class="solat-time" id="t-subuh">-</div></div>
+            <div class="solat-item" id="item-zohor"><div class="solat-label">Zohor</div><div class="solat-time" id="t-zohor">-</div></div>
+            <div class="solat-item" id="item-asar"><div class="solat-label">Asar</div><div class="solat-time" id="t-asar">-</div></div>
+            <div class="solat-item" id="item-maghrib"><div class="solat-label">Maghrib</div><div class="solat-time" id="t-maghrib">-</div></div>
+            <div class="solat-item" id="item-isyak"><div class="solat-label">Isyak</div><div class="solat-time" id="t-isyak">-</div></div>
         </div>
 
         <div id="scheduleGrid">
@@ -345,14 +299,12 @@
     <div id="bookingModal" class="modal">
         <div class="modal-content">
             <h2>🌙 Tempahan Ifthar</h2>
-            <p id="displayDate" style="margin-bottom:15px; font-weight:bold; color:var(--secondary)"></p>
+            <p id="displayDate" style="margin:10px 0; font-weight:bold; color:var(--secondary)"></p>
             <form id="bookingForm">
                 <input type="hidden" id="selectedDate">
-                <label>Nama Hos / Kumpulan</label>
-                <input type="text" id="hostName" required>
-                <label>No. WhatsApp (601...)</label>
-                <input type="tel" id="hostContact" required>
-                <div class="btn-group">
+                <input type="text" id="hostName" placeholder="Nama Hos / Kumpulan" required>
+                <input type="tel" id="hostContact" placeholder="No. WhatsApp (601...)" required>
+                <div style="display:flex; gap:10px; margin-top:15px;">
                     <button type="button" onclick="closeModal('bookingModal')" class="secondary-btn">Batal</button>
                     <button type="submit" id="submitBtn" class="primary-btn">Sahkan</button>
                 </div>
@@ -362,48 +314,29 @@
 
     <div id="adminModal" class="modal">
         <div class="modal-content">
-            <h2 id="adminTitle">⚙️ Admin Login</h2>
-
+            <h2 id="adminTitle">⚙️ Admin</h2>
             <div id="loginStep">
-                <label>Kata Laluan Keselamatan</label>
-                <input type="password" id="adminPassword" placeholder="Sila masukkan kata laluan...">
-                <div class="btn-group">
-                    <button onclick="closeModal('adminModal')" class="secondary-btn">Batal</button>
-                    <button onclick="verifyAdmin()" class="primary-btn">Log Masuk</button>
-                </div>
+                <input type="password" id="adminPassword" placeholder="Kata Laluan">
+                <button onclick="verifyAdmin()" class="primary-btn">Log Masuk</button>
             </div>
-
             <div id="editStep" class="hidden">
-                <label>Pilih Tarikh Ramadhan</label>
                 <select id="adminDateSelect"></select>
-                <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
-
-                <label>Tajaan Ifthar</label>
                 <input type="text" id="admHost" placeholder="Nama Hos">
                 <input type="text" id="admContact" placeholder="WhatsApp Hos">
-
-                <label>Solat Tarawih</label>
                 <input type="text" id="admImam" placeholder="Nama Imam">
-                <input type="text" id="admImamImg" placeholder="Link Gambar Imam (URL)">
-
-                <label>Program Khas</label>
-                <input type="text" id="admProg" placeholder="Tajuk Program">
-                <input type="text" id="admProgImg" placeholder="Link Gambar Program (URL)">
-
-                <label>Kuliah Subuh</label>
-                <input type="text" id="admKuliah" placeholder="Tajuk Kuliah">
-                <input type="text" id="admKuliahImg" placeholder="Link Gambar Kuliah (URL)">
-
-                <div class="btn-group">
-                    <button onclick="closeModal('adminModal')" class="secondary-btn">Tutup</button>
-                    <button onclick="submitAdminUpdate()" id="admSubmitBtn" class="primary-btn">Simpan Data</button>
-                </div>
+                <input type="text" id="admImamImg" placeholder="Link Gambar Imam">
+                <input type="text" id="admProg" placeholder="Program Khas">
+                <input type="text" id="admProgImg" placeholder="Link Gambar Program">
+                <input type="text" id="admKuliah" placeholder="Kuliah Subuh">
+                <input type="text" id="admKuliahImg" placeholder="Link Gambar Kuliah">
+                <button onclick="submitAdminUpdate()" id="admSubmitBtn" class="primary-btn">Simpan</button>
+                <button onclick="closeModal('adminModal')" class="secondary-btn" style="margin-top:10px">Tutup</button>
             </div>
         </div>
     </div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrp6cMApCAfydHWggAzpnQyqmArb-V0H16jvdkgTqMT-7xNPr6tIUHT_JRGwxt742P/exec';
+        const SCRIPT_URL = 'YOUR_DEPLOYED_URL_HERE';
         let slots = {};
 
         async function loadData() {
@@ -411,27 +344,46 @@
                 const res = await fetch(SCRIPT_URL);
                 const data = await res.json();
 
-                // Handle schedule
+                // Process Schedule
                 slots = {};
-                data.schedule.forEach(item => {
-                    if (item.SelectedDate) slots[item.SelectedDate] = item;
-                });
+                data.schedule.forEach(item => { if (item.SelectedDate) slots[item.SelectedDate] = item; });
 
-                // Handle prayer times
+                // Process Prayer Times
                 if (data.prayerTimes) {
                     document.getElementById('prayerSection').classList.remove('hidden');
-                    document.getElementById('t-imsak').innerText = data.prayerTimes.imsak;
-                    document.getElementById('t-subuh').innerText = data.prayerTimes.subuh;
-                    document.getElementById('t-zohor').innerText = data.prayerTimes.zohor;
-                    document.getElementById('t-asar').innerText = data.prayerTimes.asar;
-                    document.getElementById('t-maghrib').innerText = data.prayerTimes.maghrib;
-                    document.getElementById('t-isyak').innerText = data.prayerTimes.isyak;
-                }
+                    document.getElementById('hijriDisplay').innerText = data.prayerTimes.hDate;
 
+                    const p = data.prayerTimes;
+                    const tMap = { imsak: p.imsak, subuh: p.subuh, zohor: p.zohor, asar: p.asar, maghrib: p.maghrib, isyak: p.isyak };
+
+                    for (const [id, time] of Object.entries(tMap)) {
+                        document.getElementById(`t-${id}`).innerText = time;
+                    }
+                    highlightCurrentSolat(tMap);
+                }
                 render();
             } catch (e) {
-                document.getElementById('scheduleGrid').innerHTML = '<p style="text-align:center;">Ralat sambungan.</p>';
+                document.getElementById('scheduleGrid').innerHTML = '<p>Ralat sambungan.</p>';
             }
+        }
+
+        function highlightCurrentSolat(times) {
+            const now = new Date();
+            const parseT = (tStr) => {
+                const [t, mod] = tStr.split(' ');
+                let [h, m] = t.split(':');
+                if (h === '12') h = '00';
+                if (mod === 'PM') h = parseInt(h) + 12;
+                const d = new Date(); d.setHours(h, m, 0, 0);
+                return d;
+            };
+
+            const order = ['imsak', 'subuh', 'zohor', 'asar', 'maghrib', 'isyak'];
+            let current = '';
+            for (let i = 0; i < order.length; i++) {
+                if (now >= parseT(times[order[i]])) current = order[i];
+            }
+            if (current) document.getElementById(`item-${current}`).classList.add('active-prayer');
         }
 
         function render() {
@@ -445,65 +397,52 @@
                 const s = slots[ds] || {};
 
                 html += `
-                                            <div class="day-card">
-                                                <div class="day-header">
-                                                    <div class="ramadhan-info">
-                                                        <span class="ramadhan-num">${i}</span>
-                                                        <div class="date-text">${dayNames[dObj.getDay()]}<br>${dObj.getDate()} FEB</div>
-                                                    </div>
-                                                    <span style="font-size:1.2rem;">🌙</span>
-                                                </div>
-                                                <div class="program-body">
-                                                    ${s.KuliahSubuh ? `<div class="activity-item"><div class="icon-box">📖</div><div class="act-details"><strong>Kuliah Subuh</strong><div class="act-text">${s.KuliahSubuh}</div>${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="entry-img">` : ''}</div></div>` : ''}
-                                                    ${s.Program ? `<div class="activity-item"><div class="icon-box">☪️</div><div class="act-details"><strong>Program Khas</strong><div class="act-text">${s.Program}</div>${s.ProgramUrl ? `<img src="${s.ProgramUrl}" class="entry-img">` : ''}</div></div>` : ''}
-                                                    ${s.Imam ? `<div class="activity-item"><div class="icon-box">🕌</div><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${s.Imam}</div>${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img">` : ''}</div></div>` : ''}
-                                                </div>
-                                                <div class="ifthar-section">
-                                                    <div class="host-info"><span class="host-label">Tajaan Ifthar</span><div class="host-name">${s.HostName || 'Kekosongan Terbuka'}</div></div>
-                                                    ${!s.HostName ? `<button class="primary-btn" style="padding:8px 15px; font-size:0.8rem; flex:none; width:auto;" onclick="handleBooking('${ds}')">Tempah</button>` : '✅'}
-                                                </div>
-                                            </div>`;
+                        <div class="day-card">
+                            <div class="day-header">
+                                <div class="ramadhan-info">
+                                    <span class="ramadhan-num">${i}</span>
+                                    <div class="date-text">${dayNames[dObj.getDay()]}<br>${dObj.getDate()} FEB</div>
+                                </div>
+                                <span>🌙</span>
+                            </div>
+                            <div class="program-body">
+                                ${s.KuliahSubuh ? `<div class="activity-item"><div class="act-details"><strong>Kuliah Subuh</strong><div class="act-text">${s.KuliahSubuh}</div>${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="entry-img">` : ''}</div></div>` : ''}
+                                ${s.Program ? `<div class="activity-item"><div class="act-details"><strong>Program Khas</strong><div class="act-text">${s.Program}</div>${s.ProgramUrl ? `<img src="${s.ProgramUrl}" class="entry-img">` : ''}</div></div>` : ''}
+                                ${s.Imam ? `<div class="activity-item"><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${s.Imam}</div>${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img">` : ''}</div></div>` : ''}
+                            </div>
+                            <div class="ifthar-section">
+                                <div><span style="font-size:0.6rem; color:var(--text-muted); text-transform:uppercase;">Tajaan Ifthar</span><div class="host-name">${s.HostName || 'Kekosongan Terbuka'}</div></div>
+                                ${!s.HostName ? `<button class="primary-btn" style="width:auto; padding:8px 15px;" onclick="handleBooking('${ds}')">Tempah</button>` : '✅'}
+                            </div>
+                        </div>`;
             }
             grid.innerHTML = html;
         }
 
+        // --- Standard UI Functions ---
         function handleBooking(date) {
             document.getElementById('selectedDate').value = date;
-            document.getElementById('displayDate').innerText = "Slot: " + date;
+            document.getElementById('displayDate').innerText = "Tarikh: " + date;
             document.getElementById('bookingModal').style.display = 'flex';
         }
-
-        function openAdminLogin() {
-            document.getElementById('adminModal').style.display = 'flex';
-            document.getElementById('loginStep').classList.remove('hidden');
-            document.getElementById('editStep').classList.add('hidden');
-            document.getElementById('adminTitle').innerText = "⚙️ Admin Login";
-        }
-
+        function openAdminLogin() { document.getElementById('adminModal').style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
         async function verifyAdmin() {
-            const passInput = document.getElementById('adminPassword').value;
-            const btn = document.querySelector('#loginStep .primary-btn');
-            btn.innerText = "Mengesahkan..."; btn.disabled = true;
-            try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ type: "verify_login", password: passInput }) });
-                if (await res.text() === "Valid") {
-                    document.getElementById('loginStep').classList.add('hidden');
-                    document.getElementById('editStep').classList.remove('hidden');
-                    document.getElementById('adminTitle').innerText = "Kemaskini Data";
-                    populateAdminForm();
-                } else { alert("Kata laluan salah!"); }
-            } catch (e) { alert("Ralat sambungan."); }
-            finally { btn.innerText = "Log Masuk"; btn.disabled = false; }
+            const pass = document.getElementById('adminPassword').value;
+            const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ type: "verify_login", password: pass }) });
+            if (await res.text() === "Valid") {
+                document.getElementById('loginStep').classList.add('hidden');
+                document.getElementById('editStep').classList.remove('hidden');
+                populateAdminForm();
+            } else { alert("Salah!"); }
         }
 
         function populateAdminForm() {
             const select = document.getElementById('adminDateSelect');
             select.innerHTML = "";
-            Object.keys(slots).sort().forEach(date => {
-                const opt = document.createElement('option');
-                opt.value = date; opt.innerText = date;
+            Object.keys(slots).sort().forEach(d => {
+                const opt = document.createElement('option'); opt.value = d; opt.innerText = d;
                 select.appendChild(opt);
             });
             select.onchange = () => {
@@ -521,8 +460,6 @@
         }
 
         async function submitAdminUpdate() {
-            const btn = document.getElementById('admSubmitBtn');
-            btn.innerText = "Menyimpan..."; btn.disabled = true;
             const payload = {
                 type: "admin_update",
                 password: document.getElementById('adminPassword').value,
@@ -536,28 +473,19 @@
                 kuliahSubuh: document.getElementById('admKuliah').value,
                 kuliahSubuhUrl: document.getElementById('admKuliahImg').value
             };
-            try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-                if (await res.text() === "Success") { alert("Berjaya dikemaskini!"); location.reload(); }
-            } catch (e) { alert("Ralat rangkaian."); }
-            finally { btn.innerText = "Simpan Data"; btn.disabled = false; }
+            const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+            if (await res.text() === "Success") location.reload();
         }
 
         document.getElementById('bookingForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.innerText = "Memproses..."; btn.disabled = true;
-            try {
-                const res = await fetch(SCRIPT_URL, {
-                    method: 'POST', body: JSON.stringify({
-                        selectedDate: document.getElementById('selectedDate').value,
-                        hostName: document.getElementById('hostName').value,
-                        hostContact: document.getElementById('hostContact').value
-                    })
-                });
-                if (await res.text() === "Success") { closeModal('bookingModal'); loadData(); }
-            } catch (err) { alert("Ralat."); }
-            finally { btn.innerText = "Sahkan"; btn.disabled = false; }
+            const payload = {
+                selectedDate: document.getElementById('selectedDate').value,
+                hostName: document.getElementById('hostName').value,
+                hostContact: document.getElementById('hostContact').value
+            };
+            const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+            if (await res.text() === "Success") location.reload();
         });
 
         loadData();
