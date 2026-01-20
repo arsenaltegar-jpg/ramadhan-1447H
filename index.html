@@ -10,10 +10,52 @@
             --secondary: #880e4f;
             --gold: #d4af37;
             --gold-light: #fceabb;
-            --glass: rgba(255, 255, 255, 0.95);
+            --glass: rgba(255, 255, 255, 0.98);
             --text-main: #2d1b0d;
             --text-muted: #666;
             --admin-bg: #ffffff;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(212, 175, 55, 0.6);
+            }
         }
 
         * {
@@ -23,90 +65,158 @@
         }
 
         body {
-            background: linear-gradient(135deg, #2d0b3a 0%, #4a135a 50%, #880e4f 100%);
+            background: linear-gradient(135deg, #1a0624 0%, #2d0b3a 25%, #4a135a 50%, #6b1b7a 75%, #880e4f 100%);
             background-attachment: fixed;
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             color: white;
             padding-bottom: 80px;
+            position: relative;
+            overflow-x: hidden;
         }
+
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(136, 14, 79, 0.15) 0%, transparent 50%);
+                pointer-events: none;
+                z-index: 0;
+            }
 
         .header-section {
             text-align: center;
-            padding: 40px 20px 20px;
+            padding: 50px 20px 30px;
+            position: relative;
+            z-index: 1;
         }
 
             .header-section h1 {
                 font-family: 'Georgia', serif;
-                font-size: 2.2rem;
-                background: linear-gradient(to bottom, var(--gold-light), var(--gold));
+                font-size: 2.5rem;
+                background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, #b8941f 100%);
+                background-size: 200% 200%;
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
+                background-clip: text;
+                animation: shimmer 3s linear infinite;
+                margin-bottom: 8px;
+                filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.3));
             }
 
-        .container {
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 0 15px;
+        .header-subtitle {
+            color: var(--gold);
+            letter-spacing: 4px;
+            font-weight: 800;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-top: 5px;
+            opacity: 0.95;
         }
 
-        /* --- PRAYER TIMES WIDGET --- */
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 0 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* --- ENHANCED PRAYER TIMES WIDGET --- */
         .solat-container {
             background: var(--glass);
-            margin-bottom: 25px;
-            padding: 18px;
-            border-radius: 24px;
+            margin-bottom: 30px;
+            padding: 22px;
+            border-radius: 28px;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            gap: 14px;
             color: var(--text-main);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.5);
+            border: 2px solid rgba(212, 175, 55, 0.2);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
         }
+
+            .solat-container::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+                animation: shimmer 3s infinite;
+            }
 
         .solat-title {
             grid-column: span 3;
             text-align: center;
-            font-size: 0.8rem;
-            font-weight: 800;
+            font-size: 0.75rem;
+            font-weight: 900;
             color: var(--primary);
-            border-bottom: 2px solid rgba(74, 19, 90, 0.05);
-            padding-bottom: 10px;
-            margin-bottom: 8px;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.2);
+            padding-bottom: 12px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
         }
 
         .solat-item {
             text-align: center;
-            padding: 12px 5px;
-            border-radius: 16px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid transparent;
+            padding: 14px 6px;
+            border-radius: 18px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
         }
+
+            .solat-item::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+
+            .solat-item:hover::before {
+                opacity: 1;
+            }
 
         .solat-label {
             font-size: 0.65rem;
             text-transform: uppercase;
-            font-weight: bold;
+            font-weight: 800;
             color: var(--text-muted);
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
         }
 
         .solat-time {
-            font-size: 0.95rem;
-            font-weight: 800;
+            font-size: 1rem;
+            font-weight: 900;
             color: var(--text-main);
         }
 
         .active-prayer {
-            background: white;
-            border: 1.5px solid var(--gold);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
-            transform: translateY(-2px);
+            background: linear-gradient(135deg, #ffffff 0%, #fffef8 100%);
+            border: 2px solid var(--gold);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4), inset 0 1px 0 rgba(255,255,255,0.8);
+            transform: translateY(-3px) scale(1.05);
+            animation: pulse-glow 2s ease-in-out infinite;
         }
 
             .active-prayer .solat-label {
@@ -115,85 +225,280 @@
 
             .active-prayer .solat-time {
                 color: var(--primary);
+                font-size: 1.1rem;
             }
 
-        /* --- ADMIN & MODAL UI --- */
+        /* --- ENHANCED DAY CARDS --- */
+        .day-card {
+            background: var(--glass);
+            margin-bottom: 24px;
+            border-radius: 24px;
+            overflow: hidden;
+            color: var(--text-main);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.5);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+            .day-card:nth-child(1) {
+                animation-delay: 0.05s;
+            }
+
+            .day-card:nth-child(2) {
+                animation-delay: 0.1s;
+            }
+
+            .day-card:nth-child(3) {
+                animation-delay: 0.15s;
+            }
+
+            .day-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.6);
+            }
+
+        .day-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 18px 22px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .day-header::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                right: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+                animation: float 6s ease-in-out infinite;
+            }
+
+        .ramadhan-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ramadhan-num {
+            font-size: 2rem;
+            font-weight: 900;
+            border-right: 2px solid rgba(255,255,255,0.4);
+            padding-right: 14px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .date-text {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            line-height: 1.3;
+            letter-spacing: 0.5px;
+        }
+
+        .moon-icon {
+            font-size: 1.8rem;
+            opacity: 0.9;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px 22px;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+            .activity-item:hover {
+                background: rgba(212, 175, 55, 0.05);
+            }
+
+        .act-details {
+            flex: 1;
+        }
+
+            .act-details strong {
+                display: block;
+                font-size: 0.65rem;
+                color: var(--secondary);
+                text-transform: uppercase;
+                margin-bottom: 4px;
+                letter-spacing: 0.8px;
+                font-weight: 800;
+            }
+
+        .act-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .entry-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid var(--gold);
+            margin-top: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.3s;
+        }
+
+            .entry-img:hover {
+                transform: scale(1.1) rotate(2deg);
+            }
+
+        .ifthar-section {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.12) 100%);
+            padding: 16px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .host-label {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .host-name {
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .book-btn {
+            padding: 8px 16px;
+            flex: none;
+            width: auto;
+            font-size: 0.75rem;
+            border-radius: 10px;
+            font-weight: 800;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+            .book-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(74, 19, 90, 0.4);
+            }
+
+        .check-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        /* --- ENHANCED MODAL --- */
         .modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             z-index: 1000;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(12px);
         }
 
         .modal-content {
             background: var(--admin-bg);
             width: 100%;
-            max-width: 440px;
-            border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            max-width: 460px;
+            border-radius: 28px;
+            padding: 35px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.8);
             color: #333;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+            animation: fadeInUp 0.4s ease-out;
         }
 
         .modal h2 {
             font-family: 'Segoe UI', sans-serif;
             color: var(--primary);
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            font-weight: 800;
-            border-left: 5px solid var(--gold);
-            padding-left: 12px;
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+            font-weight: 900;
+            border-left: 6px solid var(--gold);
+            padding-left: 14px;
         }
 
         .admin-label {
             font-size: 0.7rem;
-            font-weight: 700;
+            font-weight: 800;
             color: #666;
             text-transform: uppercase;
-            margin-top: 12px;
+            margin-top: 14px;
             display: block;
+            letter-spacing: 0.5px;
         }
 
         .form-input {
             width: 100%;
-            padding: 12px 16px;
-            margin: 6px 0 14px;
+            padding: 14px 18px;
+            margin: 8px 0 16px;
             border: 2px solid #eee;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 1rem;
             font-family: inherit;
-            transition: border-color 0.2s;
+            transition: all 0.3s;
             color: #222;
+            background: #fafafa;
         }
 
             .form-input:focus {
                 border-color: var(--primary);
                 outline: none;
-                background: #fafafa;
+                background: white;
+                box-shadow: 0 4px 12px rgba(74, 19, 90, 0.15);
+                transform: translateY(-1px);
             }
 
         .btn-row {
             display: flex;
             gap: 12px;
-            margin-top: 20px;
+            margin-top: 24px;
         }
 
         .primary-btn {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: 700;
+            padding: 16px;
+            border-radius: 14px;
+            font-weight: 800;
             cursor: pointer;
             flex: 2;
-            transition: opacity 0.2s;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 15px rgba(74, 19, 90, 0.3);
         }
+
+            .primary-btn:hover:not(:disabled) {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(74, 19, 90, 0.5);
+            }
 
             .primary-btn:disabled {
                 opacity: 0.6;
@@ -203,122 +508,108 @@
         .secondary-btn {
             background: #f0f0f0;
             color: #444;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
+            border: 2px solid #ddd;
+            padding: 16px;
+            border-radius: 14px;
             flex: 1;
             cursor: pointer;
-            font-weight: 700;
-        }
-
-        /* --- DAY CARDS --- */
-        .day-card {
-            background: var(--glass);
-            margin-bottom: 20px;
-            border-radius: 20px;
-            overflow: hidden;
-            color: var(--text-main);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .day-header {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            padding: 15px 20px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .ramadhan-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .ramadhan-num {
-            font-size: 1.8rem;
             font-weight: 800;
-            border-right: 1px solid rgba(255,255,255,0.3);
-            padding-right: 12px;
-        }
-
-        .date-text {
-            font-size: 0.75rem;
+            transition: all 0.3s;
             text-transform: uppercase;
-            font-weight: bold;
-            line-height: 1.2;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
         }
 
-        .activity-item {
-            display: flex;
-            gap: 15px;
-            padding: 12px 20px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            align-items: center;
-        }
+            .secondary-btn:hover {
+                background: #e0e0e0;
+                border-color: #ccc;
+            }
 
-        .act-details strong {
-            display: block;
-            font-size: 0.65rem;
-            color: var(--secondary);
-            text-transform: uppercase;
-        }
-
-        .act-text {
-            font-size: 0.95rem;
-            font-weight: 600;
-        }
-
-        .entry-img {
-            width: 45px;
-            height: 45px;
-            border-radius: 8px;
-            object-fit: cover;
-            border: 1px solid var(--gold);
-            margin-top: 5px;
-        }
-
-        .ifthar-section {
-            background: rgba(212, 175, 55, 0.08);
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .host-name {
-            font-weight: 700;
-            color: var(--primary);
-            font-size: 0.9rem;
-        }
-
+        /* --- ENHANCED FAB --- */
         .admin-fab {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--primary);
-            width: 50px;
-            height: 50px;
+            bottom: 25px;
+            right: 25px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            border: 2px solid var(--gold);
+            border: 3px solid var(--gold);
             z-index: 99;
+            font-size: 1.5rem;
+            box-shadow: 0 8px 30px rgba(74, 19, 90, 0.5), 0 0 0 0 rgba(212, 175, 55, 0.4);
+            transition: all 0.3s;
+            animation: pulse-glow 2s ease-in-out infinite;
         }
+
+            .admin-fab:hover {
+                transform: scale(1.1) rotate(90deg);
+            }
+
+            .admin-fab:active {
+                transform: scale(0.95);
+            }
 
         .hidden {
             display: none !important;
         }
+
+        .loading-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gold-light);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+            .loading-state::after {
+                content: '...';
+                animation: loading 1.5s steps(4, end) infinite;
+            }
+
+        @keyframes loading {
+            0%, 20% {
+                content: '.';
+            }
+
+            40% {
+                content: '..';
+            }
+
+            60%, 100% {
+                content: '...';
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 10px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--gold-light);
+            }
     </style>
 </head>
 <body>
 
     <div class="header-section">
         <h1>Ramadhan 1447H</h1>
-        <p style="color:var(--gold); letter-spacing:3px; font-weight:bold; font-size:0.8rem;">SURAU SERI PUTRA</p>
+        <p class="header-subtitle">Surau Seri Putra</p>
     </div>
 
     <div class="container">
@@ -336,7 +627,7 @@
         </div>
 
         <div id="scheduleGrid">
-            <div style="text-align:center; padding:50px; color:var(--gold-light)">Memuatkan jadual Ihya...</div>
+            <div class="loading-state">Memuatkan jadual Ihya</div>
         </div>
     </div>
 
@@ -345,7 +636,7 @@
     <div id="bookingModal" class="modal">
         <div class="modal-content">
             <h2>🌙 Tempahan Ifthar</h2>
-            <p id="displayDate" style="margin-bottom:15px; font-weight:bold; color:var(--secondary)"></p>
+            <p id="displayDate" style="margin-bottom:18px; font-weight:bold; color:var(--secondary); font-size:1.05rem;"></p>
             <form id="bookingForm">
                 <input type="hidden" id="selectedDate">
                 <span class="admin-label">Nama Kumpulan / Individu</span>
@@ -354,7 +645,7 @@
                 <input type="tel" id="hostContact" class="form-input" placeholder="60123456789" required>
                 <div class="btn-row">
                     <button type="button" onclick="closeModal('bookingModal')" class="secondary-btn">Batal</button>
-                    <button type="submit" id="submitBtn" class="primary-btn">Sahkan Tempahan</button>
+                    <button type="submit" id="submitBtn" class="primary-btn">Sahkan</button>
                 </div>
             </form>
         </div>
@@ -393,7 +684,7 @@
                 </div>
 
                 <div class="btn-row">
-                    <button onclick="submitAdminUpdate()" id="admSubmitBtn" class="primary-btn">Simpan Data</button>
+                    <button onclick="submitAdminUpdate()" id="admSubmitBtn" class="primary-btn">Simpan</button>
                     <button onclick="closeModal('adminModal')" class="secondary-btn">Tutup</button>
                 </div>
             </div>
@@ -428,7 +719,7 @@
                 }
                 render();
             } catch (e) {
-                document.getElementById('scheduleGrid').innerHTML = '<p style="text-align:center;">Ralat sambungan rangkaian.</p>';
+                document.getElementById('scheduleGrid').innerHTML = '<p style="text-align:center; padding:50px; color:rgba(255,255,255,0.7);">Ralat sambungan rangkaian.</p>';
             }
         }
 
@@ -470,16 +761,19 @@
                                     <span class="ramadhan-num">${i}</span>
                                     <div class="date-text">${dayNames[dObj.getDay()]}<br>${dObj.getDate()} FEB</div>
                                 </div>
-                                <span>🌙</span>
+                                <span class="moon-icon">🌙</span>
                             </div>
                             <div class="program-body">
                                 ${s.KuliahSubuh ? `<div class="activity-item"><div class="act-details"><strong>Kuliah Subuh</strong><div class="act-text">${s.KuliahSubuh}</div></div></div>` : ''}
                                 ${s.Program ? `<div class="activity-item"><div class="act-details"><strong>Program Khas</strong><div class="act-text">${s.Program}</div></div></div>` : ''}
-                                ${s.Imam ? `<div class="activity-item"><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${s.Imam}</div>${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img">` : ''}</div></div>` : ''}
+                                ${s.Imam ? `<div class="activity-item"><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${s.Imam}</div>${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img" alt="Imam">` : ''}</div></div>` : ''}
                             </div>
                             <div class="ifthar-section">
-                                <div><span style="font-size:0.6rem; color:var(--text-muted); text-transform:uppercase; font-weight:bold;">Tajaan Ifthar</span><div class="host-name">${s.HostName || 'Kekosongan Terbuka'}</div></div>
-                                ${!s.HostName ? `<button class="primary-btn" style="padding:8px 15px; flex:none; width:auto; font-size:0.8rem;" onclick="handleBooking('${ds}')">Tempah</button>` : '✅'}
+                                <div>
+                                    <div class="host-label">Tajaan Ifthar</div>
+                                    <div class="host-name">${s.HostName || 'Kekosongan Terbuka'}</div>
+                                </div>
+                                ${!s.HostName ? `<button class="primary-btn book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span class="check-icon">✅</span>'}
                             </div>
                         </div>`;
             }
@@ -489,7 +783,8 @@
         async function verifyAdmin() {
             const btn = document.getElementById('loginBtn');
             const pass = document.getElementById('adminPassword').value;
-            btn.innerText = "Mengesahkan..."; btn.disabled = true;
+            btn.innerText = "Mengesahkan...";
+            btn.disabled = true;
 
             try {
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ type: "verify_login", password: pass }) });
@@ -498,16 +793,23 @@
                     document.getElementById('loginStep').classList.add('hidden');
                     document.getElementById('editStep').classList.remove('hidden');
                     populateAdminForm();
-                } else { alert("Kata laluan salah!"); }
-            } catch (e) { alert("Ralat sambungan."); }
-            btn.innerText = "Log Masuk"; btn.disabled = false;
+                } else {
+                    alert("Kata laluan salah!");
+                }
+            } catch (e) {
+                alert("Ralat sambungan.");
+            }
+            btn.innerText = "Log Masuk";
+            btn.disabled = false;
         }
 
         function populateAdminForm() {
             const select = document.getElementById('adminDateSelect');
             select.innerHTML = "";
             Object.keys(slots).sort().forEach(d => {
-                const opt = document.createElement('option'); opt.value = d; opt.innerText = d;
+                const opt = document.createElement('option');
+                opt.value = d;
+                opt.innerText = d;
                 select.appendChild(opt);
             });
             select.onchange = () => {
@@ -524,7 +826,8 @@
 
         async function submitAdminUpdate() {
             const btn = document.getElementById('admSubmitBtn');
-            btn.innerText = "Menyimpan..."; btn.disabled = true;
+            btn.innerText = "Menyimpan...";
+            btn.disabled = true;
 
             const payload = {
                 type: "admin_update",
@@ -544,23 +847,32 @@
                     alert("Kemaskini berjaya disimpan!");
                     location.reload();
                 }
-            } catch (e) { alert("Ralat rangkaian."); }
-            btn.innerText = "Simpan Data"; btn.disabled = false;
+            } catch (e) {
+                alert("Ralat rangkaian.");
+            }
+            btn.innerText = "Simpan";
+            btn.disabled = false;
         }
 
-        // --- Standard UI Functions ---
         function handleBooking(date) {
             document.getElementById('selectedDate').value = date;
             document.getElementById('displayDate').innerText = "Tarikh: " + date;
             document.getElementById('bookingModal').style.display = 'flex';
         }
-        function openAdminLogin() { document.getElementById('adminModal').style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        function openAdminLogin() {
+            document.getElementById('adminModal').style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
 
         document.getElementById('bookingForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
-            btn.innerText = "Memproses..."; btn.disabled = true;
+            btn.innerText = "Memproses...";
+            btn.disabled = true;
 
             try {
                 const payload = {
@@ -573,8 +885,11 @@
                     alert("Tempahan anda telah berjaya!");
                     location.reload();
                 }
-            } catch (e) { alert("Gagal memproses tempahan."); }
-            btn.innerText = "Sahkan Tempahan"; btn.disabled = false;
+            } catch (e) {
+                alert("Gagal memproses tempahan.");
+            }
+            btn.innerText = "Sahkan";
+            btn.disabled = false;
         });
 
         loadData();
