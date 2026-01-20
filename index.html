@@ -185,7 +185,16 @@
             background: linear-gradient(135deg, #ffffff 0%, #fffef8 100%);
             border: 2px solid var(--gold);
             animation: pulse-glow 2s ease-in-out infinite;
+            transform: translateY(-3px) scale(1.05);
         }
+
+            .active-prayer .solat-label {
+                color: var(--secondary);
+            }
+
+            .active-prayer .solat-time {
+                color: var(--primary);
+            }
 
         .day-card {
             background: var(--glass);
@@ -233,7 +242,6 @@
             animation: float 4s ease-in-out infinite;
         }
 
-        /* --- UPDATED INLINE ACTIVITY STYLES --- */
         .activity-item {
             display: flex;
             justify-content: space-between;
@@ -308,7 +316,6 @@
             margin-left: 10px;
         }
 
-        /* --- MODAL & FAB --- */
         .modal {
             display: none;
             position: fixed;
@@ -452,12 +459,39 @@
                 if (data.prayerTimes) {
                     document.getElementById('prayerSection').classList.remove('hidden');
                     document.getElementById('hijriDisplay').innerText = data.prayerTimes.hDate || "";
-                    ['imsak', 'subuh', 'zohor', 'asar', 'maghrib', 'isyak'].forEach(k => {
-                        document.getElementById(`t-${k}`).innerText = data.prayerTimes[k] || "-";
-                    });
+
+                    const p = data.prayerTimes;
+                    const tMap = { imsak: p.imsak, subuh: p.subuh, zohor: p.zohor, asar: p.asar, maghrib: p.maghrib, isyak: p.isyak };
+
+                    for (const [id, time] of Object.entries(tMap)) {
+                        const el = document.getElementById(`t-${id}`);
+                        if (el) el.innerText = time || "-";
+                    }
+                    highlightCurrentSolat(tMap);
                 }
                 render();
             } catch (e) { console.error(e); }
+        }
+
+        function highlightCurrentSolat(times) {
+            const now = new Date();
+            const parseT = (tStr) => {
+                if (!tStr || tStr === "-") return new Date(0);
+                const [t, mod] = tStr.split(' ');
+                let [h, m] = t.split(':');
+                if (h === '12') h = '00';
+                if (mod === 'PM') h = parseInt(h) + 12;
+                const d = new Date(); d.setHours(h, m, 0, 0);
+                return d;
+            };
+
+            const order = ['imsak', 'subuh', 'zohor', 'asar', 'maghrib', 'isyak'];
+            let current = '';
+            for (let i = 0; i < order.length; i++) {
+                if (now >= parseT(times[order[i]])) current = order[i];
+            }
+            document.querySelectorAll('.solat-item').forEach(el => el.classList.remove('active-prayer'));
+            if (current) document.getElementById(`item-${current}`).classList.add('active-prayer');
         }
 
         function render() {
