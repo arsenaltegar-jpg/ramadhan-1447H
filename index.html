@@ -367,7 +367,10 @@
             <div id="loginStep">
                 <span class="admin-label">Sila masukkan kata laluan</span>
                 <input type="password" id="adminPassword" class="form-input" placeholder="******">
-                <button onclick="verifyAdmin()" id="loginBtn" class="primary-btn" style="width:100%">Log Masuk</button>
+                <div class="btn-row">
+                    <button onclick="verifyAdmin()" id="loginBtn" class="primary-btn">Log Masuk</button>
+                    <button type="button" onclick="closeModal('adminModal')" class="secondary-btn">Batal</button>
+                </div>
             </div>
 
             <div id="editStep" class="hidden">
