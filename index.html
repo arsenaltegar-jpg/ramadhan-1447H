@@ -397,13 +397,21 @@
             <div id="loginStep">
                 <input type="password" id="adminPassword" class="form-input" placeholder="Kata Laluan">
                 <button onclick="verifyAdmin()" id="loginBtn" class="primary-btn">Log Masuk</button>
+                <button type="button" onclick="closeModal('adminModal')" style="width:100%; margin-top:10px; background:none; border:none; cursor:pointer;">Batal</button>
             </div>
-            <div id="editStep" class="hidden">
+            <div id="editStep" class="hidden" style="max-height: 70vh; overflow-y: auto; padding-right: 5px;">
+                <label style="font-size: 0.7rem; font-weight: bold;">TARIKH</label>
                 <select id="adminDateSelect" class="form-input"></select>
-                <input type="text" id="admHost" class="form-input" placeholder="Nama Host">
-                <input type="text" id="admContact" class="form-input" placeholder="WhatsApp Host">
-                <input type="text" id="admImam" class="form-input" placeholder="Imam Tarawih">
-                <input type="text" id="admImamImg" class="form-input" placeholder="URL Gambar Imam">
+
+                <input type="text" id="admHost" class="form-input" placeholder="Host Name">
+                <input type="text" id="admContact" class="form-input" placeholder="Host Contact">
+                <input type="text" id="admImam" class="form-input" placeholder="Imam">
+                <input type="text" id="admProgram" class="form-input" placeholder="Program">
+                <input type="text" id="admImageUrl" class="form-input" placeholder="Image URL (Imam)">
+                <input type="text" id="admProgramUrl" class="form-input" placeholder="Program Image URL">
+                <input type="text" id="admKuliahSubuh" class="form-input" placeholder="Kuliah Subuh">
+                <input type="text" id="admKuliahSubuhUrl" class="form-input" placeholder="Kuliah Subuh Image URL">
+
                 <button onclick="submitAdminUpdate()" id="admSubmitBtn" class="primary-btn">Simpan Perubahan</button>
                 <button type="button" onclick="closeModal('adminModal')" style="width:100%; margin-top:10px; background:none; border:none; cursor:pointer;">Tutup</button>
             </div>
@@ -529,6 +537,7 @@
         function populateAdminForm() {
             const select = document.getElementById('adminDateSelect');
             select.innerHTML = "";
+            // Ensure dates are sorted so they are easy to find
             Object.keys(slots).sort().forEach(d => {
                 const opt = document.createElement('option');
                 opt.value = d; opt.innerText = d; select.appendChild(opt);
@@ -538,7 +547,11 @@
                 document.getElementById('admHost').value = s.HostName || "";
                 document.getElementById('admContact').value = s.HostContact || "";
                 document.getElementById('admImam').value = s.Imam || "";
-                document.getElementById('admImamImg').value = s.ImageUrl || "";
+                document.getElementById('admProgram').value = s.Program || "";
+                document.getElementById('admImageUrl').value = s.ImageUrl || "";
+                document.getElementById('admProgramUrl').value = s.ProgramUrl || "";
+                document.getElementById('admKuliahSubuh').value = s.KuliahSubuh || "";
+                document.getElementById('admKuliahSubuhUrl').value = s.KuliahSubuhUrl || "";
             };
             if (select.options.length > 0) select.onchange();
         }
@@ -553,11 +566,21 @@
                 hostName: document.getElementById('admHost').value,
                 hostContact: document.getElementById('admContact').value,
                 imam: document.getElementById('admImam').value,
-                imageUrl: document.getElementById('admImamImg').value
+                program: document.getElementById('admProgram').value,
+                imageUrl: document.getElementById('admImageUrl').value,
+                programUrl: document.getElementById('admProgramUrl').value,
+                kuliahSubuh: document.getElementById('admKuliahSubuh').value,
+                kuliahSubuhUrl: document.getElementById('admKuliahSubuhUrl').value
             };
             try {
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-                if (await res.text() === "Success") { alert("Berjaya disimpan!"); location.reload(); }
+                const result = await res.text();
+                if (result === "Success") {
+                    alert("Berjaya disimpan!");
+                    location.reload();
+                } else {
+                    alert("Gagal: " + result);
+                }
             } catch (e) { alert("Gagal menyimpan"); }
             btn.innerText = "Simpan Perubahan";
         }
