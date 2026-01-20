@@ -779,9 +779,9 @@
                                 <span class="moon-icon">🌙</span>
                             </div>
                             <div class="program-body">
-                                ${s.KuliahSubuh ? `<div class="activity-item"><div class="act-details"><strong>Kuliah Subuh</strong><div class="act-text">${s.KuliahSubuh}</div></div></div>` : ''}
-                                ${s.Program ? `<div class="activity-item"><div class="act-details"><strong>Program Khas</strong><div class="act-text">${s.Program}</div></div></div>` : ''}
-                                ${s.Imam ? `<div class="activity-item"><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${s.Imam}</div>${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img" alt="Imam">` : ''}</div></div>` : ''}
+                                ${s.KuliahSubuh ? `<div class="activity-item"><div class="act-details"><strong>Kuliah Subuh</strong><div class="act-text">${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="entry-img" alt="KuliahSubuh">` : ''}${s.KuliahSubuh}</div></div></div>` : ''}
+                                ${s.Program ? `<div class="activity-item"><div class="act-details"><strong>Program Khas</strong><div class="act-text">${s.ProgramUrl ? `<img src="${s.ProgramUrl}" class="entry-img" alt="Program">` : ''}${s.Program}</div></div></div>` : ''}
+                                ${s.Imam ? `<div class="activity-item"><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img" alt="Imam">` : ''}${s.Imam}</div></div></div>` : ''}
                             </div>
                             <div class="ifthar-section">
                                 <div class="host-info">
