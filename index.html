@@ -377,24 +377,24 @@
                 const s = slots[ds] || {};
 
                 html += `
-                        <div class="day-card">
-                            <div class="day-header">
-                                <div class="ramadhan-info">
-                                    <span class="ramadhan-num">${i}</span>
-                                    <div class="date-text">${dayNames[dObj.getDay()]}<br>${dObj.getDate()} FEB</div>
-                                </div>
-                                <span style="font-size:1.2rem;">🌙</span>
-                            </div>
-                            <div class="program-body">
-                                ${s.KuliahSubuh ? `<div class="activity-item"><div class="icon-box">📖</div><div class="act-details"><strong>Kuliah Subuh</strong><div class="act-text">${s.KuliahSubuh}</div>${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="entry-img">` : ''}</div></div>` : ''}
-                                ${s.Program ? `<div class="activity-item"><div class="icon-box">☪️</div><div class="act-details"><strong>Program Khas</strong><div class="act-text">${s.Program}</div>${s.ProgramUrl ? `<img src="${s.ProgramUrl}" class="entry-img">` : ''}</div></div>` : ''}
-                                ${s.Imam ? `<div class="activity-item"><div class="icon-box">🕌</div><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${s.Imam}</div>${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img">` : ''}</div></div>` : ''}
-                            </div>
-                            <div class="ifthar-section">
-                                <div class="host-info"><span class="host-label">Tajaan Ifthar</span><div class="host-name">${s.HostName || 'Kekosongan Terbuka'}</div></div>
-                                ${!s.HostName ? `<button class="primary-btn" style="padding:8px 15px; font-size:0.8rem; flex:none; width:auto;" onclick="handleBooking('${ds}')">Tempah</button>` : '✅'}
-                            </div>
-                        </div>`;
+                                            <div class="day-card">
+                                                <div class="day-header">
+                                                    <div class="ramadhan-info">
+                                                        <span class="ramadhan-num">${i}</span>
+                                                        <div class="date-text">${dayNames[dObj.getDay()]}<br>${dObj.getDate()} FEB</div>
+                                                    </div>
+                                                    <span style="font-size:1.2rem;">🌙</span>
+                                                </div>
+                                                <div class="program-body">
+                                                    ${s.KuliahSubuh ? `<div class="activity-item"><div class="icon-box">📖</div><div class="act-details"><strong>Kuliah Subuh</strong><div class="act-text">${s.KuliahSubuh}</div>${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="entry-img">` : ''}</div></div>` : ''}
+                                                    ${s.Program ? `<div class="activity-item"><div class="icon-box">☪️</div><div class="act-details"><strong>Program Khas</strong><div class="act-text">${s.Program}</div>${s.ProgramUrl ? `<img src="${s.ProgramUrl}" class="entry-img">` : ''}</div></div>` : ''}
+                                                    ${s.Imam ? `<div class="activity-item"><div class="icon-box">🕌</div><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${s.Imam}</div>${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img">` : ''}</div></div>` : ''}
+                                                </div>
+                                                <div class="ifthar-section">
+                                                    <div class="host-info"><span class="host-label">Tajaan Ifthar</span><div class="host-name">${s.HostName || 'Kekosongan Terbuka'}</div></div>
+                                                    ${!s.HostName ? `<button class="primary-btn" style="padding:8px 15px; font-size:0.8rem; flex:none; width:auto;" onclick="handleBooking('${ds}')">Tempah</button>` : '✅'}
+                                                </div>
+                                            </div>`;
             }
             grid.innerHTML = html;
         }
@@ -494,5 +494,7 @@
 
         loadData();
     </script>
+
+    <br />  <br />  <br />  <br />  <br />  <br />
 </body>
 </html>
