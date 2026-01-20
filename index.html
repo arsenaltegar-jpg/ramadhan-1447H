@@ -5,6 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ihya Ramadhan 1447H | Surau Seri Putra</title>
     <style>
+        /* Prayer Times Widget */
+        .solat-container {
+            background: var(--glass);
+            margin: 0 auto 25px;
+            padding: 15px;
+            border-radius: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            color: var(--text-main);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            border: 1px solid var(--gold);
+        }
+
+        .solat-item {
+            text-align: center;
+        }
+
+        .solat-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .solat-time {
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .solat-title {
+            grid-column: span 4;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--primary);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
         :root {
             --primary: #4a135a;
             --secondary: #880e4f;
@@ -284,8 +324,20 @@
         <p style="color:var(--gold); letter-spacing:3px; font-weight:bold; font-size:0.8rem;">SURAU SERI PUTRA</p>
     </div>
 
-    <div class="container" id="scheduleGrid">
-        <div style="text-align:center; padding:50px;">Memuatkan jadual...</div>
+    <div class="container">
+        <div id="prayerSection" class="solat-container hidden">
+            <div class="solat-title">WAKTU SOLAT HARI INI</div>
+            <div class="solat-item"><div class="solat-label">Imsak</div><div class="solat-time" id="t-imsak">-</div></div>
+            <div class="solat-item"><div class="solat-label">Subuh</div><div class="solat-time" id="t-subuh">-</div></div>
+            <div class="solat-item"><div class="solat-label">Zohor</div><div class="solat-time" id="t-zohor">-</div></div>
+            <div class="solat-item"><div class="solat-label">Asar</div><div class="solat-time" id="t-asar">-</div></div>
+            <div class="solat-item"><div class="solat-label">Maghrib</div><div class="solat-time" id="t-maghrib" style="color:#d32f2f">-</div></div>
+            <div class="solat-item"><div class="solat-label">Isyak</div><div class="solat-time" id="t-isyak">-</div></div>
+        </div>
+
+        <div id="scheduleGrid">
+            <div style="text-align:center; padding:50px;">Memuatkan jadual...</div>
+        </div>
     </div>
 
     <div class="admin-fab" onclick="openAdminLogin()">⚙️</div>
@@ -358,8 +410,24 @@
             try {
                 const res = await fetch(SCRIPT_URL);
                 const data = await res.json();
+
+                // Handle schedule
                 slots = {};
-                data.forEach(item => { if (item.SelectedDate) slots[item.SelectedDate] = item; });
+                data.schedule.forEach(item => {
+                    if (item.SelectedDate) slots[item.SelectedDate] = item;
+                });
+
+                // Handle prayer times
+                if (data.prayerTimes) {
+                    document.getElementById('prayerSection').classList.remove('hidden');
+                    document.getElementById('t-imsak').innerText = data.prayerTimes.imsak;
+                    document.getElementById('t-subuh').innerText = data.prayerTimes.subuh;
+                    document.getElementById('t-zohor').innerText = data.prayerTimes.zohor;
+                    document.getElementById('t-asar').innerText = data.prayerTimes.asar;
+                    document.getElementById('t-maghrib').innerText = data.prayerTimes.maghrib;
+                    document.getElementById('t-isyak').innerText = data.prayerTimes.isyak;
+                }
+
                 render();
             } catch (e) {
                 document.getElementById('scheduleGrid').innerHTML = '<p style="text-align:center;">Ralat sambungan.</p>';
@@ -494,7 +562,5 @@
 
         loadData();
     </script>
-
-    <br />  <br />  <br />  <br />  <br />  <br />
 </body>
 </html>
