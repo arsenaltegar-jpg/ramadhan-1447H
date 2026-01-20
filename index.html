@@ -385,15 +385,15 @@
         }
 
         .book-btn {
-            padding: 8px 16px;
+            padding: 6px 12px;
             flex: none;
             width: auto;
-            font-size: 0.75rem;
-            border-radius: 10px;
-            font-weight: 800;
+            font-size: 0.7rem;
+            border-radius: 8px;
+            font-weight: 700;
             transition: all 0.3s;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
 
             .book-btn:hover {
@@ -771,7 +771,7 @@
                             <div class="ifthar-section">
                                 <div>
                                     <div class="host-label">Tajaan Ifthar</div>
-                                    <div class="host-name">${s.HostName || 'Kosong'}</div>
+                                    <div class="host-name">${s.HostName || 'Kekosongan Terbuka'}</div>
                                 </div>
                                 ${!s.HostName ? `<button class="primary-btn book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span class="check-icon">✅</span>'}
                             </div>
