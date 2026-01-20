@@ -13,6 +13,7 @@
             --glass: rgba(255, 255, 255, 0.95);
             --text-main: #2d1b0d;
             --text-muted: #666;
+            --admin-bg: #ffffff;
         }
 
         * {
@@ -24,7 +25,7 @@
         body {
             background: linear-gradient(135deg, #2d0b3a 0%, #4a135a 50%, #880e4f 100%);
             background-attachment: fixed;
-            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             color: white;
             padding-bottom: 80px;
         }
@@ -52,36 +53,37 @@
         .solat-container {
             background: var(--glass);
             margin-bottom: 25px;
-            padding: 15px;
-            border-radius: 20px;
+            padding: 18px;
+            border-radius: 24px;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 12px;
             color: var(--text-main);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border: 1px solid var(--gold);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 1px solid rgba(212, 175, 55, 0.3);
         }
 
         .solat-title {
             grid-column: span 3;
             text-align: center;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 800;
             color: var(--primary);
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-            padding-bottom: 8px;
-            margin-bottom: 5px;
+            border-bottom: 2px solid rgba(74, 19, 90, 0.05);
+            padding-bottom: 10px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .solat-item {
             text-align: center;
-            padding: 10px 5px;
-            border-radius: 15px;
-            transition: all 0.3s ease;
+            padding: 12px 5px;
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid transparent;
         }
 
@@ -91,19 +93,20 @@
             font-weight: bold;
             color: var(--text-muted);
             display: block;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
 
         .solat-time {
-            font-size: 0.9rem;
-            font-weight: 700;
+            font-size: 0.95rem;
+            font-weight: 800;
             color: var(--text-main);
         }
 
         .active-prayer {
-            background: rgba(212, 175, 55, 0.15);
-            border: 1px solid var(--gold);
-            box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.1);
+            background: white;
+            border: 1.5px solid var(--gold);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+            transform: translateY(-2px);
         }
 
             .active-prayer .solat-label {
@@ -112,8 +115,101 @@
 
             .active-prayer .solat-time {
                 color: var(--primary);
-                font-size: 1rem;
             }
+
+        /* --- ADMIN & MODAL UI --- */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: var(--admin-bg);
+            width: 100%;
+            max-width: 440px;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            color: #333;
+        }
+
+        .modal h2 {
+            font-family: 'Segoe UI', sans-serif;
+            color: var(--primary);
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            font-weight: 800;
+            border-left: 5px solid var(--gold);
+            padding-left: 12px;
+        }
+
+        .admin-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #666;
+            text-transform: uppercase;
+            margin-top: 12px;
+            display: block;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            margin: 6px 0 14px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            color: #222;
+        }
+
+            .form-input:focus {
+                border-color: var(--primary);
+                outline: none;
+                background: #fafafa;
+            }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .primary-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            flex: 2;
+            transition: opacity 0.2s;
+        }
+
+            .primary-btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+
+        .secondary-btn {
+            background: #f0f0f0;
+            color: #444;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            flex: 1;
+            cursor: pointer;
+            font-weight: 700;
+        }
 
         /* --- DAY CARDS --- */
         .day-card {
@@ -167,7 +263,6 @@
             font-size: 0.65rem;
             color: var(--secondary);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .act-text {
@@ -192,72 +287,10 @@
             align-items: center;
         }
 
-        /* --- MODAL & FORM STYLING --- */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(45, 11, 58, 0.95);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: white;
-            width: 100%;
-            max-width: 420px;
-            border-radius: 28px;
-            padding: 25px;
-            border: 2px solid var(--gold);
-            color: var(--text-main);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal h2 {
+        .host-name {
+            font-weight: 700;
             color: var(--primary);
-            margin-bottom: 15px;
-            font-family: 'Georgia', serif;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-family: inherit;
-        }
-
-        .btn-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .primary-btn {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            flex: 2;
-        }
-
-        .secondary-btn {
-            background: #eee;
-            color: #666;
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            flex: 1;
-            cursor: pointer;
-            font-weight: bold;
+            font-size: 0.9rem;
         }
 
         .admin-fab {
@@ -274,7 +307,6 @@
             cursor: pointer;
             border: 2px solid var(--gold);
             z-index: 99;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
         .hidden {
@@ -293,7 +325,7 @@
         <div id="prayerSection" class="solat-container hidden">
             <div class="solat-title">
                 <span>Waktu Solat</span>
-                <span id="hijriDisplay" style="color:var(--secondary)">Memuatkan...</span>
+                <span id="hijriDisplay" style="color:var(--secondary)"></span>
             </div>
             <div class="solat-item" id="item-imsak"><span class="solat-label">Imsak</span><div class="solat-time" id="t-imsak">-</div></div>
             <div class="solat-item" id="item-subuh"><span class="solat-label">Subuh</span><div class="solat-time" id="t-subuh">-</div></div>
@@ -304,7 +336,7 @@
         </div>
 
         <div id="scheduleGrid">
-            <div style="text-align:center; padding:50px;">Memuatkan jadual...</div>
+            <div style="text-align:center; padding:50px; color:var(--gold-light)">Memuatkan jadual Ihya...</div>
         </div>
     </div>
 
@@ -313,14 +345,16 @@
     <div id="bookingModal" class="modal">
         <div class="modal-content">
             <h2>🌙 Tempahan Ifthar</h2>
-            <p id="displayDate" style="margin:10px 0; font-weight:bold; color:var(--secondary)"></p>
+            <p id="displayDate" style="margin-bottom:15px; font-weight:bold; color:var(--secondary)"></p>
             <form id="bookingForm">
                 <input type="hidden" id="selectedDate">
-                <input type="text" id="hostName" class="form-input" placeholder="Nama Hos / Kumpulan" required>
-                <input type="tel" id="hostContact" class="form-input" placeholder="No. WhatsApp (601...)" required>
+                <span class="admin-label">Nama Kumpulan / Individu</span>
+                <input type="text" id="hostName" class="form-input" placeholder="Contoh: Keluarga Hj Ahmad" required>
+                <span class="admin-label">No. Telefon WhatsApp</span>
+                <input type="tel" id="hostContact" class="form-input" placeholder="60123456789" required>
                 <div class="btn-row">
                     <button type="button" onclick="closeModal('bookingModal')" class="secondary-btn">Batal</button>
-                    <button type="submit" id="submitBtn" class="primary-btn">Sahkan</button>
+                    <button type="submit" id="submitBtn" class="primary-btn">Sahkan Tempahan</button>
                 </div>
             </form>
         </div>
@@ -328,24 +362,35 @@
 
     <div id="adminModal" class="modal">
         <div class="modal-content">
-            <h2 id="adminTitle">⚙️ Admin</h2>
+            <h2 id="adminTitle">⚙️ Pentadbir</h2>
+
             <div id="loginStep">
-                <input type="password" id="adminPassword" class="form-input" placeholder="Kata Laluan">
-                <button onclick="verifyAdmin()" class="primary-btn" style="width:100%">Log Masuk</button>
+                <span class="admin-label">Sila masukkan kata laluan</span>
+                <input type="password" id="adminPassword" class="form-input" placeholder="******">
+                <button onclick="verifyAdmin()" id="loginBtn" class="primary-btn" style="width:100%">Log Masuk</button>
             </div>
+
             <div id="editStep" class="hidden">
+                <span class="admin-label">Pilih Tarikh Kemaskini</span>
                 <select id="adminDateSelect" class="form-input"></select>
-                <input type="text" id="admHost" class="form-input" placeholder="Nama Hos Ifthar">
-                <input type="text" id="admContact" class="form-input" placeholder="WhatsApp Hos">
-                <hr style="margin:15px 0; opacity:0.1">
-                <input type="text" id="admImam" class="form-input" placeholder="Nama Imam Tarawih">
-                <input type="text" id="admImamImg" class="form-input" placeholder="Link Gambar Imam">
-                <input type="text" id="admProg" class="form-input" placeholder="Tajuk Program Khas">
-                <input type="text" id="admProgImg" class="form-input" placeholder="Link Gambar Program">
-                <input type="text" id="admKuliah" class="form-input" placeholder="Tajuk Kuliah Subuh">
-                <input type="text" id="admKuliahImg" class="form-input" placeholder="Link Gambar Kuliah">
+
+                <div style="max-height: 350px; overflow-y: auto; padding-right: 5px; margin-bottom: 10px;">
+                    <span class="admin-label">Nama Hos Ifthar</span>
+                    <input type="text" id="admHost" class="form-input">
+                    <span class="admin-label">No. WhatsApp Hos</span>
+                    <input type="text" id="admContact" class="form-input">
+                    <span class="admin-label">Imam Tarawih</span>
+                    <input type="text" id="admImam" class="form-input">
+                    <span class="admin-label">URL Gambar Imam</span>
+                    <input type="text" id="admImamImg" class="form-input">
+                    <span class="admin-label">Tajuk Program Khas</span>
+                    <input type="text" id="admProg" class="form-input">
+                    <span class="admin-label">Tajuk Kuliah Subuh</span>
+                    <input type="text" id="admKuliah" class="form-input">
+                </div>
+
                 <div class="btn-row">
-                    <button onclick="submitAdminUpdate()" id="admSubmitBtn" class="primary-btn">Simpan</button>
+                    <button onclick="submitAdminUpdate()" id="admSubmitBtn" class="primary-btn">Simpan Data</button>
                     <button onclick="closeModal('adminModal')" class="secondary-btn">Tutup</button>
                 </div>
             </div>
@@ -366,7 +411,8 @@
 
                 if (data.prayerTimes) {
                     document.getElementById('prayerSection').classList.remove('hidden');
-                    document.getElementById('hijriDisplay').innerText = data.prayerTimes.hDate || "";
+                    const hDate = data.prayerTimes.hDate;
+                    document.getElementById('hijriDisplay').innerText = (hDate && hDate !== "undefined") ? hDate : "";
 
                     const p = data.prayerTimes;
                     const tMap = { imsak: p.imsak, subuh: p.subuh, zohor: p.zohor, asar: p.asar, maghrib: p.maghrib, isyak: p.isyak };
@@ -379,14 +425,14 @@
                 }
                 render();
             } catch (e) {
-                document.getElementById('scheduleGrid').innerHTML = '<p>Ralat sambungan.</p>';
+                document.getElementById('scheduleGrid').innerHTML = '<p style="text-align:center;">Ralat sambungan rangkaian.</p>';
             }
         }
 
         function highlightCurrentSolat(times) {
             const now = new Date();
             const parseT = (tStr) => {
-                if (!tStr) return new Date(0);
+                if (!tStr || tStr === "-") return new Date(0);
                 const [t, mod] = tStr.split(' ');
                 let [h, m] = t.split(':');
                 if (h === '12') h = '00';
@@ -424,35 +470,34 @@
                                 <span>🌙</span>
                             </div>
                             <div class="program-body">
-                                ${s.KuliahSubuh ? `<div class="activity-item"><div class="act-details"><strong>Kuliah Subuh</strong><div class="act-text">${s.KuliahSubuh}</div>${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="entry-img">` : ''}</div></div>` : ''}
-                                ${s.Program ? `<div class="activity-item"><div class="act-details"><strong>Program Khas</strong><div class="act-text">${s.Program}</div>${s.ProgramUrl ? `<img src="${s.ProgramUrl}" class="entry-img">` : ''}</div></div>` : ''}
+                                ${s.KuliahSubuh ? `<div class="activity-item"><div class="act-details"><strong>Kuliah Subuh</strong><div class="act-text">${s.KuliahSubuh}</div></div></div>` : ''}
+                                ${s.Program ? `<div class="activity-item"><div class="act-details"><strong>Program Khas</strong><div class="act-text">${s.Program}</div></div></div>` : ''}
                                 ${s.Imam ? `<div class="activity-item"><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${s.Imam}</div>${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img">` : ''}</div></div>` : ''}
                             </div>
                             <div class="ifthar-section">
                                 <div><span style="font-size:0.6rem; color:var(--text-muted); text-transform:uppercase; font-weight:bold;">Tajaan Ifthar</span><div class="host-name">${s.HostName || 'Kekosongan Terbuka'}</div></div>
-                                ${!s.HostName ? `<button class="primary-btn" style="padding:8px 15px; flex:none; width:auto;" onclick="handleBooking('${ds}')">Tempah</button>` : '✅'}
+                                ${!s.HostName ? `<button class="primary-btn" style="padding:8px 15px; flex:none; width:auto; font-size:0.8rem;" onclick="handleBooking('${ds}')">Tempah</button>` : '✅'}
                             </div>
                         </div>`;
             }
             grid.innerHTML = html;
         }
 
-        function handleBooking(date) {
-            document.getElementById('selectedDate').value = date;
-            document.getElementById('displayDate').innerText = "Tarikh: " + date;
-            document.getElementById('bookingModal').style.display = 'flex';
-        }
-        function openAdminLogin() { document.getElementById('adminModal').style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
         async function verifyAdmin() {
+            const btn = document.getElementById('loginBtn');
             const pass = document.getElementById('adminPassword').value;
-            const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ type: "verify_login", password: pass }) });
-            if (await res.text() === "Valid") {
-                document.getElementById('loginStep').classList.add('hidden');
-                document.getElementById('editStep').classList.remove('hidden');
-                populateAdminForm();
-            } else { alert("Kata laluan salah!"); }
+            btn.innerText = "Mengesahkan..."; btn.disabled = true;
+
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ type: "verify_login", password: pass }) });
+                const status = await res.text();
+                if (status === "Valid") {
+                    document.getElementById('loginStep').classList.add('hidden');
+                    document.getElementById('editStep').classList.remove('hidden');
+                    populateAdminForm();
+                } else { alert("Kata laluan salah!"); }
+            } catch (e) { alert("Ralat sambungan."); }
+            btn.innerText = "Log Masuk"; btn.disabled = false;
         }
 
         function populateAdminForm() {
@@ -469,16 +514,15 @@
                 document.getElementById('admImam').value = s.Imam || "";
                 document.getElementById('admImamImg').value = s.ImageUrl || "";
                 document.getElementById('admProg').value = s.Program || "";
-                document.getElementById('admProgImg').value = s.ProgramUrl || "";
                 document.getElementById('admKuliah').value = s.KuliahSubuh || "";
-                document.getElementById('admKuliahImg').value = s.KuliahSubuhUrl || "";
             };
             if (select.options.length > 0) select.onchange();
         }
 
         async function submitAdminUpdate() {
             const btn = document.getElementById('admSubmitBtn');
-            btn.innerText = "Simpan..."; btn.disabled = true;
+            btn.innerText = "Menyimpan..."; btn.disabled = true;
+
             const payload = {
                 type: "admin_update",
                 password: document.getElementById('adminPassword').value,
@@ -488,21 +532,33 @@
                 imam: document.getElementById('admImam').value,
                 imageUrl: document.getElementById('admImamImg').value,
                 program: document.getElementById('admProg').value,
-                programUrl: document.getElementById('admProgImg').value,
-                kuliahSubuh: document.getElementById('admKuliah').value,
-                kuliahSubuhUrl: document.getElementById('admKuliahImg').value
+                kuliahSubuh: document.getElementById('admKuliah').value
             };
+
             try {
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-                if (await res.text() === "Success") { alert("Berjaya!"); location.reload(); }
-            } catch (e) { alert("Ralat!"); }
-            btn.innerText = "Simpan"; btn.disabled = false;
+                if (await res.text() === "Success") {
+                    alert("Kemaskini berjaya disimpan!");
+                    location.reload();
+                }
+            } catch (e) { alert("Ralat rangkaian."); }
+            btn.innerText = "Simpan Data"; btn.disabled = false;
         }
+
+        // --- Standard UI Functions ---
+        function handleBooking(date) {
+            document.getElementById('selectedDate').value = date;
+            document.getElementById('displayDate').innerText = "Tarikh: " + date;
+            document.getElementById('bookingModal').style.display = 'flex';
+        }
+        function openAdminLogin() { document.getElementById('adminModal').style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
         document.getElementById('bookingForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
-            btn.innerText = "Proses..."; btn.disabled = true;
+            btn.innerText = "Memproses..."; btn.disabled = true;
+
             try {
                 const payload = {
                     selectedDate: document.getElementById('selectedDate').value,
@@ -510,8 +566,12 @@
                     hostContact: document.getElementById('hostContact').value
                 };
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-                if (await res.text() === "Success") location.reload();
-            } catch (e) { alert("Ralat!"); }
+                if (await res.text() === "Success") {
+                    alert("Tempahan anda telah berjaya!");
+                    location.reload();
+                }
+            } catch (e) { alert("Gagal memproses tempahan."); }
+            btn.innerText = "Sahkan Tempahan"; btn.disabled = false;
         });
 
         loadData();
