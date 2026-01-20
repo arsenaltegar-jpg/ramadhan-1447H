@@ -367,6 +367,11 @@
             justify-content: space-between;
             align-items: center;
             border-top: 1px solid rgba(212, 175, 55, 0.2);
+            gap: 12px;
+        }
+
+        .host-info {
+            flex: 1;
         }
 
         .host-label {
@@ -769,7 +774,7 @@
                                 ${s.Imam ? `<div class="activity-item"><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${s.Imam}</div>${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img" alt="Imam">` : ''}</div></div>` : ''}
                             </div>
                             <div class="ifthar-section">
-                                <div>
+                                <div class="host-info">
                                     <div class="host-label">Tajaan Ifthar</div>
                                     <div class="host-name">${s.HostName || 'Kekosongan Terbuka'}</div>
                                 </div>
