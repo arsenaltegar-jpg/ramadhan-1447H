@@ -272,17 +272,20 @@
         }
 
         .book-btn {
-            padding: 6px 12px; /* Smaller padding */
-            font-size: 0.7rem; /* Smaller font */
+            display: inline-block; /* Ensures it fits text size */
+            padding: 6px 12px; /* Compact padding */
+            font-size: 0.7rem;
             border-radius: 50px;
             border: none;
             background: var(--primary);
             color: white;
             cursor: pointer;
             font-weight: 800;
-            width: auto; /* Ensures it doesn't stretch */
-            margin-left: auto; /* Pushes it to the right */
+            width: auto; /* Prevent stretching */
+            margin-left: auto; /* Moves to right if parent is flex */
+            white-space: nowrap; /* Prevents text from wrapping */
         }
+
 
         .modal {
             display: none;
@@ -501,7 +504,7 @@
                                 <div style="font-size:0.6rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Ifthar</div>
                                 <div class="host-name">${s.HostName || 'Kekosongan Terbuka'}</div>
                             </div>
-                            ${!s.HostName ? `<button class="primary-btn book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span>🥤🍲</span>'}
+                            ${!s.HostName ? `<button class=" book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span>🥤🍲</span>'}
                         </div>
                     </div>`;
             }
