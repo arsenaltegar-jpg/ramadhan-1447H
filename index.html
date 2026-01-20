@@ -353,7 +353,53 @@
             padding: 50px;
             color: var(--gold-light);
         }
+        /* Styling for the Cancel/Secondary button */
+        .secondary-btn {
+            width: 100%;
+            margin-top: 12px;
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: var(--text-muted);
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            .secondary-btn:hover {
+                background: rgba(0, 0, 0, 0.1);
+                color: var(--primary);
+            }
+
+        /* Scrollable container for the long admin form */
+        .admin-scroll-area {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 8px;
+            margin: 15px 0;
+        }
+
+            /* Custom scrollbar for admin area */
+            .admin-scroll-area::-webkit-scrollbar {
+                width: 5px;
+            }
+
+            .admin-scroll-area::-webkit-scrollbar-thumb {
+                background: var(--gold);
+                border-radius: 10px;
+            }
+
+        .admin-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--secondary);
+            text-transform: uppercase;
+            display: block;
+            margin-top: 10px;
+        }
     </style>
+
 </head>
 <body>
 
@@ -393,27 +439,38 @@
 
     <div id="adminModal" class="modal">
         <div class="modal-content">
-            <h2>⚙️ Pentadbir</h2>
-            <div id="loginStep">
-                <input type="password" id="adminPassword" class="form-input" placeholder="Kata Laluan">
-                <button onclick="verifyAdmin()" id="loginBtn" class="primary-btn">Log Masuk</button>
-                <button type="button" onclick="closeModal('adminModal')" style="width:100%; margin-top:10px; background:none; border:none; cursor:pointer;">Batal</button>
-            </div>
-            <div id="editStep" class="hidden" style="max-height: 70vh; overflow-y: auto; padding-right: 5px;">
-                <label style="font-size: 0.7rem; font-weight: bold;">TARIKH</label>
-                <select id="adminDateSelect" class="form-input"></select>
+            <h2 style="color: var(--primary); margin-bottom: 20px;">⚙️ Pentadbir</h2>
 
-                <input type="text" id="admHost" class="form-input" placeholder="Host Name">
-                <input type="text" id="admContact" class="form-input" placeholder="Host Contact">
-                <input type="text" id="admImam" class="form-input" placeholder="Imam">
-                <input type="text" id="admProgram" class="form-input" placeholder="Program">
-                <input type="text" id="admImageUrl" class="form-input" placeholder="Image URL (Imam)">
-                <input type="text" id="admProgramUrl" class="form-input" placeholder="Program Image URL">
-                <input type="text" id="admKuliahSubuh" class="form-input" placeholder="Kuliah Subuh">
-                <input type="text" id="admKuliahSubuhUrl" class="form-input" placeholder="Kuliah Subuh Image URL">
+            <div id="loginStep">
+                <input type="password" id="adminPassword" class="form-input" placeholder="Kata Laluan Pentadbir">
+                <button onclick="verifyAdmin()" id="loginBtn" class="primary-btn">Log Masuk</button>
+                <button type="button" onclick="closeModal('adminModal')" class="secondary-btn">Batal</button>
+            </div>
+
+            <div id="editStep" class="hidden">
+                <div class="admin-scroll-area">
+                    <label class="admin-label">Pilih Tarikh</label>
+                    <select id="adminDateSelect" class="form-input"></select>
+
+                    <label class="admin-label">Maklumat Ifthar</label>
+                    <input type="text" id="admHost" class="form-input" placeholder="Nama Host (Individu/Kumpulan)">
+                    <input type="text" id="admContact" class="form-input" placeholder="WhatsApp (Contoh: 60123456789)">
+
+                    <label class="admin-label">Maklumat Imam Tarawih</label>
+                    <input type="text" id="admImam" class="form-input" placeholder="Nama Imam">
+                    <input type="text" id="admImageUrl" class="form-input" placeholder="URL Gambar Imam (https://...)">
+
+                    <label class="admin-label">Program Khas</label>
+                    <input type="text" id="admProgram" class="form-input" placeholder="Tajuk Program">
+                    <input type="text" id="admProgramUrl" class="form-input" placeholder="URL Gambar Program">
+
+                    <label class="admin-label">Kuliah Subuh</label>
+                    <input type="text" id="admKuliahSubuh" class="form-input" placeholder="Nama Penceramah">
+                    <input type="text" id="admKuliahSubuhUrl" class="form-input" placeholder="URL Gambar Penceramah">
+                </div>
 
                 <button onclick="submitAdminUpdate()" id="admSubmitBtn" class="primary-btn">Simpan Perubahan</button>
-                <button type="button" onclick="closeModal('adminModal')" style="width:100%; margin-top:10px; background:none; border:none; cursor:pointer;">Tutup</button>
+                <button type="button" onclick="closeModal('adminModal')" class="secondary-btn">Tutup</button>
             </div>
         </div>
     </div>
@@ -537,7 +594,6 @@
         function populateAdminForm() {
             const select = document.getElementById('adminDateSelect');
             select.innerHTML = "";
-            // Ensure dates are sorted so they are easy to find
             Object.keys(slots).sort().forEach(d => {
                 const opt = document.createElement('option');
                 opt.value = d; opt.innerText = d; select.appendChild(opt);
@@ -574,12 +630,9 @@
             };
             try {
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-                const result = await res.text();
-                if (result === "Success") {
+                if (await res.text() === "Success") {
                     alert("Berjaya disimpan!");
                     location.reload();
-                } else {
-                    alert("Gagal: " + result);
                 }
             } catch (e) { alert("Gagal menyimpan"); }
             btn.innerText = "Simpan Perubahan";
