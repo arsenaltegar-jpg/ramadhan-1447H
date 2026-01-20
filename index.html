@@ -97,13 +97,10 @@
                 font-family: 'Georgia', serif;
                 font-size: 2.5rem;
                 background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, #b8941f 100%);
-                background-size: 200% 200%;
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
-                background-clip: text;
                 animation: shimmer 3s linear infinite;
                 margin-bottom: 8px;
-                filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.3));
             }
 
         .header-subtitle {
@@ -112,8 +109,6 @@
             font-weight: 800;
             font-size: 0.75rem;
             text-transform: uppercase;
-            margin-top: 5px;
-            opacity: 0.95;
         }
 
         .container {
@@ -133,10 +128,8 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 14px;
             color: var(--text-main);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.5);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
             border: 2px solid rgba(212, 175, 55, 0.2);
-            position: relative;
-            overflow: hidden;
             animation: fadeInUp 0.6s ease-out;
         }
 
@@ -153,17 +146,14 @@
             justify-content: space-between;
             align-items: center;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
         }
 
         .solat-item {
             text-align: center;
             padding: 14px 6px;
             border-radius: 18px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 2px solid transparent;
             background: rgba(255, 255, 255, 0.3);
-            position: relative;
+            border: 2px solid transparent;
         }
 
         .solat-label {
@@ -172,7 +162,6 @@
             font-weight: 800;
             color: var(--text-muted);
             display: block;
-            margin-bottom: 5px;
         }
 
         .solat-time {
@@ -182,18 +171,14 @@
         }
 
         .active-prayer {
-            background: linear-gradient(135deg, #ffffff 0%, #fffef8 100%);
+            background: #fff;
             border: 2px solid var(--gold);
-            animation: pulse-glow 2s ease-in-out infinite;
-            transform: translateY(-3px) scale(1.05);
+            transform: scale(1.05);
+            animation: pulse-glow 2s infinite;
         }
 
             .active-prayer .solat-label {
                 color: var(--secondary);
-            }
-
-            .active-prayer .solat-time {
-                color: var(--primary);
             }
 
         .day-card {
@@ -203,8 +188,6 @@
             overflow: hidden;
             color: var(--text-main);
             box-shadow: 0 15px 45px rgba(0,0,0,0.4);
-            border: 1px solid rgba(212, 175, 55, 0.15);
-            transition: all 0.4s ease-out;
             animation: fadeInUp 0.6s ease-out backwards;
         }
 
@@ -234,7 +217,6 @@
             font-size: 0.75rem;
             text-transform: uppercase;
             font-weight: 800;
-            line-height: 1.3;
         }
 
         .moon-icon {
@@ -249,31 +231,19 @@
             gap: 16px;
             padding: 14px 22px;
             border-bottom: 1px solid rgba(0,0,0,0.06);
-            transition: background 0.3s;
         }
 
-            .activity-item:hover {
-                background: rgba(212, 175, 55, 0.05);
-            }
-
-        .act-details {
-            flex: 1;
+        .act-details strong {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--secondary);
+            text-transform: uppercase;
+            margin-bottom: 2px;
         }
-
-            .act-details strong {
-                display: block;
-                font-size: 0.65rem;
-                color: var(--secondary);
-                text-transform: uppercase;
-                margin-bottom: 2px;
-                letter-spacing: 0.8px;
-                font-weight: 800;
-            }
 
         .act-text {
             font-size: 0.95rem;
             font-weight: 600;
-            color: var(--text-main);
             line-height: 1.3;
         }
 
@@ -284,16 +254,10 @@
             object-fit: cover;
             border: 2px solid var(--gold);
             flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            transition: transform 0.3s;
         }
 
-            .entry-img:hover {
-                transform: scale(1.1);
-            }
-
         .ifthar-section {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.12) 100%);
+            background: rgba(212, 175, 55, 0.1);
             padding: 16px 22px;
             display: flex;
             justify-content: space-between;
@@ -308,49 +272,52 @@
         }
 
         .book-btn {
-            padding: 8px 16px !important;
-            width: auto !important;
-            font-size: 0.75rem !important;
-            border-radius: 50px !important;
-            flex: none;
-            margin-left: 10px;
+            padding: 8px 16px;
+            font-size: 0.75rem;
+            border-radius: 50px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            font-weight: 800;
         }
 
         .modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0,0,0,0.85);
             z-index: 1000;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(10px);
         }
 
         .modal-content {
-            background: var(--admin-bg);
+            background: white;
             width: 100%;
             max-width: 460px;
             border-radius: 28px;
-            padding: 35px;
+            padding: 30px;
             color: #333;
         }
 
         .form-input {
             width: 100%;
-            padding: 14px 18px;
-            margin: 8px 0 16px;
-            border: 2px solid #eee;
-            border-radius: 14px;
+            padding: 12px;
+            margin: 8px 0 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
         }
 
         .primary-btn {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
             border: none;
-            padding: 16px;
-            border-radius: 14px;
+            background: var(--primary);
+            color: white;
             font-weight: 800;
             cursor: pointer;
         }
@@ -359,16 +326,17 @@
             position: fixed;
             bottom: 25px;
             right: 25px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background: var(--primary);
             width: 60px;
             height: 60px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
             border: 3px solid var(--gold);
+            cursor: pointer;
             z-index: 99;
+            font-size: 1.5rem;
         }
 
         .hidden {
@@ -377,9 +345,8 @@
 
         .loading-state {
             text-align: center;
-            padding: 60px;
+            padding: 50px;
             color: var(--gold-light);
-            font-weight: 600;
         }
     </style>
 </head>
@@ -392,10 +359,7 @@
 
     <div class="container">
         <div id="prayerSection" class="solat-container hidden">
-            <div class="solat-title">
-                <span>Waktu Solat</span>
-                <span id="hijriDisplay" style="color:var(--secondary)"></span>
-            </div>
+            <div class="solat-title"><span>Waktu Solat</span><span id="hijriDisplay" style="color:var(--secondary)"></span></div>
             <div class="solat-item" id="item-imsak"><span class="solat-label">Imsak</span><div class="solat-time" id="t-imsak">-</div></div>
             <div class="solat-item" id="item-subuh"><span class="solat-label">Subuh</span><div class="solat-time" id="t-subuh">-</div></div>
             <div class="solat-item" id="item-zohor"><span class="solat-label">Zohor</span><div class="solat-time" id="t-zohor">-</div></div>
@@ -403,10 +367,7 @@
             <div class="solat-item" id="item-maghrib"><span class="solat-label">Maghrib</span><div class="solat-time" id="t-maghrib">-</div></div>
             <div class="solat-item" id="item-isyak"><span class="solat-label">Isyak</span><div class="solat-time" id="t-isyak">-</div></div>
         </div>
-
-        <div id="scheduleGrid">
-            <div class="loading-state">Memuatkan jadual Ihya</div>
-        </div>
+        <div id="scheduleGrid"><div class="loading-state">Memuatkan jadual...</div></div>
     </div>
 
     <div class="admin-fab" onclick="openAdminLogin()">⚙️</div>
@@ -414,15 +375,13 @@
     <div id="bookingModal" class="modal">
         <div class="modal-content">
             <h2>🌙 Tempahan Ifthar</h2>
-            <p id="displayDate" style="margin: 15px 0; font-weight:bold; color:var(--secondary);"></p>
+            <p id="displayDate" style="margin: 10px 0; font-weight: bold; color: var(--secondary);"></p>
             <form id="bookingForm">
                 <input type="hidden" id="selectedDate">
                 <input type="text" id="hostName" class="form-input" placeholder="Nama Kumpulan / Individu" required>
                 <input type="tel" id="hostContact" class="form-input" placeholder="60123456789" required>
-                <div style="display:flex; gap:10px;">
-                    <button type="button" onclick="closeModal('bookingModal')" style="flex:1; background:#eee; border:none; border-radius:14px;">Batal</button>
-                    <button type="submit" id="submitBtn" class="primary-btn" style="flex:2;">Sahkan</button>
-                </div>
+                <button type="submit" id="submitBtn" class="primary-btn">Sahkan</button>
+                <button type="button" onclick="closeModal('bookingModal')" style="width:100%; margin-top:10px; background:none; border:none; cursor:pointer;">Batal</button>
             </form>
         </div>
     </div>
@@ -432,15 +391,16 @@
             <h2>⚙️ Pentadbir</h2>
             <div id="loginStep">
                 <input type="password" id="adminPassword" class="form-input" placeholder="Kata Laluan">
-                <button onclick="verifyAdmin()" id="loginBtn" class="primary-btn" style="width:100%;">Log Masuk</button>
+                <button onclick="verifyAdmin()" id="loginBtn" class="primary-btn">Log Masuk</button>
             </div>
             <div id="editStep" class="hidden">
                 <select id="adminDateSelect" class="form-input"></select>
-                <input type="text" id="admHost" class="form-input" placeholder="Host Name">
-                <input type="text" id="admContact" class="form-input" placeholder="Host Contact">
+                <input type="text" id="admHost" class="form-input" placeholder="Nama Host">
+                <input type="text" id="admContact" class="form-input" placeholder="WhatsApp Host">
                 <input type="text" id="admImam" class="form-input" placeholder="Imam Tarawih">
-                <input type="text" id="admImamImg" class="form-input" placeholder="Image URL">
-                <button onclick="submitAdminUpdate()" id="admSubmitBtn" class="primary-btn" style="width:100%;">Simpan</button>
+                <input type="text" id="admImamImg" class="form-input" placeholder="URL Gambar Imam">
+                <button onclick="submitAdminUpdate()" id="admSubmitBtn" class="primary-btn">Simpan Perubahan</button>
+                <button type="button" onclick="closeModal('adminModal')" style="width:100%; margin-top:10px; background:none; border:none; cursor:pointer;">Tutup</button>
             </div>
         </div>
     </div>
@@ -459,10 +419,8 @@
                 if (data.prayerTimes) {
                     document.getElementById('prayerSection').classList.remove('hidden');
                     document.getElementById('hijriDisplay').innerText = data.prayerTimes.hDate || "";
-
                     const p = data.prayerTimes;
                     const tMap = { imsak: p.imsak, subuh: p.subuh, zohor: p.zohor, asar: p.asar, maghrib: p.maghrib, isyak: p.isyak };
-
                     for (const [id, time] of Object.entries(tMap)) {
                         const el = document.getElementById(`t-${id}`);
                         if (el) el.innerText = time || "-";
@@ -470,7 +428,7 @@
                     highlightCurrentSolat(tMap);
                 }
                 render();
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error("Load failed", e); }
         }
 
         function highlightCurrentSolat(times) {
@@ -484,12 +442,9 @@
                 const d = new Date(); d.setHours(h, m, 0, 0);
                 return d;
             };
-
             const order = ['imsak', 'subuh', 'zohor', 'asar', 'maghrib', 'isyak'];
             let current = '';
-            for (let i = 0; i < order.length; i++) {
-                if (now >= parseT(times[order[i]])) current = order[i];
-            }
+            for (let i = 0; i < order.length; i++) { if (now >= parseT(times[order[i]])) current = order[i]; }
             document.querySelectorAll('.solat-item').forEach(el => el.classList.remove('active-prayer'));
             if (current) document.getElementById(`item-${current}`).classList.add('active-prayer');
         }
@@ -505,69 +460,65 @@
                 const s = slots[ds] || {};
 
                 html += `
-                        <div class="day-card">
-                            <div class="day-header">
-                                <div class="ramadhan-info">
-                                    <span class="ramadhan-num">${i}</span>
-                                    <div class="date-text">${dayNames[dObj.getDay()]}<br>${dObj.getDate()} FEB</div>
-                                </div>
-                                <span class="moon-icon">🌙</span>
+                    <div class="day-card">
+                        <div class="day-header">
+                            <div class="ramadhan-info">
+                                <span class="ramadhan-num">${i}</span>
+                                <div class="date-text">${dayNames[dObj.getDay()]}<br>${dObj.getDate()} FEB</div>
                             </div>
-                            <div class="program-body">
-                                ${s.KuliahSubuh ? `
-                                    <div class="activity-item">
-                                        <div class="act-details">
-                                            <strong>Kuliah Subuh</strong>
-                                            <div class="act-text">${s.KuliahSubuh}</div>
-                                        </div>
-                                        ${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="entry-img">` : ''}
-                                    </div>` : ''}
-                                ${s.Program ? `
-                                    <div class="activity-item">
-                                        <div class="act-details">
-                                            <strong>Program Khas</strong>
-                                            <div class="act-text">${s.Program}</div>
-                                        </div>
-                                        ${s.ProgramUrl ? `<img src="${s.ProgramUrl}" class="entry-img">` : ''}
-                                    </div>` : ''}
-                                ${s.Imam ? `
-                                    <div class="activity-item">
-                                        <div class="act-details">
-                                            <strong>Imam Tarawih</strong>
-                                            <div class="act-text">${s.Imam}</div>
-                                        </div>
-                                        ${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img">` : ''}
-                                    </div>` : ''}
+                            <span class="moon-icon">🌙</span>
+                        </div>
+                        <div class="program-body">
+                            ${s.KuliahSubuh ? `
+                                <div class="activity-item">
+                                    <div class="act-details">
+                                        <strong>Kuliah Subuh</strong>
+                                        <div class="act-text">${s.KuliahSubuh}</div>
+                                    </div>
+                                    ${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="entry-img">` : ''}
+                                </div>` : ''}
+                            ${s.Program ? `
+                                <div class="activity-item">
+                                    <div class="act-details">
+                                        <strong>Program Khas</strong>
+                                        <div class="act-text">${s.Program}</div>
+                                    </div>
+                                    ${s.ProgramUrl ? `<img src="${s.ProgramUrl}" class="entry-img">` : ''}
+                                </div>` : ''}
+                            ${s.Imam ? `
+                                <div class="activity-item">
+                                    <div class="act-details">
+                                        <strong>Imam Tarawih</strong>
+                                        <div class="act-text">${s.Imam}</div>
+                                    </div>
+                                    ${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img">` : ''}
+                                </div>` : ''}
+                        </div>
+                        <div class="ifthar-section">
+                            <div class="host-info">
+                                <div style="font-size:0.6rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Ifthar</div>
+                                <div class="host-name">${s.HostName || 'Kekosongan Terbuka'}</div>
                             </div>
-                            <div class="ifthar-section">
-                                <div class="host-info">
-                                    <div style="font-size:0.6rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Ifthar</div>
-                                    <div class="host-name">${s.HostName || 'Kekosongan Terbuka'}</div>
-                                </div>
-                                ${!s.HostName ? `<button class="primary-btn book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span>🥤🍲</span>'}
-                            </div>
-                        </div>`;
+                            ${!s.HostName ? `<button class="primary-btn book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span>🥤🍲</span>'}
+                        </div>
+                    </div>`;
             }
             grid.innerHTML = html;
         }
 
-        function handleBooking(date) {
-            document.getElementById('selectedDate').value = date;
-            document.getElementById('displayDate').innerText = "Tarikh: " + date;
-            document.getElementById('bookingModal').style.display = 'flex';
-        }
-
-        function openAdminLogin() { document.getElementById('adminModal').style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
         async function verifyAdmin() {
             const pass = document.getElementById('adminPassword').value;
-            const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ type: "verify_login", password: pass }) });
-            if (await res.text() === "Valid") {
-                document.getElementById('loginStep').classList.add('hidden');
-                document.getElementById('editStep').classList.remove('hidden');
-                populateAdminForm();
-            } else { alert("Salah!"); }
+            const btn = document.getElementById('loginBtn');
+            btn.innerText = "Mengesahkan...";
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ type: "verify_login", password: pass }) });
+                if (await res.text() === "Valid") {
+                    document.getElementById('loginStep').classList.add('hidden');
+                    document.getElementById('editStep').classList.remove('hidden');
+                    populateAdminForm();
+                } else { alert("Kata laluan salah!"); }
+            } catch (e) { alert("Ralat sambungan"); }
+            btn.innerText = "Log Masuk";
         }
 
         function populateAdminForm() {
@@ -577,7 +528,54 @@
                 const opt = document.createElement('option');
                 opt.value = d; opt.innerText = d; select.appendChild(opt);
             });
+            select.onchange = () => {
+                const s = slots[select.value] || {};
+                document.getElementById('admHost').value = s.HostName || "";
+                document.getElementById('admContact').value = s.HostContact || "";
+                document.getElementById('admImam').value = s.Imam || "";
+                document.getElementById('admImamImg').value = s.ImageUrl || "";
+            };
+            if (select.options.length > 0) select.onchange();
         }
+
+        async function submitAdminUpdate() {
+            const btn = document.getElementById('admSubmitBtn');
+            btn.innerText = "Menyimpan...";
+            const payload = {
+                type: "admin_update",
+                password: document.getElementById('adminPassword').value,
+                selectedDate: document.getElementById('adminDateSelect').value,
+                hostName: document.getElementById('admHost').value,
+                hostContact: document.getElementById('admContact').value,
+                imam: document.getElementById('admImam').value,
+                imageUrl: document.getElementById('admImamImg').value
+            };
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                if (await res.text() === "Success") { alert("Berjaya disimpan!"); location.reload(); }
+            } catch (e) { alert("Gagal menyimpan"); }
+            btn.innerText = "Simpan Perubahan";
+        }
+
+        document.getElementById('bookingForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "Memproses...";
+            const payload = {
+                selectedDate: document.getElementById('selectedDate').value,
+                hostName: document.getElementById('hostName').value,
+                hostContact: document.getElementById('hostContact').value
+            };
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                if (await res.text() === "Success") { alert("Tempahan berjaya!"); location.reload(); }
+            } catch (e) { alert("Gagal memproses tempahan"); }
+            btn.innerText = "Sahkan";
+        };
+
+        function handleBooking(date) { document.getElementById('selectedDate').value = date; document.getElementById('displayDate').innerText = "Tarikh: " + date; document.getElementById('bookingModal').style.display = 'flex'; }
+        function openAdminLogin() { document.getElementById('adminModal').style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
         loadData();
     </script>
