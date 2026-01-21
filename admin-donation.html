@@ -6,6 +6,8 @@
     <title>Pengurusan Kewangan | Surau Seri Putra</title>
     <style>
 
+
+
         .nav-links {
             display: flex;
             gap: 15px;
@@ -740,17 +742,29 @@
         }
 
         async function loadDonations() {
+            // 1. Try to load from Cache first
+            const cached = localStorage.getItem('surau_donations_cache');
+            if (cached) {
+                const data = JSON.parse(cached);
+                donations = data.rawList; // Update the global variable
+                updateStats(); // Update stats grid
+                applyFilters(); // Render the list
+            }
+
             try {
+                // 2. Background Sync
                 const res = await fetch(SCRIPT_URL);
                 const data = await res.json();
 
                 if (data.donations && data.donations.rawList) {
+                    // 3. Save to Cache and Update UI
+                    localStorage.setItem('surau_donations_cache', JSON.stringify(data.donations));
                     donations = data.donations.rawList;
                     updateStats();
                     applyFilters();
                 }
             } catch (e) {
-                console.error('Failed to load donations', e);
+                console.error('Background sync failed', e);
             }
         }
 
@@ -868,39 +882,61 @@
         }
 
         async function deleteDonation(id) {
-            if (!confirm('Adakah anda pasti mahu memadam transaksi ini?')) return;
+            if (!confirm('Adakah anda pasti?')) return;
 
-            showLoading(true);
+            // 1. Remove from local screen instantly
+            donations = donations.filter(d => d.id !== id);
+            updateStats();
+            applyFilters();
 
+            // 2. Request deletion from server in background
             try {
                 const res = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify({
-                        type: 'delete_donation',
-                        id: id,
-                        password: currentPassword
-                    })
+                    body: JSON.stringify({ type: 'delete_donation', id, password: currentPassword })
                 });
-
-                if (await res.text() === 'Success') {
-                    showStatus('Transaksi berjaya dipadam!', 'success');
-                    loadDonations();
-                } else {
-                    showStatus('Gagal memadam transaksi.', 'error');
-                }
+                if (await res.text() !== 'Success') alert('Gagal memadam di server.');
             } catch (e) {
-                showStatus('Ralat sambungan.', 'error');
+                console.error('Delete failed', e);
             }
-
-            showLoading(false);
         }
 
         document.getElementById('donationForm').onsubmit = async (e) => {
             e.preventDefault();
 
+            // 1. Prepare form data
+            const donorName = document.getElementById('donorName').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const category = document.getElementById('category').value;
+            const payDate = document.getElementById('payDate').value;
             const fileInput = document.getElementById('receiptFile');
             const file = fileInput.files[0];
 
+            // 2. OPTIMISTIC UPDATE: Add to local list immediately
+            const tempId = editingId || Date.now();
+            const tempDonation = {
+                id: tempId,
+                donorName: donorName,
+                amount: amount,
+                category: category,
+                payDate: payDate,
+                isPending: true // Visual flag for syncing
+            };
+
+            if (editingId) {
+                const idx = donations.findIndex(d => d.id === editingId);
+                donations[idx] = tempDonation;
+            } else {
+                donations.unshift(tempDonation); // Add to the top of the list
+            }
+
+            // 3. Refresh UI instantly
+            updateStats();
+            applyFilters();
+            resetForm();
+            showStatus('Menyimpan ke awan...', 'success');
+
+            // 4. Background Server Request
             showLoading(true);
 
             let fileData = null;
@@ -912,39 +948,25 @@
                 });
             }
 
-            const existingDonation = editingId ? donations.find(d => d.id === editingId) : null;
-
             const payload = {
                 type: 'donation_update',
                 id: editingId,
-                existingFileUrl: existingDonation ? existingDonation.fileUrl : '',
                 password: currentPassword,
-                category: document.getElementById('category').value,
-                amount: document.getElementById('amount').value,
-                donorName: document.getElementById('donorName').value,
-                payDate: document.getElementById('payDate').value,
+                category, amount, donorName, payDate,
                 fileName: file ? file.name : '',
                 mimeType: file ? file.type : '',
                 fileData: fileData
             };
 
             try {
-                const res = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(payload)
-                });
-
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
                 if (await res.text() === 'Success') {
-                    showStatus(editingId ? 'Transaksi berjaya dikemaskini!' : 'Transaksi berjaya disimpan!', 'success');
-                    resetForm();
-                    loadDonations();
-                } else {
-                    showStatus('Gagal menyimpan transaksi.', 'error');
+                    showStatus('Tersimpan di awan!', 'success');
+                    loadDonations(); // Full refresh to get real IDs and file URLs
                 }
             } catch (e) {
-                showStatus('Ralat sambungan.', 'error');
+                showStatus('Gagal sync. Sila cuba lagi.', 'error');
             }
-
             showLoading(false);
         };
 

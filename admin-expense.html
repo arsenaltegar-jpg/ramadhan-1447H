@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pengurusan Perbelanjaan | Surau Seri Putra</title>
     <style>
+
         :root {
             --primary: #4a135a;
             --secondary: #880e4f;
@@ -769,32 +770,48 @@
         }
 
         async function loadData() {
+            // 1. Load everything from Cache first
+            const cached = localStorage.getItem('surau_expense_cache');
+            if (cached) {
+                const data = JSON.parse(cached);
+                totalIncome = data.donations.total || 0;
+                expenses = data.expenses.rawList || [];
+                updateStats();
+                applyFilters();
+            }
+
             try {
+                // 2. Background Sync for fresh data
                 const res = await fetch(SCRIPT_URL);
                 const data = await res.json();
 
-                if (data.donations && data.donations.total !== undefined) {
+                if (data.expenses) {
+                    // 3. Update Cache and local variables
+                    localStorage.setItem('surau_expense_cache', JSON.stringify(data));
                     totalIncome = data.donations.total;
-                }
-
-                if (data.expenses && data.expenses.rawList) {
                     expenses = data.expenses.rawList;
+
                     updateStats();
                     applyFilters();
                 }
             } catch (e) {
-                console.error('Failed to load data', e);
+                console.error('Expense sync failed', e);
             }
         }
 
         function updateStats() {
+            // Recalculate based on the current 'expenses' array (including temp items)
             const totalExpense = expenses.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0);
             const balance = totalIncome - totalExpense;
 
+            // Update the DOM elements
             document.getElementById('totalIncome').innerText = `RM ${totalIncome.toFixed(2)}`;
             document.getElementById('totalExpense').innerText = `RM ${totalExpense.toFixed(2)}`;
-            document.getElementById('balance').innerText = `RM ${balance.toFixed(2)}`;
-            document.getElementById('balance').style.color = balance >= 0 ? '#2e7d32' : '#c62828';
+
+            const balanceEl = document.getElementById('balance');
+            balanceEl.innerText = `RM ${balance.toFixed(2)}`;
+            balanceEl.style.color = balance >= 0 ? '#2e7d32' : '#c62828';
+
             document.getElementById('totalTransactions').innerText = expenses.length;
         }
 
@@ -925,15 +942,42 @@
 
         document.getElementById('expenseForm').onsubmit = async (e) => {
             e.preventDefault();
-            const fileInput = document.getElementById('receiptFile');
-            const file = fileInput.files[0];
-            showLoading(true);
 
+            // 1. Collect Form Data
+            const amt = parseFloat(document.getElementById('amount').value);
+            const vendorName = document.getElementById('vendorName').value;
+            const category = document.getElementById('category').value;
+            const expenseDate = document.getElementById('expenseDate').value;
+            const description = document.getElementById('description').value;
+            const file = document.getElementById('receiptFile').files[0];
+
+            // 2. OPTIMISTIC UPDATE: Update UI instantly
+            const tempExpense = {
+                id: editingId || Date.now(),
+                vendorName, amount: amt, category, expenseDate, description,
+                isPending: true
+            };
+
+            if (editingId) {
+                const idx = expenses.findIndex(ex => ex.id === editingId);
+                expenses[idx] = tempExpense;
+            } else {
+                expenses.unshift(tempExpense);
+            }
+
+            // Refresh UI Components immediately
+            updateStats();
+            applyFilters();
+            resetForm();
+            showStatus('Merekod perbelanjaan...', 'success');
+
+            // 3. Background Processing
+            showLoading(true);
             let fileData = null;
             if (file) {
                 const reader = new FileReader();
-                fileData = await new Promise((resolve) => {
-                    reader.onload = (e) => resolve(e.target.result.split(',')[1]);
+                fileData = await new Promise(r => {
+                    reader.onload = (ev) => r(ev.target.result.split(',')[1]);
                     reader.readAsDataURL(file);
                 });
             }
@@ -942,31 +986,20 @@
                 type: 'expense_update',
                 id: editingId,
                 password: currentPassword,
-                category: document.getElementById('category').value,
-                amount: document.getElementById('amount').value,
-                vendorName: document.getElementById('vendorName').value,
-                description: document.getElementById('description').value,
-                expenseDate: document.getElementById('expenseDate').value,
+                category, amount: amt, vendorName, description, expenseDate,
                 fileName: file ? file.name : '',
                 mimeType: file ? file.type : '',
-                fileData: fileData
+                fileData
             };
 
             try {
-                const res = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(payload)
-                });
-
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
                 if (await res.text() === 'Success') {
-                    showStatus(editingId ? 'Berjaya dikemaskini!' : 'Berjaya disimpan!', 'success');
-                    resetForm();
-                    loadData();
-                } else {
-                    showStatus('Gagal menyimpan.', 'error');
+                    showStatus('Berjaya disinkron!', 'success');
+                    loadData(); // Re-sync with server to get official data
                 }
             } catch (e) {
-                showStatus('Ralat sambungan.', 'error');
+                showStatus('Ralat rangkaian. Sila cuba lagi.', 'error');
             }
             showLoading(false);
         };

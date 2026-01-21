@@ -689,60 +689,71 @@
             totalEl.innerText = `RM ${total.toFixed(2)}`;
             breakdownEl.innerHTML = html;
         }
+        function renderUI(data) {
+            // --- 1. RESTORE DONATION INFO ---
+            if (data.donations) {
+                const donationSection = document.getElementById('donationSection');
+                const totalEl = document.getElementById('totalDonation');
+                const breakdownEl = document.getElementById('donationBreakdown');
 
-        async function loadData() {
-            try {
-                const res = await fetch(SCRIPT_URL);
-                const data = await res.json();
-                slots = {};
-                data.schedule.forEach(item => { if (item.SelectedDate) slots[item.SelectedDate] = item; });
+                // Show the section
+                donationSection.classList.remove('hidden');
 
-                // Update raw list for the admin donation manager
-                if (data.donations && data.donations.rawList) {
-                    adminDonationList = data.donations.rawList;
+                // Update Total Amount
+                totalEl.innerText = `RM ${data.donations.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+                // Rebuild the Category Breakdown list
+                let breakdownHtml = '<div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">';
+                data.donations.categories.forEach(cat => {
+                    breakdownHtml += `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem;">
+                    <span style="color: var(--text-muted); font-weight: 600;">${cat.name}</span>
+                    <span style="font-weight: 800; color: var(--primary);">RM ${cat.amount.toFixed(2)}</span>
+                </div>`;
+                });
+                breakdownHtml += '</div>';
+                breakdownEl.innerHTML = breakdownHtml;
+            }
+
+            // --- 2. UPDATE PRAYER TIMES ---
+            if (data.prayerTimes) {
+                document.getElementById('prayerSection').classList.remove('hidden');
+                document.getElementById('hijriDisplay').innerText = data.prayerTimes.hDate || "";
+                const p = data.prayerTimes;
+                const tMap = { imsak: p.imsak, subuh: p.subuh, zohor: p.zohor, asar: p.asar, maghrib: p.maghrib, isyak: p.isyak };
+
+                for (const [id, time] of Object.entries(tMap)) {
+                    const el = document.getElementById(`t-${id}`);
+                    if (el) el.innerText = time || "-";
                 }
+                highlightCurrentSolat(tMap);
+            }
 
-                if (data.prayerTimes) {
-                    document.getElementById('prayerSection').classList.remove('hidden');
-                    document.getElementById('hijriDisplay').innerText = data.prayerTimes.hDate || "";
-                    const p = data.prayerTimes;
-                    const tMap = { imsak: p.imsak, subuh: p.subuh, zohor: p.zohor, asar: p.asar, maghrib: p.maghrib, isyak: p.isyak };
-                    for (const [id, time] of Object.entries(tMap)) {
-                        const el = document.getElementById(`t-${id}`);
-                        if (el) el.innerText = time || "-";
-                    }
-                    highlightCurrentSolat(tMap);
-                }
-
-                if (data.donations) {
-                    const donationSection = document.getElementById('donationSection');
-                    const totalEl = document.getElementById('totalDonation');
-                    const breakdownEl = document.getElementById('donationBreakdown');
-                    donationSection.classList.remove('hidden');
-                    totalEl.innerText = `RM ${data.donations.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-
-                    let breakdownHtml = '<div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">';
-                    data.donations.categories.forEach(cat => {
-                        breakdownHtml += `
-            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem;">
-                <span style="color: var(--text-muted); font-weight: 600;">${cat.name}</span>
-                <span style="font-weight: 800; color: var(--primary);">RM ${cat.amount.toFixed(2)}</span>
-            </div>`;
-                    });
-                    breakdownHtml += '</div>';
-                    breakdownEl.innerHTML = breakdownHtml;
-                }
-
-                // Trigger admin UI refresh if already logged in
-                if (localStorage.getItem('adminPass')) {
-                    populateAdminForm();
-                    renderAdminDonationList();
-                }
-
-                render();
-            } catch (e) { console.error("Load failed", e); }
+            // --- 3. REBUILD SCHEDULE ---
+            slots = {};
+            data.schedule.forEach(item => { if (item.SelectedDate) slots[item.SelectedDate] = item; });
+            render();
         }
 
+        async function loadData() {
+            // A. Show Cached Data immediately (no waiting)
+            const cached = localStorage.getItem('surau_main_cache');
+            if (cached) {
+                renderUI(JSON.parse(cached));
+            }
+
+            try {
+                // B. Fetch fresh data in the background
+                const res = await fetch(SCRIPT_URL);
+                const freshData = await res.json();
+
+                // C. Save fresh data to cache and refresh UI
+                localStorage.setItem('surau_main_cache', JSON.stringify(freshData));
+                renderUI(freshData);
+            } catch (e) {
+                console.error("Sync failed, using offline data.");
+            }
+        }
         function highlightCurrentSolat(times) {
             const now = new Date();
             const parseT = (tStr) => {
