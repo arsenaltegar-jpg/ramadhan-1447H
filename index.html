@@ -981,6 +981,7 @@
                     // Reset for next entry
                     document.getElementById('donAmount').value = "";
                     fileInput.value = "";
+                    await loadData();
                 } else {
                     status.style.color = "red";
                     status.innerText = "❌ Gagal: " + result;
