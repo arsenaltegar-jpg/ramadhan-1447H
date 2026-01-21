@@ -597,18 +597,24 @@
         }
 
         function renderAdminDonationList() {
-            const listArea = document.getElementById('adminDonationListArea');
+            const listArea = document.getElementById('adminDonationContainer');
             if (!listArea) return;
 
-            let html = '<div style="margin-top:15px; border-top:1px solid #eee; padding-top:10px;">';
-            adminDonationList.forEach(item => {
-                html += `
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; margin-bottom:8px; background:#f9f9f9; padding:5px; border-radius:5px;">
-            <span><strong>${item.category}</strong>: RM${item.amount}</span>
-            <button onclick="editDonationEntry(${item.id})" style="background:var(--gold); border:none; padding:2px 8px; border-radius:4px; cursor:pointer;">Edit</button>
-        </div>`;
-            });
-            listArea.innerHTML = html + '</div>';
+            let html = '';
+            if (adminDonationList.length === 0) {
+                html = '<div style="font-size:0.7rem; color:gray; text-align:center; padding:10px;">Tiada data transaksi.</div>';
+            } else {
+                adminDonationList.forEach(item => {
+                    html += `
+            <div class="don-item-row">
+                <span><strong>${item.category}</strong>: RM${parseFloat(item.amount).toFixed(2)}</span>
+                <div class="don-actions">
+                    <button onclick="editDonationEntry(${item.id})" title="Edit">✏️</button>
+                </div>
+            </div>`;
+                });
+            }
+            listArea.innerHTML = html;
         }
 
         function editDonationEntry(id) {
@@ -652,6 +658,11 @@
                 slots = {};
                 data.schedule.forEach(item => { if (item.SelectedDate) slots[item.SelectedDate] = item; });
 
+                // Update raw list for the admin donation manager
+                if (data.donations && data.donations.rawList) {
+                    adminDonationList = data.donations.rawList;
+                }
+
                 if (data.prayerTimes) {
                     document.getElementById('prayerSection').classList.remove('hidden');
                     document.getElementById('hijriDisplay').innerText = data.prayerTimes.hDate || "";
@@ -663,28 +674,32 @@
                     }
                     highlightCurrentSolat(tMap);
                 }
+
                 if (data.donations) {
                     const donationSection = document.getElementById('donationSection');
                     const totalEl = document.getElementById('totalDonation');
                     const breakdownEl = document.getElementById('donationBreakdown');
-
                     donationSection.classList.remove('hidden');
-
-                    // Set the Grand Total
                     totalEl.innerText = `RM ${data.donations.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-                    // Build the Category Breakdown HTML
                     let breakdownHtml = '<div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">';
                     data.donations.categories.forEach(cat => {
                         breakdownHtml += `
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem;">
-                        <span style="color: var(--text-muted); font-weight: 600;">${cat.name}</span>
-                        <span style="font-weight: 800; color: var(--primary);">RM ${cat.amount.toFixed(2)}</span>
-                    </div>`;
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem;">
+                <span style="color: var(--text-muted); font-weight: 600;">${cat.name}</span>
+                <span style="font-weight: 800; color: var(--primary);">RM ${cat.amount.toFixed(2)}</span>
+            </div>`;
                     });
                     breakdownHtml += '</div>';
                     breakdownEl.innerHTML = breakdownHtml;
                 }
+
+                // Trigger admin UI refresh if already logged in
+                if (localStorage.getItem('adminPass')) {
+                    populateAdminForm();
+                    renderAdminDonationList();
+                }
+
                 render();
             } catch (e) { console.error("Load failed", e); }
         }
@@ -793,11 +808,13 @@
                 });
 
                 if (await res.text() === "Valid") {
-                    localStorage.setItem('adminPass', pass); // SAVE SESSION
+                    localStorage.setItem('adminPass', pass);
                     document.getElementById('loginStep').classList.add('hidden');
                     document.getElementById('editStep').classList.remove('hidden');
+
+                    // Populate the admin forms immediately upon login
                     populateAdminForm();
-                    renderAdminDonationList(); // Load the donation editor list
+                    renderAdminDonationList();
                 } else {
                     if (!isSilent) alert("Kata laluan salah!");
                     localStorage.removeItem('adminPass');
