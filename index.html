@@ -556,13 +556,13 @@
                         <div id="financeStatus" style="font-size:0.7rem; margin:10px 0;"></div>
                         <button onclick="submitDonationUpdate()" id="donSubmitBtn" class="primary-btn" style="background:#2e7d32;">Simpan Resit</button>
                         <div id="adminDonationListArea"></div>
-                        <button onclick="localStorage.removeItem('adminPass'); location.reload();" class="secondary-btn" style="color:red; font-size:0.6rem; margin-top:20px;">Log Keluar Pentadbir</button>
+                      
                         <div id="donationManageList" style="margin-top: 20px;">
                             <h4 style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Senarai Transaksi</h4>
                             <div id="adminDonationContainer" style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
                             </div>
                         </div>
-                        <span class="logout-link" onclick="logoutAdmin()">Log Keluar Pentadbir</span>
+                      
                     </div>
                 </div>
 
@@ -610,11 +610,41 @@
                 <span><strong>${item.category}</strong>: RM${parseFloat(item.amount).toFixed(2)}</span>
                 <div class="don-actions">
                     <button onclick="editDonationEntry(${item.id})" title="Edit">✏️</button>
+                    <button onclick="deleteDonationEntry(${item.id})" title="Padam" style="color:red;">🗑️</button>
                 </div>
             </div>`;
                 });
             }
             listArea.innerHTML = html;
+        }
+
+        async function deleteDonationEntry(id) {
+            if (!confirm("Adakah anda pasti mahu memadam rekod ini?")) return;
+
+            const status = document.getElementById('financeStatus');
+            status.innerText = "Memadam...";
+
+            const payload = {
+                type: "delete_donation",
+                id: id,
+                password: document.getElementById('adminPassword').value
+            };
+
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await res.text();
+                if (result === "Success") {
+                    status.style.color = "green";
+                    status.innerText = "✅ Rekod berjaya dipadam.";
+                    await loadData(); // Refresh the list and totals
+                } else {
+                    status.style.color = "red";
+                    status.innerText = "❌ Gagal memadam.";
+                }
+            } catch (e) {
+                status.style.color = "red";
+                status.innerText = "❌ Ralat sambungan.";
+            }
         }
 
         function editDonationEntry(id) {
