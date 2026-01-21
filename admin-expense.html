@@ -3,20 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengurusan Kewangan | Surau Seri Putra</title>
+    <title>Pengurusan Perbelanjaan | Surau Seri Putra</title>
     <style>
-
-        .nav-links {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        @media (max-width: 640px) {
-            .nav-links {
-                width: 100%;
-            }
-        }
         :root {
             --primary: #4a135a;
             --secondary: #880e4f;
@@ -25,6 +13,7 @@
             --glass: rgba(255, 255, 255, 0.98);
             --text-main: #2d1b0d;
             --text-muted: #666;
+            --expense-red: #c62828;
         }
 
         @keyframes fadeInUp {
@@ -73,18 +62,13 @@
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             color: white;
             padding-bottom: 40px;
-            position: relative;
-            overflow-x: hidden;
             min-height: 100vh;
         }
 
             body::before {
                 content: '';
                 position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
+                inset: 0;
                 background: radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(136, 14, 79, 0.15) 0%, transparent 50%);
                 pointer-events: none;
                 z-index: 0;
@@ -103,7 +87,6 @@
                 background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, #b8941f 100%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
-                animation: shimmer 3s linear infinite;
                 margin-bottom: 8px;
             }
 
@@ -132,6 +115,12 @@
             gap: 15px;
         }
 
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -150,6 +139,10 @@
             animation: fadeInUp 0.6s ease-out;
         }
 
+            .stat-card.expense {
+                border-color: rgba(198, 40, 40, 0.3);
+            }
+
         .stat-label {
             font-size: 0.7rem;
             text-transform: uppercase;
@@ -161,8 +154,19 @@
         .stat-value {
             font-size: 1.8rem;
             font-weight: 900;
-            color: #2e7d32;
         }
+
+            .stat-value.income {
+                color: #2e7d32;
+            }
+
+            .stat-value.expense {
+                color: var(--expense-red);
+            }
+
+            .stat-value.balance {
+                color: var(--primary);
+            }
 
         .content-grid {
             display: grid;
@@ -210,23 +214,29 @@
             margin-bottom: 6px;
         }
 
-        .form-input, .form-select {
+        .form-input, .form-select, .form-textarea {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
             border-radius: 12px;
             font-size: 0.9rem;
             transition: all 0.3s ease;
+            font-family: inherit;
         }
 
-            .form-input:focus, .form-select:focus {
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+            .form-input:focus, .form-select:focus, .form-textarea:focus {
                 outline: none;
                 border-color: var(--gold);
                 box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
             }
 
         .btn-primary {
-            background: var(--primary);
+            background: var(--expense-red);
             color: white;
             padding: 14px 28px;
             border: none;
@@ -241,17 +251,9 @@
         }
 
             .btn-primary:hover {
-                background: var(--secondary);
+                background: #b71c1c;
                 transform: translateY(-2px);
-                box-shadow: 0 5px 20px rgba(74, 19, 90, 0.4);
-            }
-
-        .btn-success {
-            background: #2e7d32;
-        }
-
-            .btn-success:hover {
-                background: #1b5e20;
+                box-shadow: 0 5px 20px rgba(198, 40, 40, 0.4);
             }
 
         .btn-secondary {
@@ -288,11 +290,11 @@
             cursor: pointer;
         }
 
-        .donation-list {
+        .expense-list {
             margin-top: 20px;
         }
 
-        .donation-item {
+        .expense-item {
             background: #f9f9f9;
             border-radius: 16px;
             padding: 16px;
@@ -305,24 +307,24 @@
             animation: slideIn 0.3s ease-out;
         }
 
-            .donation-item:hover {
-                border-color: var(--gold);
+            .expense-item:hover {
+                border-color: var(--expense-red);
                 box-shadow: 0 5px 15px rgba(0,0,0,0.1);
                 transform: translateX(5px);
             }
 
-        .donation-info {
+        .expense-info {
             flex: 1;
         }
 
-        .donation-name {
+        .expense-name {
             font-weight: 800;
             font-size: 1rem;
             color: var(--text-main);
             margin-bottom: 4px;
         }
 
-        .donation-details {
+        .expense-details {
             font-size: 0.75rem;
             color: var(--text-muted);
             display: flex;
@@ -330,14 +332,21 @@
             flex-wrap: wrap;
         }
 
-        .donation-amount {
+        .expense-description {
+            font-size: 0.8rem;
+            color: #555;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .expense-amount {
             font-size: 1.3rem;
             font-weight: 900;
-            color: #2e7d32;
+            color: var(--expense-red);
             margin: 0 15px;
         }
 
-        .donation-actions {
+        .expense-actions {
             display: flex;
             gap: 8px;
         }
@@ -350,6 +359,8 @@
             padding: 8px;
             border-radius: 8px;
             transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
         }
 
             .btn-icon:hover {
@@ -475,7 +486,6 @@
         .loading-spinner {
             color: var(--gold);
             font-size: 2rem;
-            animation: shimmer 1.5s linear infinite;
         }
 
         .empty-state {
@@ -502,17 +512,17 @@
         }
 
         @media (max-width: 640px) {
-            .donation-item {
+            .expense-item {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 12px;
             }
 
-            .donation-amount {
+            .expense-amount {
                 margin: 0;
             }
 
-            .donation-actions {
+            .expense-actions {
                 width: 100%;
                 justify-content: flex-end;
             }
@@ -537,18 +547,18 @@
                 document.documentElement.classList.add('is-authenticated');
                 const style = document.createElement('style');
                 style.innerHTML = `
-                    #loginScreen { display: none !important; }
-                    #mainContent { display: block !important; }
-                    #adminModal #loginStep { display: none !important; }
-                    #adminModal #editStep { display: block !important; }
-                `;
+                        #loginScreen { display: none !important; }
+                        #mainContent { display: block !important; }
+                        #adminModal #loginStep { display: none !important; }
+                        #adminModal #editStep { display: block !important; }
+                    `;
                 document.head.appendChild(style);
             }
         })();
     </script>
     <div id="loginScreen" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; position: fixed; inset: 0; z-index: 2000; background: linear-gradient(135deg, #1a0624 0%, #2d0b3a 25%, #4a135a 50%, #6b1b7a 75%, #880e4f 100%);">
         <div style="background: white; padding: 40px; border-radius: 24px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
-            <h2 style="color: var(--primary); text-align: center; margin-bottom: 10px;">🔐 Pengurusan Kewangan</h2>
+            <h2 style="color: var(--primary); text-align: center; margin-bottom: 10px;">🔐 Pengurusan Perbelanjaan</h2>
             <p style="color: var(--text-muted); text-align: center; font-size: 0.85rem; margin-bottom: 25px;">Surau Seri Putra</p>
             <input type="password" id="loginPassword" placeholder="Kata Laluan Pentadbir" style="width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; margin-bottom: 15px; font-size: 1rem;">
             <button onclick="verifyLogin()" id="loginBtn" style="width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 1rem;">Log Masuk</button>
@@ -558,15 +568,15 @@
 
     <div id="mainContent" style="display: none;">
         <div class="header-section">
-            <h1>Pengurusan Kewangan</h1>
-            <p class="header-subtitle">Dana Ihya Ramadhan 1447H</p>
+            <h1>Pengurusan Perbelanjaan</h1>
+            <p class="header-subtitle">Dana Ramadhan 1447H</p>
         </div>
 
         <div class="container">
             <div class="top-bar">
                 <div class="nav-links">
                     <a href="index.html" class="back-link">🏠 Jadual</a>
-                    <a href="admin-expense.html" class="back-link">💸 Perbelanjaan</a>
+                    <a href="admin-donation.html" class="back-link">💰 Kutipan</a>
                 </div>
                 <button onclick="logout()" class="logout-btn">🚪 Log Keluar</button>
             </div>
@@ -574,15 +584,19 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-label">Jumlah Kutipan</div>
-                    <div class="stat-value" id="totalAmount">RM 0.00</div>
+                    <div class="stat-value income" id="totalIncome">RM 0.00</div>
+                </div>
+                <div class="stat-card expense">
+                    <div class="stat-label">Jumlah Perbelanjaan</div>
+                    <div class="stat-value expense" id="totalExpense">RM 0.00</div>
                 </div>
                 <div class="stat-card">
+                    <div class="stat-label">Baki Dana</div>
+                    <div class="stat-value balance" id="balance">RM 0.00</div>
+                </div>
+                <div class="stat-card expense">
                     <div class="stat-label">Bilangan Transaksi</div>
-                    <div class="stat-value" id="totalTransactions">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Purata Sumbangan</div>
-                    <div class="stat-value" id="avgDonation">RM 0.00</div>
+                    <div class="stat-value expense" id="totalTransactions">0</div>
                 </div>
             </div>
 
@@ -590,20 +604,22 @@
                 <div class="sticky-form">
                     <div class="main-card">
                         <div class="section-title">
-                            <span>💰</span>
-                            <span id="formTitle">Tambah Transaksi</span>
+                            <span>💸</span>
+                            <span id="formTitle">Tambah Perbelanjaan</span>
                         </div>
 
                         <div id="statusMessage" class="status-message"></div>
 
-                        <form id="donationForm">
+                        <form id="expenseForm">
                             <div class="form-group">
                                 <label class="form-label">Kategori</label>
                                 <select id="category" class="form-select" required>
                                     <option value="Ifthar & Jamuan">Ifthar & Jamuan</option>
                                     <option value="Imarah Ramadhan">Imarah Ramadhan</option>
                                     <option value="Penyelenggaraan">Penyelenggaraan</option>
-                                    <option value="Zakat & Sedekah">Zakat & Sedekah</option>
+                                    <option value="Utiliti">Utiliti (Elektrik/Air)</option>
+                                    <option value="Bahan Mentah">Bahan Mentah & Groceries</option>
+                                    <option value="Lain-lain">Lain-lain</option>
                                 </select>
                             </div>
 
@@ -613,22 +629,27 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Nama Penyumbang</label>
-                                <input type="text" id="donorName" class="form-input" placeholder="Nama Individu / Syarikat" required>
+                                <label class="form-label">Penerima / Vendor</label>
+                                <input type="text" id="vendorName" class="form-input" placeholder="Nama Penerima / Kedai" required>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Tarikh Bayaran</label>
-                                <input type="date" id="payDate" class="form-input" required>
+                                <label class="form-label">Keterangan</label>
+                                <textarea id="description" class="form-textarea" placeholder="Butiran pembelian atau tujuan perbelanjaan"></textarea>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Resit (Imej/PDF)</label>
+                                <label class="form-label">Tarikh Transaksi</label>
+                                <input type="date" id="expenseDate" class="form-input" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Resit / Invoice (Imej/PDF)</label>
                                 <input type="file" id="receiptFile" class="form-input" accept="image/*,application/pdf">
                             </div>
 
-                            <button type="submit" class="btn-primary btn-success" id="submitBtn">
-                                <span id="submitBtnText">💾 Simpan Transaksi</span>
+                            <button type="submit" class="btn-primary" id="submitBtn">
+                                <span id="submitBtnText">💾 Simpan Perbelanjaan</span>
                             </button>
                             <button type="button" onclick="resetForm()" class="btn-primary btn-secondary">
                                 🔄 Reset
@@ -641,17 +662,19 @@
                     <div class="main-card">
                         <div class="section-title">
                             <span>📋</span>
-                            <span>Senarai Transaksi</span>
+                            <span>Senarai Perbelanjaan</span>
                         </div>
 
                         <div class="search-filter-bar">
-                            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Cari nama penyumbang...">
+                            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Cari vendor atau keterangan...">
                             <select id="categoryFilter" class="filter-select">
                                 <option value="">Semua Kategori</option>
                                 <option value="Ifthar & Jamuan">Ifthar & Jamuan</option>
                                 <option value="Imarah Ramadhan">Imarah Ramadhan</option>
                                 <option value="Penyelenggaraan">Penyelenggaraan</option>
-                                <option value="Zakat & Sedekah">Zakat & Sedekah</option>
+                                <option value="Utiliti">Utiliti</option>
+                                <option value="Bahan Mentah">Bahan Mentah</option>
+                                <option value="Lain-lain">Lain-lain</option>
                             </select>
                             <select id="sortOrder" class="filter-select">
                                 <option value="date-desc">Terbaru</option>
@@ -661,10 +684,10 @@
                             </select>
                         </div>
 
-                        <div id="donationList" class="donation-list">
+                        <div id="expenseList" class="expense-list">
                             <div class="empty-state">
                                 <div class="empty-state-icon">📭</div>
-                                <p>Tiada transaksi lagi</p>
+                                <p>Tiada perbelanjaan lagi</p>
                             </div>
                         </div>
 
@@ -685,15 +708,17 @@
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxd0TcffvvIZnKn6YlxdKbc-7QrBqjb6px9wQ4MzcdIUGGj08hHmBE_QDqLDl5QwxYf/exec';
-        let donations = [];
-        let filteredDonations = [];
+        let expenses = [];
+        let filteredExpenses = [];
+        let totalIncome = 0;
         let editingId = null;
         let currentPassword = '';
         let currentPage = 1;
         const itemsPerPage = 10;
 
         document.addEventListener('DOMContentLoaded', () => {
-            const savedPass = sessionStorage.getItem('adminPass') || localStorage.getItem('adminPass');
+            // Check both local and session storage for auto-login
+            const savedPass = localStorage.getItem('adminPass') || sessionStorage.getItem('adminPass');
             if (savedPass) {
                 document.getElementById('loginPassword').value = savedPass;
                 verifyLogin(true);
@@ -702,6 +727,9 @@
             document.getElementById('searchInput').addEventListener('input', applyFilters);
             document.getElementById('categoryFilter').addEventListener('change', applyFilters);
             document.getElementById('sortOrder').addEventListener('change', applyFilters);
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('expenseDate').value = today;
         });
 
         async function verifyLogin(isSilent = false) {
@@ -715,13 +743,14 @@
                     body: JSON.stringify({ type: 'verify_login', password: pass })
                 });
 
-                if (await res.text() === 'Valid') {
+                const status = await res.text();
+                if (status === 'Valid') {
                     currentPassword = pass;
                     localStorage.setItem('adminPass', pass);
                     sessionStorage.setItem('adminPass', pass);
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('mainContent').style.display = 'block';
-                    loadDonations();
+                    loadData(); // Fixed: Matches the function name in this file
                 } else {
                     if (!isSilent) alert('Kata laluan salah!');
                     localStorage.removeItem('adminPass');
@@ -739,28 +768,34 @@
             location.reload();
         }
 
-        async function loadDonations() {
+        async function loadData() {
             try {
                 const res = await fetch(SCRIPT_URL);
                 const data = await res.json();
 
-                if (data.donations && data.donations.rawList) {
-                    donations = data.donations.rawList;
+                if (data.donations && data.donations.total !== undefined) {
+                    totalIncome = data.donations.total;
+                }
+
+                if (data.expenses && data.expenses.rawList) {
+                    expenses = data.expenses.rawList;
                     updateStats();
                     applyFilters();
                 }
             } catch (e) {
-                console.error('Failed to load donations', e);
+                console.error('Failed to load data', e);
             }
         }
 
         function updateStats() {
-            const total = donations.reduce((sum, d) => sum + parseFloat(d.amount || 0), 0);
-            const avg = donations.length > 0 ? total / donations.length : 0;
+            const totalExpense = expenses.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0);
+            const balance = totalIncome - totalExpense;
 
-            document.getElementById('totalAmount').innerText = `RM ${total.toFixed(2)}`;
-            document.getElementById('totalTransactions').innerText = donations.length;
-            document.getElementById('avgDonation').innerText = `RM ${avg.toFixed(2)}`;
+            document.getElementById('totalIncome').innerText = `RM ${totalIncome.toFixed(2)}`;
+            document.getElementById('totalExpense').innerText = `RM ${totalExpense.toFixed(2)}`;
+            document.getElementById('balance').innerText = `RM ${balance.toFixed(2)}`;
+            document.getElementById('balance').style.color = balance >= 0 ? '#2e7d32' : '#c62828';
+            document.getElementById('totalTransactions').innerText = expenses.length;
         }
 
         function applyFilters() {
@@ -768,69 +803,63 @@
             const categoryFilter = document.getElementById('categoryFilter').value;
             const sortOrder = document.getElementById('sortOrder').value;
 
-            filteredDonations = donations.filter(d => {
-                const matchesSearch = d.donorName.toLowerCase().includes(searchTerm);
-                const matchesCategory = !categoryFilter || d.category === categoryFilter;
+            filteredExpenses = expenses.filter(e => {
+                const matchesSearch = e.vendorName.toLowerCase().includes(searchTerm) ||
+                    (e.description || '').toLowerCase().includes(searchTerm);
+                const matchesCategory = !categoryFilter || e.category === categoryFilter;
                 return matchesSearch && matchesCategory;
             });
 
-            filteredDonations.sort((a, b) => {
+            filteredExpenses.sort((a, b) => {
                 switch (sortOrder) {
-                    case 'date-desc':
-                        return new Date(b.payDate) - new Date(a.payDate);
-                    case 'date-asc':
-                        return new Date(a.payDate) - new Date(b.payDate);
-                    case 'amount-desc':
-                        return parseFloat(b.amount) - parseFloat(a.amount);
-                    case 'amount-asc':
-                        return parseFloat(a.amount) - parseFloat(b.amount);
-                    default:
-                        return 0;
+                    case 'date-desc': return new Date(b.expenseDate) - new Date(a.expenseDate);
+                    case 'date-asc': return new Date(a.expenseDate) - new Date(b.expenseDate);
+                    case 'amount-desc': return parseFloat(b.amount) - parseFloat(a.amount);
+                    case 'amount-asc': return parseFloat(a.amount) - parseFloat(b.amount);
+                    default: return 0;
                 }
             });
 
             currentPage = 1;
-            renderDonations();
+            renderExpenses();
         }
 
-        function renderDonations() {
-            const listEl = document.getElementById('donationList');
+        function renderExpenses() {
+            const listEl = document.getElementById('expenseList');
             const paginationEl = document.getElementById('paginationControls');
 
-            if (filteredDonations.length === 0) {
+            if (filteredExpenses.length === 0) {
                 listEl.innerHTML = `
                             <div class="empty-state">
                                 <div class="empty-state-icon">📭</div>
-                                <p>${donations.length === 0 ? 'Tiada transaksi lagi' : 'Tiada hasil carian'}</p>
+                                <p>${expenses.length === 0 ? 'Tiada perbelanjaan lagi' : 'Tiada hasil carian'}</p>
                             </div>`;
                 paginationEl.style.display = 'none';
                 return;
             }
 
-            const totalPages = Math.ceil(filteredDonations.length / itemsPerPage);
+            const totalPages = Math.ceil(filteredExpenses.length / itemsPerPage);
             const startIdx = (currentPage - 1) * itemsPerPage;
             const endIdx = startIdx + itemsPerPage;
-            const pageItems = filteredDonations.slice(startIdx, endIdx);
+            const pageItems = filteredExpenses.slice(startIdx, endIdx);
 
             let html = '';
-            pageItems.forEach(d => {
+            pageItems.forEach(e => {
                 html += `
-                            <div class="donation-item">
-                                <div class="donation-info">
-                                    <div class="donation-name">${d.donorName || 'Penyumbang Am'}</div>
-                                    <div class="donation-details">
-                                        <span>📁 ${d.category}</span>
-                                        <span>📅 ${d.payDate || 'Tiada Tarikh'}</span>
-                                        ${d.fileUrl ? '<span>📎 Resit Asal</span>' : ''}
-                                        ${d.officialReceiptUrl ? '<span>📄 Resit Rasmi</span>' : ''}
+                            <div class="expense-item">
+                                <div class="expense-info">
+                                    <div class="expense-name">${e.vendorName || 'Vendor Tidak Dikenali'}</div>
+                                    <div class="expense-details">
+                                        <span>📁 ${e.category}</span>
+                                        <span>📅 ${e.expenseDate || 'Tiada Tarikh'}</span>
+                                        ${e.fileUrl ? `<a href="${e.fileUrl}" target="_blank" style="text-decoration:none">📎 Resit</a>` : ''}
                                     </div>
+                                    ${e.description ? `<div class="expense-description">${e.description}</div>` : ''}
                                 </div>
-                                <div class="donation-amount">RM ${parseFloat(d.amount).toFixed(2)}</div>
-                                <div class="donation-actions">
-                                    ${d.officialReceiptUrl ? `<a href="${d.officialReceiptUrl}" target="_blank" class="btn-icon" title="Resit Rasmi" style="color: #2e7d32;">📄</a>` : ''}
-                                    ${d.fileUrl ? `<a href="${d.fileUrl}" target="_blank" class="btn-icon" title="Lihat Resit Asal">📎</a>` : ''}
-                                    <button onclick="editDonation(${d.id})" class="btn-icon btn-edit" title="Edit">✏️</button>
-                                    <button onclick="deleteDonation(${d.id})" class="btn-icon btn-delete" title="Padam">🗑️</button>
+                                <div class="expense-amount">RM ${parseFloat(e.amount).toFixed(2)}</div>
+                                <div class="expense-actions">
+                                    <button onclick="editExpense(${e.id})" class="btn-icon btn-edit" title="Edit">✏️</button>
+                                    <button onclick="deleteExpense(${e.id})" class="btn-icon btn-delete" title="Padam">🗑️</button>
                                 </div>
                             </div>`;
             });
@@ -848,59 +877,56 @@
 
         function changePage(delta) {
             currentPage += delta;
-            renderDonations();
+            renderExpenses();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function editDonation(id) {
-            const donation = donations.find(d => d.id === id);
-            if (!donation) return;
+        function editExpense(id) {
+            const expense = expenses.find(e => e.id === id);
+            if (!expense) return;
 
             editingId = id;
-            document.getElementById('category').value = donation.category;
-            document.getElementById('amount').value = donation.amount;
-            document.getElementById('donorName').value = donation.donorName;
-            document.getElementById('payDate').value = donation.payDate;
-            document.getElementById('formTitle').innerText = 'Kemaskini Transaksi';
+            document.getElementById('category').value = expense.category;
+            document.getElementById('amount').value = expense.amount;
+            document.getElementById('vendorName').value = expense.vendorName;
+            document.getElementById('description').value = expense.description || '';
+            document.getElementById('expenseDate').value = expense.expenseDate;
+            document.getElementById('formTitle').innerText = 'Kemaskini Perbelanjaan';
             document.getElementById('submitBtnText').innerText = '💾 Kemaskini';
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        async function deleteDonation(id) {
-            if (!confirm('Adakah anda pasti mahu memadam transaksi ini?')) return;
-
+        async function deleteExpense(id) {
+            if (!confirm('Adakah anda pasti mahu memadam perbelanjaan ini?')) return;
             showLoading(true);
 
             try {
                 const res = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify({
-                        type: 'delete_donation',
+                        type: 'delete_expense',
                         id: id,
                         password: currentPassword
                     })
                 });
 
                 if (await res.text() === 'Success') {
-                    showStatus('Transaksi berjaya dipadam!', 'success');
-                    loadDonations();
+                    showStatus('Perbelanjaan berjaya dipadam!', 'success');
+                    loadData();
                 } else {
-                    showStatus('Gagal memadam transaksi.', 'error');
+                    showStatus('Gagal memadam.', 'error');
                 }
             } catch (e) {
                 showStatus('Ralat sambungan.', 'error');
             }
-
             showLoading(false);
         }
 
-        document.getElementById('donationForm').onsubmit = async (e) => {
+        document.getElementById('expenseForm').onsubmit = async (e) => {
             e.preventDefault();
-
             const fileInput = document.getElementById('receiptFile');
             const file = fileInput.files[0];
-
             showLoading(true);
 
             let fileData = null;
@@ -912,17 +938,15 @@
                 });
             }
 
-            const existingDonation = editingId ? donations.find(d => d.id === editingId) : null;
-
             const payload = {
-                type: 'donation_update',
+                type: 'expense_update',
                 id: editingId,
-                existingFileUrl: existingDonation ? existingDonation.fileUrl : '',
                 password: currentPassword,
                 category: document.getElementById('category').value,
                 amount: document.getElementById('amount').value,
-                donorName: document.getElementById('donorName').value,
-                payDate: document.getElementById('payDate').value,
+                vendorName: document.getElementById('vendorName').value,
+                description: document.getElementById('description').value,
+                expenseDate: document.getElementById('expenseDate').value,
                 fileName: file ? file.name : '',
                 mimeType: file ? file.type : '',
                 fileData: fileData
@@ -935,27 +959,24 @@
                 });
 
                 if (await res.text() === 'Success') {
-                    showStatus(editingId ? 'Transaksi berjaya dikemaskini!' : 'Transaksi berjaya disimpan!', 'success');
+                    showStatus(editingId ? 'Berjaya dikemaskini!' : 'Berjaya disimpan!', 'success');
                     resetForm();
-                    loadDonations();
+                    loadData();
                 } else {
-                    showStatus('Gagal menyimpan transaksi.', 'error');
+                    showStatus('Gagal menyimpan.', 'error');
                 }
             } catch (e) {
                 showStatus('Ralat sambungan.', 'error');
             }
-
             showLoading(false);
         };
 
         function resetForm() {
-            document.getElementById('donationForm').reset();
+            document.getElementById('expenseForm').reset();
             editingId = null;
-            document.getElementById('formTitle').innerText = 'Tambah Transaksi';
-            document.getElementById('submitBtnText').innerText = '💾 Simpan Transaksi';
-
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('payDate').value = today;
+            document.getElementById('formTitle').innerText = 'Tambah Perbelanjaan';
+            document.getElementById('submitBtnText').innerText = '💾 Simpan Perbelanjaan';
+            document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
         }
 
         function showStatus(message, type) {
@@ -963,20 +984,12 @@
             statusEl.innerText = message;
             statusEl.className = `status-message status-${type}`;
             statusEl.style.display = 'block';
-
-            setTimeout(() => {
-                statusEl.style.display = 'none';
-            }, 5000);
+            setTimeout(() => statusEl.style.display = 'none', 5000);
         }
 
         function showLoading(show) {
             document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
         }
-
-        window.onload = () => {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('payDate').value = today;
-        };
     </script>
 </body>
 </html>
