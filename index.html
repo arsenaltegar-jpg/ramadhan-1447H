@@ -523,6 +523,7 @@
             const grid = document.getElementById('scheduleGrid');
             let html = '';
             const dayNames = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
+            const monthNames = ['JAN', 'FEB', 'MAC', 'APR', 'MEI', 'JUN', 'JUL', 'OGOS', 'SEPT', 'OKT', 'NOV', 'DIS'];
 
             for (let i = 1; i <= 30; i++) {
                 const dObj = new Date(2026, 1, 19 + (i - 1));
@@ -534,7 +535,10 @@
                         <div class="day-header">
                             <div class="ramadhan-info">
                                 <span class="ramadhan-num">${i}</span>
-                                <div class="date-text">${dayNames[dObj.getDay()]}<br>${dObj.getDate()} FEB</div>
+                                <div class="date-text">
+                            ${dayNames[dObj.getDay()]}<br>
+                            ${dObj.getDate()} ${monthNames[dObj.getMonth()]}
+                        </div>
                             </div>
                             <span class="moon-icon">🌙</span>
                         </div>
