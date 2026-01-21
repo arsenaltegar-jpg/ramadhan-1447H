@@ -524,57 +524,70 @@
             const dayNames = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
             const monthNames = ['JAN', 'FEB', 'MAC', 'APR', 'MEI', 'JUN', 'JUL', 'OGOS', 'SEPT', 'OKT', 'NOV', 'DIS'];
 
-            for (let i = 1; i <= 30; i++) {
-                const dObj = new Date(2026, 1, 19 + (i - 1));
+            // Start from 0 to include the night before 1st Ramadhan
+            for (let i = 0; i <= 30; i++) {
+                // 19 Feb is 1 Ramadhan. (19 - 1) = 18 Feb is the last day of Syaaban
+                const dObj = new Date(2026, 1, 18 + i);
                 const ds = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, '0')}-${String(dObj.getDate()).padStart(2, '0')}`;
                 const s = slots[ds] || {};
 
+                // Logical check: Is this the "Night Before" (Day 0)?
+                const isNightBefore = (i === 0);
+
                 html += `
-                    <div class="day-card">
-                        <div class="day-header">
-                            <div class="ramadhan-info">
-                                <span class="ramadhan-num">${i}</span>
-                                <div class="date-text">
+            <div class="day-card" ${isNightBefore ? 'style="border: 2px solid var(--gold);"' : ''}>
+                <div class="day-header">
+                    <div class="ramadhan-info">
+                        <span class="ramadhan-num">${isNightBefore ? '🌙' : i}</span>
+                        <div class="date-text">
                             ${dayNames[dObj.getDay()]}<br>
                             ${dObj.getDate()} ${monthNames[dObj.getMonth()]}
+                            ${isNightBefore ? '<br><small>Malam Tarawih Pertama</small>' : ''}
                         </div>
+                    </div>
+                    <span class="moon-icon">✨</span>
+                </div>
+                <div class="program-body">
+                    ${s.KuliahSubuh && !isNightBefore ? `
+                        <div class="activity-item">
+                            <div class="act-details">
+                                <strong>Kuliah Subuh</strong>
+                                <div class="act-text">${s.KuliahSubuh}</div>
                             </div>
-                            <span class="moon-icon">🌙</span>
-                        </div>
-                        <div class="program-body">
-                            ${s.KuliahSubuh ? `
-                                <div class="activity-item">
-                                    <div class="act-details">
-                                        <strong>Kuliah Subuh</strong>
-                                        <div class="act-text">${s.KuliahSubuh}</div>
-                                    </div>
-                                    ${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="entry-img">` : ''}
-                                </div>` : ''}
-                            ${s.Program ? `
-                                <div class="activity-item">
-                                    <div class="act-details">
-                                        <strong>Program Khas</strong>
-                                        <div class="act-text">${s.Program}</div>
-                                    </div>
-                                    ${s.ProgramUrl ? `<img src="${s.ProgramUrl}" class="entry-img">` : ''}
-                                </div>` : ''}
-                            ${s.Imam ? `
-                                <div class="activity-item">
-                                    <div class="act-details">
-                                        <strong>Imam Tarawih</strong>
-                                        <div class="act-text">${s.Imam}</div>
-                                    </div>
-                                    ${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img">` : ''}
-                                </div>` : ''}
-                        </div>
-                        <div class="ifthar-section">
-                            <div class="host-info">
-                                <div style="font-size:0.6rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Ifthar</div>
-                                <div class="host-name">${s.HostName || 'MASIH KOSONG'}</div>
+                            ${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="entry-img">` : ''}
+                        </div>` : ''}
+                    
+                    ${s.Program ? `
+                        <div class="activity-item">
+                            <div class="act-details">
+                                <strong>Program Khas</strong>
+                                <div class="act-text">${s.Program}</div>
                             </div>
-                            ${!s.HostName ? `<button class=" book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span>🥤🍲</span>'}
-                        </div>
-                    </div>`;
+                            ${s.ProgramUrl ? `<img src="${s.ProgramUrl}" class="entry-img">` : ''}
+                        </div>` : ''}
+
+                    ${s.Imam ? `
+                        <div class="activity-item">
+                            <div class="act-details">
+                                <strong>Imam Tarawih</strong>
+                                <div class="act-text">${s.Imam}</div>
+                            </div>
+                            ${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img">` : ''}
+                        </div>` : ''}
+                </div>
+
+                ${!isNightBefore ? `
+                <div class="ifthar-section">
+                    <div class="host-info">
+                        <div style="font-size:0.6rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Ifthar</div>
+                        <div class="host-name">${s.HostName || 'MASIH KOSONG'}</div>
+                    </div>
+                    ${!s.HostName ? `<button class="book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span>🥤🍲</span>'}
+                </div>` : `
+                <div class="ifthar-section" style="background: rgba(255,255,255,0.5); justify-content: center;">
+                    <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">TIADA IFTHAR (SEBELUM RAMADHAN)</div>
+                </div>`}
+            </div>`;
             }
             grid.innerHTML = html;
         }
