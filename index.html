@@ -537,6 +537,29 @@
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxd0TcffvvIZnKn6YlxdKbc-7QrBqjb6px9wQ4MzcdIUGGj08hHmBE_QDqLDl5QwxYf/exec';
         let slots = {};
 
+        function renderFinance(donations) {
+            const totalEl = document.getElementById('totalDonation');
+            const breakdownEl = document.getElementById('donationBreakdown');
+
+            let total = 0;
+            let html = '<div style="margin-top:15px; font-size:0.8rem;">';
+
+            donations.forEach(don => {
+                const amt = parseFloat(don.Amount) || 0;
+                total += amt;
+                html += `
+            <div style="display:flex; justify-content:between; border-bottom:1px solid #eee; padding:5px 0;">
+                <span style="flex:1">${don.Category}</span>
+                <span style="font-weight:bold">RM ${amt.toFixed(2)}</span>
+            </div>`;
+            });
+
+            html += '</div>';
+
+            totalEl.innerText = `RM ${total.toFixed(2)}`;
+            breakdownEl.innerHTML = html;
+        }
+
         async function loadData() {
             try {
                 const res = await fetch(SCRIPT_URL);
@@ -554,6 +577,28 @@
                         if (el) el.innerText = time || "-";
                     }
                     highlightCurrentSolat(tMap);
+                }
+                if (data.donations) {
+                    const donationSection = document.getElementById('donationSection');
+                    const totalEl = document.getElementById('totalDonation');
+                    const breakdownEl = document.getElementById('donationBreakdown');
+
+                    donationSection.classList.remove('hidden');
+
+                    // Set the Grand Total
+                    totalEl.innerText = `RM ${data.donations.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+                    // Build the Category Breakdown HTML
+                    let breakdownHtml = '<div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">';
+                    data.donations.categories.forEach(cat => {
+                        breakdownHtml += `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem;">
+                        <span style="color: var(--text-muted); font-weight: 600;">${cat.name}</span>
+                        <span style="font-weight: 800; color: var(--primary);">RM ${cat.amount.toFixed(2)}</span>
+                    </div>`;
+                    });
+                    breakdownHtml += '</div>';
+                    breakdownEl.innerHTML = breakdownHtml;
                 }
                 render();
             } catch (e) { console.error("Load failed", e); }
