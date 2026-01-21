@@ -424,6 +424,36 @@
             max-height: 50vh;
             overflow-y: auto;
         }
+
+        /* New styles for Donation Management */
+        .don-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+        }
+
+        .don-actions button {
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0 5px;
+        }
+
+        .logout-link {
+            display: block;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #cc0000;
+            margin-top: 15px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
     </style>
 
 </head>
@@ -525,6 +555,14 @@
                         <input type="file" id="receiptFile" class="form-input" accept="image/*,application/pdf">
                         <div id="financeStatus" style="font-size:0.7rem; margin:10px 0;"></div>
                         <button onclick="submitDonationUpdate()" id="donSubmitBtn" class="primary-btn" style="background:#2e7d32;">Simpan Resit</button>
+                        <div id="adminDonationListArea"></div>
+                        <button onclick="localStorage.removeItem('adminPass'); location.reload();" class="secondary-btn" style="color:red; font-size:0.6rem; margin-top:20px;">Log Keluar Pentadbir</button>
+                        <div id="donationManageList" style="margin-top: 20px;">
+                            <h4 style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Senarai Transaksi</h4>
+                            <div id="adminDonationContainer" style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
+                            </div>
+                        </div>
+                        <span class="logout-link" onclick="logoutAdmin()">Log Keluar Pentadbir</span>
                     </div>
                 </div>
 
@@ -535,7 +573,54 @@
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxd0TcffvvIZnKn6YlxdKbc-7QrBqjb6px9wQ4MzcdIUGGj08hHmBE_QDqLDl5QwxYf/exec';
+        // Check for saved session on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedPass = localStorage.getItem('adminPass');
+            if (savedPass) {
+                document.getElementById('adminPassword').value = savedPass;
+                verifyAdmin(true); // Silent login
+            }
+        });
+
+        function logoutAdmin() {
+            localStorage.removeItem('adminPass');
+            location.reload();
+        }
         let slots = {};
+        let adminDonationList = [];
+
+        async function fetchDonationsForAdmin() {
+            const res = await fetch(SCRIPT_URL);
+            const data = await res.json();
+            adminDonationList = data.donations.rawList;
+            renderAdminDonationList();
+        }
+
+        function renderAdminDonationList() {
+            const listArea = document.getElementById('adminDonationListArea');
+            if (!listArea) return;
+
+            let html = '<div style="margin-top:15px; border-top:1px solid #eee; padding-top:10px;">';
+            adminDonationList.forEach(item => {
+                html += `
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; margin-bottom:8px; background:#f9f9f9; padding:5px; border-radius:5px;">
+            <span><strong>${item.category}</strong>: RM${item.amount}</span>
+            <button onclick="editDonationEntry(${item.id})" style="background:var(--gold); border:none; padding:2px 8px; border-radius:4px; cursor:pointer;">Edit</button>
+        </div>`;
+            });
+            listArea.innerHTML = html + '</div>';
+        }
+
+        function editDonationEntry(id) {
+            const entry = adminDonationList.find(i => i.id === id);
+            if (entry) {
+                document.getElementById('donCategory').value = entry.category;
+                document.getElementById('donAmount').value = entry.amount;
+                document.getElementById('donSubmitBtn').innerText = "Kemaskini Resit";
+                document.getElementById('donSubmitBtn').dataset.editId = id; // Store ID on button
+                document.getElementById('donSubmitBtn').dataset.existingFile = entry.fileUrl;
+            }
+        }
 
         function renderFinance(donations) {
             const totalEl = document.getElementById('totalDonation');
@@ -696,18 +781,28 @@
             grid.innerHTML = html;
         }
 
-        async function verifyAdmin() {
+        async function verifyAdmin(isSilent = false) {
             const pass = document.getElementById('adminPassword').value;
             const btn = document.getElementById('loginBtn');
-            btn.innerText = "Mengesahkan...";
+            if (!isSilent) btn.innerText = "Mengesahkan...";
+
             try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ type: "verify_login", password: pass }) });
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ type: "verify_login", password: pass })
+                });
+
                 if (await res.text() === "Valid") {
+                    localStorage.setItem('adminPass', pass); // SAVE SESSION
                     document.getElementById('loginStep').classList.add('hidden');
                     document.getElementById('editStep').classList.remove('hidden');
                     populateAdminForm();
-                } else { alert("Kata laluan salah!"); }
-            } catch (e) { alert("Ralat sambungan"); }
+                    renderAdminDonationList(); // Load the donation editor list
+                } else {
+                    if (!isSilent) alert("Kata laluan salah!");
+                    localStorage.removeItem('adminPass');
+                }
+            } catch (e) { console.error("Ralat sambungan"); }
             btn.innerText = "Log Masuk";
         }
 
@@ -752,7 +847,7 @@
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
                 if (await res.text() === "Success") {
                     alert("Berjaya disimpan!");
-                    location.reload();
+                    
                 }
             } catch (e) { alert("Gagal menyimpan"); }
             btn.innerText = "Simpan Perubahan";
@@ -809,6 +904,8 @@
 
             const payload = {
                 type: "donation_update",
+                id: btn.dataset.editId || null, // Include ID if editing
+                existingFileUrl: btn.dataset.existingFile || "",
                 password: document.getElementById('adminPassword').value,
                 category: document.getElementById('donCategory').value,
                 amount: document.getElementById('donAmount').value,
