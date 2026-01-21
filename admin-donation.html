@@ -785,12 +785,14 @@
                                 <div class="donation-details">
                                     <span>📁 ${d.category}</span>
                                     <span>📅 ${d.payDate || 'Tiada Tarikh'}</span>
-                                    ${d.fileUrl ? '<span>📄 Ada Resit</span>' : ''}
+                                    ${d.fileUrl ? '<span>📎 Resit Asal</span>' : ''}
+                                    ${d.officialReceiptUrl ? '<span>📄 Resit Rasmi</span>' : ''}
                                 </div>
                             </div>
                             <div class="donation-amount">RM ${parseFloat(d.amount).toFixed(2)}</div>
                             <div class="donation-actions">
-                                ${d.fileUrl ? `<a href="${d.fileUrl}" target="_blank" class="btn-icon" title="Lihat Resit">📎</a>` : ''}
+                                ${d.officialReceiptUrl ? `<a href="${d.officialReceiptUrl}" target="_blank" class="btn-icon" title="Resit Rasmi" style="color: #2e7d32;">📄</a>` : ''}
+                                ${d.fileUrl ? `<a href="${d.fileUrl}" target="_blank" class="btn-icon" title="Lihat Resit Asal">📎</a>` : ''}
                                 <button onclick="editDonation(${d.id})" class="btn-icon btn-edit" title="Edit">✏️</button>
                                 <button onclick="deleteDonation(${d.id})" class="btn-icon btn-delete" title="Padam">🗑️</button>
                             </div>
