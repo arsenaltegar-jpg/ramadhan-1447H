@@ -397,6 +397,33 @@
             display: block;
             margin-top: 10px;
         }
+        .donation-card {
+            background: var(--glass);
+            margin-bottom: 30px;
+            padding: 22px;
+            border-radius: 28px;
+            color: var(--text-main);
+            border: 2px solid var(--gold);
+        }
+
+        .tab-btn {
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+
+            .tab-btn.active {
+                color: var(--primary);
+                border-bottom: 2px solid var(--primary);
+            }
+
+        .admin-scroll-area {
+            max-height: 50vh;
+            overflow-y: auto;
+        }
     </style>
 
 </head>
@@ -416,6 +443,13 @@
             <div class="solat-item" id="item-asar"><span class="solat-label">Asar</span><div class="solat-time" id="t-asar">-</div></div>
             <div class="solat-item" id="item-maghrib"><span class="solat-label">Maghrib</span><div class="solat-time" id="t-maghrib">-</div></div>
             <div class="solat-item" id="item-isyak"><span class="solat-label">Isyak</span><div class="solat-time" id="t-isyak">-</div></div>
+        </div>
+        <div id="donationSection" class="donation-card hidden">
+            <div style="text-align:center;">
+                <span class="solat-label">Dana Ihya Ramadhan</span>
+                <div style="font-size: 2rem; font-weight: 900; color: #2e7d32;" id="totalDonation">RM 0.00</div>
+            </div>
+            <div id="donationBreakdown"></div>
         </div>
         <div id="scheduleGrid"><div class="loading-state">Memuatkan jadual...</div></div>
     </div>
@@ -447,29 +481,54 @@
             </div>
 
             <div id="editStep" class="hidden">
-                <div class="admin-scroll-area">
-                    <label class="admin-label">Pilih Tarikh</label>
-                    <select id="adminDateSelect" class="form-input"></select>
-
-                    <label class="admin-label">Maklumat Ifthar</label>
-                    <input type="text" id="admHost" class="form-input" placeholder="Nama Host (Individu/Kumpulan)">
-                    <input type="text" id="admContact" class="form-input" placeholder="WhatsApp (Contoh: 60123456789)">
-
-                    <label class="admin-label">Maklumat Imam Tarawih</label>
-                    <input type="text" id="admImam" class="form-input" placeholder="Nama Imam">
-                    <input type="text" id="admImageUrl" class="form-input" placeholder="URL Gambar Imam (https://...)">
-
-                    <label class="admin-label">Program Khas</label>
-                    <input type="text" id="admProgram" class="form-input" placeholder="Tajuk Program">
-                    <input type="text" id="admProgramUrl" class="form-input" placeholder="URL Gambar Program">
-
-                    <label class="admin-label">Kuliah Subuh</label>
-                    <input type="text" id="admKuliahSubuh" class="form-input" placeholder="Nama Penceramah">
-                    <input type="text" id="admKuliahSubuhUrl" class="form-input" placeholder="URL Gambar Penceramah">
+                <div style="display:flex; gap:10px; margin-bottom:15px; border-bottom:1px solid #eee;">
+                    <button class="tab-btn active" id="btn-tab-schedule" onclick="switchTab('schedule')">Jadual</button>
+                    <button class="tab-btn" id="btn-tab-finance" onclick="switchTab('finance')">Kewangan/Resit</button>
                 </div>
 
-                <button onclick="submitAdminUpdate()" id="admSubmitBtn" class="primary-btn">Simpan Perubahan</button>
-                <button type="button" onclick="closeModal('adminModal')" class="secondary-btn">Tutup</button>
+                <div id="tab-schedule">
+                    <div class="admin-scroll-area">
+                        <label class="admin-label">Pilih Tarikh</label>
+                        <select id="adminDateSelect" class="form-input"></select>
+
+                        <label class="admin-label">Maklumat Ifthar</label>
+                        <input type="text" id="admHost" class="form-input" placeholder="Nama Host">
+                        <input type="text" id="admContact" class="form-input" placeholder="WhatsApp (6012...)">
+
+                        <label class="admin-label">Maklumat Imam Tarawih</label>
+                        <input type="text" id="admImam" class="form-input" placeholder="Nama Imam">
+                        <input type="text" id="admImageUrl" class="form-input" placeholder="URL Gambar Imam">
+
+                        <label class="admin-label">Program Khas</label>
+                        <input type="text" id="admProgram" class="form-input" placeholder="Tajuk Program">
+                        <input type="text" id="admProgramUrl" class="form-input" placeholder="URL Gambar Program">
+
+                        <label class="admin-label">Kuliah Subuh</label>
+                        <input type="text" id="admKuliahSubuh" class="form-input" placeholder="Nama Penceramah">
+                        <input type="text" id="admKuliahSubuhUrl" class="form-input" placeholder="URL Gambar Penceramah">
+                    </div>
+                    <button onclick="submitAdminUpdate()" id="admSubmitBtn" class="primary-btn">Simpan Perubahan Jadual</button>
+                </div>
+
+                <div id="tab-finance" class="hidden">
+                    <div class="admin-scroll-area">
+                        <label class="admin-label">Kategori</label>
+                        <select id="donCategory" class="form-input">
+                            <option value="Ifthar & Jamuan">Ifthar & Jamuan</option>
+                            <option value="Imarah Ramadhan">Imarah Ramadhan</option>
+                            <option value="Penyelenggaraan">Penyelenggaraan</option>
+                            <option value="Zakat & Sedekah">Zakat & Sedekah</option>
+                        </select>
+                        <label class="admin-label">Jumlah (RM)</label>
+                        <input type="number" id="donAmount" class="form-input" placeholder="0.00">
+                        <label class="admin-label">Muat Naik Resit (Imej/PDF)</label>
+                        <input type="file" id="receiptFile" class="form-input" accept="image/*,application/pdf">
+                        <div id="financeStatus" style="font-size:0.7rem; margin:10px 0;"></div>
+                        <button onclick="submitDonationUpdate()" id="donSubmitBtn" class="primary-btn" style="background:#2e7d32;">Simpan Resit</button>
+                    </div>
+                </div>
+
+                <button type="button" onclick="location.reload()" class="secondary-btn">Selesai & Tutup</button>
             </div>
         </div>
     </div>
@@ -673,6 +732,65 @@
         function handleBooking(date) { document.getElementById('selectedDate').value = date; document.getElementById('displayDate').innerText = "Tarikh: " + date; document.getElementById('bookingModal').style.display = 'flex'; }
         function openAdminLogin() { document.getElementById('adminModal').style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        // 1. Function to switch between Schedule and Finance tabs
+        function switchTab(tabName) {
+            // Toggle Visibility
+            document.getElementById('tab-schedule').classList.toggle('hidden', tabName !== 'schedule');
+            document.getElementById('tab-finance').classList.toggle('hidden', tabName !== 'finance');
+
+            // Update Button Styles
+            document.getElementById('btn-tab-schedule').classList.toggle('active', tabName === 'schedule');
+            document.getElementById('btn-tab-finance').classList.toggle('active', tabName === 'finance');
+        }
+
+        // 2. Updated Donation Upload Logic
+        async function submitDonationUpdate() {
+            const btn = document.getElementById('donSubmitBtn');
+            const status = document.getElementById('financeStatus');
+            const fileInput = document.getElementById('receiptFile');
+            const file = fileInput.files[0];
+
+            btn.innerText = "Memproses...";
+            status.innerText = "Sila tunggu, sedang memuat naik...";
+            let fileData = null;
+
+            if (file) {
+                const reader = new FileReader();
+                fileData = await new Promise((resolve) => {
+                    reader.onload = (e) => resolve(e.target.result.split(',')[1]);
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            const payload = {
+                type: "donation_update",
+                password: document.getElementById('adminPassword').value,
+                category: document.getElementById('donCategory').value,
+                amount: document.getElementById('donAmount').value,
+                fileName: file ? file.name : "",
+                mimeType: file ? file.type : "",
+                fileData: fileData
+            };
+
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await res.text();
+                if (result === "Success") {
+                    status.style.color = "green";
+                    status.innerText = "✅ Berjaya! Maklumat resit telah disimpan.";
+                    // Reset for next entry
+                    document.getElementById('donAmount').value = "";
+                    fileInput.value = "";
+                } else {
+                    status.style.color = "red";
+                    status.innerText = "❌ Gagal: " + result;
+                }
+            } catch (e) {
+                status.style.color = "red";
+                status.innerText = "❌ Ralat sambungan.";
+            }
+            btn.innerText = "Simpan Resit";
+        }
 
         loadData();
     </script>
