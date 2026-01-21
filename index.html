@@ -551,18 +551,22 @@
                         </select>
                         <label class="admin-label">Jumlah (RM)</label>
                         <input type="number" id="donAmount" class="form-input" placeholder="0.00">
+                        <label class="admin-label">Nama Penyumbang</label>
+                        <input type="text" id="donDonorName" class="form-input" placeholder="Nama Individu/Syarikat">
+                        <label class="admin-label">Tarikh Bayaran</label>
+                        <input type="date" id="donPayDate" class="form-input">
                         <label class="admin-label">Muat Naik Resit (Imej/PDF)</label>
                         <input type="file" id="receiptFile" class="form-input" accept="image/*,application/pdf">
                         <div id="financeStatus" style="font-size:0.7rem; margin:10px 0;"></div>
                         <button onclick="submitDonationUpdate()" id="donSubmitBtn" class="primary-btn" style="background:#2e7d32;">Simpan Resit</button>
                         <div id="adminDonationListArea"></div>
-                      
+
                         <div id="donationManageList" style="margin-top: 20px;">
                             <h4 style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Senarai Transaksi</h4>
                             <div id="adminDonationContainer" style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
                             </div>
                         </div>
-                      
+
                     </div>
                 </div>
 
@@ -601,20 +605,23 @@
             if (!listArea) return;
 
             let html = '';
-            if (adminDonationList.length === 0) {
-                html = '<div style="font-size:0.7rem; color:gray; text-align:center; padding:10px;">Tiada data transaksi.</div>';
-            } else {
-                adminDonationList.forEach(item => {
-                    html += `
-            <div class="don-item-row">
-                <span><strong>${item.category}</strong>: RM${parseFloat(item.amount).toFixed(2)}</span>
-                <div class="don-actions">
-                    <button onclick="editDonationEntry(${item.id})" title="Edit">✏️</button>
-                    <button onclick="deleteDonationEntry(${item.id})" title="Padam" style="color:red;">🗑️</button>
-                </div>
-            </div>`;
-                });
-            }
+            adminDonationList.forEach(item => {
+                html += `
+        <div class="don-item-row" style="flex-direction: column; align-items: flex-start;">
+            <div style="width: 100%; display: flex; justify-content: space-between;">
+                <strong>${item.donorName || 'Penyumbang Am'}</strong>
+                <span style="color: green; font-weight: bold;">RM${parseFloat(item.amount).toFixed(2)}</span>
+            </div>
+            <div style="font-size: 0.65rem; color: #666;">
+                ${item.category} • ${item.payDate || 'Tiada Tarikh'}
+            </div>
+            <div class="don-actions" style="margin-top: 5px;">
+                <button onclick="editDonationEntry(${item.id})">✏️</button>
+                <button onclick="deleteDonationEntry(${item.id})" style="color:red;">🗑️</button>
+                ${item.fileUrl ? `<a href="${item.fileUrl}" target="_blank" style="text-decoration:none; font-size:1rem;">📄</a>` : ''}
+            </div>
+        </div>`;
+            });
             listArea.innerHTML = html;
         }
 
@@ -652,8 +659,10 @@
             if (entry) {
                 document.getElementById('donCategory').value = entry.category;
                 document.getElementById('donAmount').value = entry.amount;
+                document.getElementById('donDonorName').value = entry.donorName;
+                document.getElementById('donPayDate').value = entry.payDate; // Format YYYY-MM-DD
                 document.getElementById('donSubmitBtn').innerText = "Kemaskini Resit";
-                document.getElementById('donSubmitBtn').dataset.editId = id; // Store ID on button
+                document.getElementById('donSubmitBtn').dataset.editId = id;
                 document.getElementById('donSubmitBtn').dataset.existingFile = entry.fileUrl;
             }
         }
@@ -956,6 +965,8 @@
                 password: document.getElementById('adminPassword').value,
                 category: document.getElementById('donCategory').value,
                 amount: document.getElementById('donAmount').value,
+                donorName: document.getElementById('donDonorName').value,
+                payDate: document.getElementById('donPayDate').value,
                 fileName: file ? file.name : "",
                 mimeType: file ? file.type : "",
                 fileData: fileData
