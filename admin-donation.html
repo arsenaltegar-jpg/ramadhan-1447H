@@ -874,7 +874,19 @@
             document.getElementById('category').value = donation.category;
             document.getElementById('amount').value = donation.amount;
             document.getElementById('donorName').value = donation.donorName;
-            document.getElementById('payDate').value = donation.payDate;
+            // Standardizing the date format for the HTML input
+            if (donation.payDate) {
+                try {
+                    const d = new Date(donation.payDate);
+                    if (!isNaN(d.getTime())) {
+                        // Formats to YYYY-MM-DD
+                        const formattedDate = d.toISOString().split('T')[0];
+                        document.getElementById('payDate').value = formattedDate;
+                    }
+                } catch (e) {
+                    console.error("Date parsing error:", e);
+                }
+            }
             document.getElementById('formTitle').innerText = 'Kemaskini Transaksi';
             document.getElementById('submitBtnText').innerText = '💾 Kemaskini';
 
