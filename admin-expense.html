@@ -5,6 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pengurusan Perbelanjaan | Surau Seri Putra</title>
     <style>
+
+        /* Enhanced Mobile Navigation Styles */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-top: 2px solid var(--gold);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+            .mobile-nav-item i {
+                font-size: 1.2rem;
+                margin-bottom: 4px;
+            }
+
+            .mobile-nav-item.active {
+                color: var(--primary);
+            }
+
+                .mobile-nav-item.active i {
+                    transform: translateY(-5px);
+                    color: var(--secondary);
+                }
+
+        @media (max-width: 640px) {
+            /* Hide the top-bar nav links on mobile */
+            .top-bar .nav-links {
+                display: none;
+            }
+
+            /* Show bottom navigation */
+            .mobile-nav {
+                display: flex;
+            }
+
+            /* Add padding to body so content isn't hidden by the bar */
+            body {
+                padding-bottom: 80px;
+            }
+        }
         .skeleton {
             background: #e1e1e1;
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
@@ -565,11 +625,11 @@
                 document.documentElement.classList.add('is-authenticated');
                 const style = document.createElement('style');
                 style.innerHTML = `
-                        #loginScreen { display: none !important; }
-                        #mainContent { display: block !important; }
-                        #adminModal #loginStep { display: none !important; }
-                        #adminModal #editStep { display: block !important; }
-                    `;
+                            #loginScreen { display: none !important; }
+                            #mainContent { display: block !important; }
+                            #adminModal #loginStep { display: none !important; }
+                            #adminModal #editStep { display: block !important; }
+                        `;
                 document.head.appendChild(style);
             }
         })();
@@ -865,10 +925,10 @@
 
             if (filteredExpenses.length === 0) {
                 listEl.innerHTML = `
-                            <div class="empty-state">
-                                <div class="empty-state-icon">📭</div>
-                                <p>${expenses.length === 0 ? 'Tiada perbelanjaan lagi' : 'Tiada hasil carian'}</p>
-                            </div>`;
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">📭</div>
+                                    <p>${expenses.length === 0 ? 'Tiada perbelanjaan lagi' : 'Tiada hasil carian'}</p>
+                                </div>`;
                 paginationEl.style.display = 'none';
                 return;
             }
@@ -882,22 +942,22 @@
             pageItems.forEach(e => {
                 // Inside renderExpenses function, update the HTML template:
                 html += `
-                        <div class="expense-item">
-                            <div class="expense-info">
-                                <div class="expense-name">${e.vendorName || 'Vendor Tidak Dikenali'}</div>
-                                <div class="expense-details">
-                                    <span>📁 ${e.category}</span>
-                                    <span>📅 ${e.expense_date || 'Tiada Tarikh'}</span> 
-                                    ${e.file_url ? `<a href="${e.file_url}" target="_blank" style="text-decoration:none">📎 Resit</a>` : ''}
+                            <div class="expense-item">
+                                <div class="expense-info">
+                                    <div class="expense-name">${e.vendorName || 'Vendor Tidak Dikenali'}</div>
+                                    <div class="expense-details">
+                                        <span>📁 ${e.category}</span>
+                                        <span>📅 ${e.expense_date || 'Tiada Tarikh'}</span>
+                                        ${e.file_url ? `<a href="${e.file_url}" target="_blank" style="text-decoration:none">📎 Resit</a>` : ''}
+                                    </div>
+                                    ${e.description ? `<div class="expense-description">${e.description}</div>` : ''}
                                 </div>
-                                ${e.description ? `<div class="expense-description">${e.description}</div>` : ''}
-                            </div>
-                            <div class="expense-amount">RM ${parseFloat(e.amount).toFixed(2)}</div>
-                            <div class="expense-actions">
-                                <button onclick="editExpense(${e.id})" class="btn-icon btn-edit" title="Edit">✏️</button>
-                                <button onclick="deleteExpense(${e.id})" class="btn-icon btn-delete" title="Padam">🗑️</button>
-                            </div>
-                        </div>`;
+                                <div class="expense-amount">RM ${parseFloat(e.amount).toFixed(2)}</div>
+                                <div class="expense-actions">
+                                    <button onclick="editExpense(${e.id})" class="btn-icon btn-edit" title="Edit">✏️</button>
+                                    <button onclick="deleteExpense(${e.id})" class="btn-icon btn-delete" title="Padam">🗑️</button>
+                                </div>
+                            </div>`;
             });
             listEl.innerHTML = html;
 
@@ -1023,14 +1083,14 @@
 
                 const resultText = await res.text();
 
-                // Check for "Success" OR if the response contains Supabase-style JSON 
+                // Check for "Success" OR if the response contains Supabase-style JSON
                 // (which means the Supabase request finished but GAS sent the wrong text)
                 if (resultText.includes("Success") || resultText.includes("id")) {
                     showStatus('Perbelanjaan berjaya direkod!', 'success');
                     resetForm();
                     await loadData();
                 } else {
-                    // If it still says error but data is in Supabase, 
+                    // If it still says error but data is in Supabase,
                     // we force a reload to show the user the data is there.
                     showStatus('Data dikemaskini (Sila semak senarai).', 'success');
                     resetForm();
@@ -1038,7 +1098,7 @@
                 }
             } catch (e) {
                 console.error(e);
-                // Fallback: even on fetch error, try to reload data 
+                // Fallback: even on fetch error, try to reload data
                 // because Supabase might have received it.
                 await loadData();
                 showStatus('Rekod dikemaskini.', 'success');
@@ -1066,5 +1126,23 @@
             document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
         }
     </script>
+    <div class="mobile-nav">
+        <a href="index.html" class="mobile-nav-item">
+            <span>🏠</span>
+            <span>Jadual</span>
+        </a>
+        <a href="admin-donation.html" class="mobile-nav-item">
+            <span>💰</span>
+            <span>Kutipan</span>
+        </a>
+        <a href="admin-expense.html" class="mobile-nav-item active">
+            <span>💸</span>
+            <span>Belanja</span>
+        </a>
+        <div class="mobile-nav-item" onclick="logout()" style="cursor:pointer; color: #c62828;">
+            <span>🚪</span>
+            <span>Keluar</span>
+        </div>
+    </div>
 </body>
 </html>

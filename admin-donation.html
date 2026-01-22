@@ -5,6 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pengurusan Kewangan | Surau Seri Putra</title>
     <style>
+        /* Enhanced Mobile Navigation Styles */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-top: 2px solid var(--gold);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+            .mobile-nav-item i {
+                font-size: 1.2rem;
+                margin-bottom: 4px;
+            }
+
+            .mobile-nav-item.active {
+                color: var(--primary);
+            }
+
+                .mobile-nav-item.active i {
+                    transform: translateY(-5px);
+                    color: var(--secondary);
+                }
+
+        @media (max-width: 640px) {
+            /* Hide the top-bar nav links on mobile */
+            .top-bar .nav-links {
+                display: none;
+            }
+
+            /* Show bottom navigation */
+            .mobile-nav {
+                display: flex;
+            }
+
+            /* Add padding to body so content isn't hidden by the bar */
+            body {
+                padding-bottom: 80px;
+            }
+        }
 
         .skeleton {
             background: #e1e1e1;
@@ -556,11 +615,11 @@
                 document.documentElement.classList.add('is-authenticated');
                 const style = document.createElement('style');
                 style.innerHTML = `
-                    #loginScreen { display: none !important; }
-                    #mainContent { display: block !important; }
-                    #adminModal #loginStep { display: none !important; }
-                    #adminModal #editStep { display: block !important; }
-                `;
+                        #loginScreen { display: none !important; }
+                        #mainContent { display: block !important; }
+                        #adminModal #loginStep { display: none !important; }
+                        #adminModal #editStep { display: block !important; }
+                    `;
                 document.head.appendChild(style);
             }
         })();
@@ -849,10 +908,10 @@
 
             if (filteredDonations.length === 0) {
                 listEl.innerHTML = `
-                            <div class="empty-state">
-                                <div class="empty-state-icon">📭</div>
-                                <p>${donations.length === 0 ? 'Tiada transaksi lagi' : 'Tiada hasil carian'}</p>
-                            </div>`;
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">📭</div>
+                                    <p>${donations.length === 0 ? 'Tiada transaksi lagi' : 'Tiada hasil carian'}</p>
+                                </div>`;
                 paginationEl.style.display = 'none';
                 return;
             }
@@ -865,24 +924,24 @@
             let html = '';
             pageItems.forEach(d => {
                 html += `
-                            <div class="donation-item">
-                                <div class="donation-info">
-                                    <div class="donation-name">${d.donorName || 'Penyumbang Am'}</div>
-                                    <div class="donation-details">
-                                        <span>📁 ${d.category}</span>
-                                        <span>📅 ${d.payDate || 'Tiada Tarikh'}</span>
-                                        ${d.fileUrl ? '<span>📎 Resit Asal</span>' : ''}
-                                        ${d.officialReceiptUrl ? '<span>📄 Resit Rasmi</span>' : ''}
+                                <div class="donation-item">
+                                    <div class="donation-info">
+                                        <div class="donation-name">${d.donorName || 'Penyumbang Am'}</div>
+                                        <div class="donation-details">
+                                            <span>📁 ${d.category}</span>
+                                            <span>📅 ${d.payDate || 'Tiada Tarikh'}</span>
+                                            ${d.fileUrl ? '<span>📎 Resit Asal</span>' : ''}
+                                            ${d.officialReceiptUrl ? '<span>📄 Resit Rasmi</span>' : ''}
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="donation-amount">RM ${parseFloat(d.amount).toFixed(2)}</div>
-                                <div class="donation-actions">
-                                    ${d.officialReceiptUrl ? `<a href="${d.officialReceiptUrl}" target="_blank" class="btn-icon" title="Resit Rasmi" style="color: #2e7d32;">📄</a>` : ''}
-                                    ${d.fileUrl ? `<a href="${d.fileUrl}" target="_blank" class="btn-icon" title="Lihat Resit Asal">📎</a>` : ''}
-                                    <button onclick="editDonation(${d.id})" class="btn-icon btn-edit" title="Edit">✏️</button>
-                                    <button onclick="deleteDonation(${d.id})" class="btn-icon btn-delete" title="Padam">🗑️</button>
-                                </div>
-                            </div>`;
+                                    <div class="donation-amount">RM ${parseFloat(d.amount).toFixed(2)}</div>
+                                    <div class="donation-actions">
+                                        ${d.officialReceiptUrl ? `<a href="${d.officialReceiptUrl}" target="_blank" class="btn-icon" title="Resit Rasmi" style="color: #2e7d32;">📄</a>` : ''}
+                                        ${d.fileUrl ? `<a href="${d.fileUrl}" target="_blank" class="btn-icon" title="Lihat Resit Asal">📎</a>` : ''}
+                                        <button onclick="editDonation(${d.id})" class="btn-icon btn-edit" title="Edit">✏️</button>
+                                        <button onclick="deleteDonation(${d.id})" class="btn-icon btn-delete" title="Padam">🗑️</button>
+                                    </div>
+                                </div>`;
             });
             listEl.innerHTML = html;
 
@@ -1056,5 +1115,23 @@
             document.getElementById('payDate').value = today;
         }
     </script>
+    <div class="mobile-nav">
+        <a href="index.html" class="mobile-nav-item">
+            <span>🏠</span>
+            <span>Jadual</span>
+        </a>
+        <a href="admin-donation.html" class="mobile-nav-item active">
+            <span>💰</span>
+            <span>Kutipan</span>
+        </a>
+        <a href="admin-expense.html" class="mobile-nav-item">
+            <span>💸</span>
+            <span>Belanja</span>
+        </a>
+        <div class="mobile-nav-item" onclick="logout()" style="cursor:pointer; color: #c62828;">
+            <span>🚪</span>
+            <span>Keluar</span>
+        </div>
+    </div>
 </body>
 </html>
