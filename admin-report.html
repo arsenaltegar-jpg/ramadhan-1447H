@@ -1,0 +1,347 @@
+﻿<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Perakaunan | Surau Seri Putra</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #4a135a;
+            --secondary: #880e4f;
+            --gold: #d4af37;
+            --gold-light: #fceabb;
+            --glass: rgba(255, 255, 255, 0.98);
+            --text-main: #2d1b0d;
+            --text-muted: #666;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a0624 0%, #4a135a 100%);
+            background-attachment: fixed;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            color: white;
+            margin: 0;
+            padding-bottom: 80px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .report-paper {
+            background: white;
+            color: var(--text-main);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-top: 20px;
+        }
+
+        .report-header {
+            text-align: center;
+            border-bottom: 3px double var(--primary);
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+        }
+
+            .report-header h1 {
+                font-family: 'Georgia', serif;
+                margin: 0;
+                color: var(--primary);
+            }
+
+        .export-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-excel {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .btn-pdf {
+            background: #c62828;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: #f4f4f4;
+            color: var(--primary);
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        td {
+            padding: 10px;
+            border: 1px solid #eee;
+        }
+
+        .row-total {
+            background: #fff9e6;
+            font-weight: bold;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-income {
+            color: #2e7d32;
+        }
+
+        .text-expense {
+            color: #c62828;
+        }
+
+        .signature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .sig-line {
+            border-top: 1px solid #000;
+            margin-top: 60px;
+            padding-top: 5px;
+            font-weight: bold;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-top: 2px solid var(--gold);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+
+            .mobile-nav-item.active {
+                color: var(--primary);
+            }
+
+        @media print {
+            .mobile-nav, .export-buttons {
+                display: none;
+            }
+
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .report-paper {
+                box-shadow: none;
+                width: 100%;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="export-buttons">
+            <button onclick="exportExcel()" class="btn btn-excel">📗 Excel</button>
+            <button onclick="exportPDF()" class="btn btn-pdf">📕 PDF</button>
+        </div>
+
+        <div class="report-paper" id="reportArea">
+            <div class="report-header">
+                <h1>SURAU SERI PUTRA</h1>
+                <p>Penyata Kewangan Ihya Ramadhan 1447H</p>
+                <p id="generatedDate" style="font-size: 0.8rem; color: #666;"></p>
+            </div>
+
+            <h3>1. Ringkasan Keseluruhan</h3>
+            <table>
+                <tr class="row-total">
+                    <td>JUMLAH KUTIPAN DANA</td>
+                    <td class="text-right text-income" id="sumIncome">RM 0.00</td>
+                </tr>
+                <tr class="row-total">
+                    <td>JUMLAH PERBELANJAAN</td>
+                    <td class="text-right text-expense" id="sumExpense">RM 0.00</td>
+                </tr>
+                <tr class="row-total" style="font-size: 1.1rem; border-top: 2px solid var(--primary);">
+                    <td>BAKI SEMASA</td>
+                    <td class="text-right" id="sumBalance">RM 0.00</td>
+                </tr>
+            </table>
+
+            <h3>2. Lejer Terperinci</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tarikh</th>
+                        <th>Kategori</th>
+                        <th>Butiran / Penerima</th>
+                        <th class="text-right">Masuk (RM)</th>
+                        <th class="text-right">Keluar (RM)</th>
+                    </tr>
+                </thead>
+                <tbody id="ledgerBody">
+                    <tr><td colspan="5" style="text-align:center">Memuatkan data...</td></tr>
+                </tbody>
+            </table>
+
+            <div class="signature-grid">
+                <div>
+                    <div class="sig-line">Bendahari</div>
+                    <span>Surau Seri Putra</span>
+                </div>
+                <div>
+                    <div class="sig-line">Pengerusi</div>
+                    <span>Surau Seri Putra</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mobile-nav">
+        <a href="index.html" class="mobile-nav-item"><span>🏠</span><span>Jadual</span></a>
+        <a href="admin-donation.html" class="mobile-nav-item"><span>💰</span><span>Kutipan</span></a>
+        <a href="admin-expense.html" class="mobile-nav-item"><span>💸</span><span>Belanja</span></a>
+        <a href="admin-report.html" class="mobile-nav-item active"><span>📊</span><span>Laporan</span></a>
+        <div class="mobile-nav-item" onclick="logout()" style="cursor:pointer; color: #c62828;">
+            <span>🚪</span>
+            <span>Keluar</span>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkKRLbbPMHZmvVw4N6iAYiVdzq0Kg56tmhRfUQABqjT92Hzfrd-YCSyKB71HczkjmI/exec';
+
+        // Robust Date Parser
+        function parseCustomDate(dateStr) {
+            if (!dateStr) return new Date();
+            const d = new Date(dateStr);
+            // If standard parsing fails (Invalid Date), return current date as fallback
+            return isNaN(d.getTime()) ? new Date() : d;
+        }
+
+        window.onload = () => {
+            const auth = localStorage.getItem('adminPass') || sessionStorage.getItem('adminPass');
+            if (!auth) {
+                window.location.href = 'admin-donation.html';
+            } else {
+                fetchData();
+            }
+        };
+
+        async function fetchData() {
+            document.getElementById('generatedDate').innerText = "Dijana pada: " + new Date().toLocaleString('ms-MY');
+
+            try {
+                const res = await fetch(SCRIPT_URL);
+                const data = await res.json();
+
+                const donations = data.donations.rawList || [];
+                const expenses = data.expenses.rawList || [];
+
+                const totalIn = donations.reduce((sum, d) => sum + parseFloat(d.amount || 0), 0);
+                const totalOut = expenses.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0);
+
+                document.getElementById('sumIncome').innerText = "RM " + totalIn.toFixed(2);
+                document.getElementById('sumExpense').innerText = "RM " + totalOut.toFixed(2);
+                document.getElementById('sumBalance').innerText = "RM " + (totalIn - totalOut).toFixed(2);
+
+                // Mapping with robust date handling
+                const ledger = [
+                    ...donations.map(d => ({
+                        date: parseCustomDate(d.payDate),
+                        cat: d.category,
+                        desc: d.donorName,
+                        in: parseFloat(d.amount),
+                        out: 0
+                    })),
+                    ...expenses.map(e => ({
+                        date: parseCustomDate(e.expense_date || e.expenseDate), // Handles both potential keys
+                        cat: e.category,
+                        desc: e.vendorName,
+                        in: 0,
+                        out: parseFloat(e.amount)
+                    }))
+                ].sort((a, b) => b.date - a.date); // Sort newest first
+
+                const body = document.getElementById('ledgerBody');
+                body.innerHTML = ledger.map(row => `
+                        <tr>
+                            <td>${row.date.toLocaleDateString('en-GB')}</td>
+                            <td>${row.cat}</td>
+                            <td>${row.desc}</td>
+                            <td class="text-right text-income">${row.in > 0 ? row.in.toFixed(2) : '-'}</td>
+                            <td class="text-right text-expense">${row.out > 0 ? row.out.toFixed(2) : '-'}</td>
+                        </tr>
+                    `).join('');
+
+            } catch (e) {
+                console.error("Data Load Error", e);
+                document.getElementById('ledgerBody').innerHTML = '<tr><td colspan="5" style="text-align:center; color:red">Ralat memuatkan data. Sila cuba lagi.</td></tr>';
+            }
+        }
+
+        function exportExcel() {
+            const table = document.getElementById("reportArea");
+            const wb = XLSX.utils.table_to_book(table);
+            XLSX.writeFile(wb, "Laporan_Ramadhan_SSP.xlsx");
+        }
+
+        function exportPDF() {
+            const element = document.getElementById('reportArea');
+            html2pdf().from(element).set({
+                margin: 10,
+                filename: 'Laporan_Ramadhan_SSP.pdf',
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).save();
+        }
+    </script>
+</body>
+</html>
