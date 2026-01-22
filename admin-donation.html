@@ -686,7 +686,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxd0TcffvvIZnKn6YlxdKbc-7QrBqjb6px9wQ4MzcdIUGGj08hHmBE_QDqLDl5QwxYf/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkKRLbbPMHZmvVw4N6iAYiVdzq0Kg56tmhRfUQABqjT92Hzfrd-YCSyKB71HczkjmI/exec';
         let donations = [];
         let filteredDonations = [];
         let editingId = null;
@@ -717,7 +717,11 @@
                     body: JSON.stringify({ type: 'verify_login', password: pass })
                 });
 
-                if (await res.text() === 'Valid') {
+                // TUKAR DI SINI: Baca sebagai JSON, bukan .text()
+                const data = await res.json();
+
+                // Semak properti .result daripada JSON yang dihantar GAS
+                if (data.result === 'Valid') {
                     currentPassword = pass;
                     localStorage.setItem('adminPass', pass);
                     sessionStorage.setItem('adminPass', pass);
@@ -730,6 +734,7 @@
                     sessionStorage.removeItem('adminPass');
                 }
             } catch (e) {
+                console.error("Login error:", e);
                 if (!isSilent) alert('Ralat sambungan. Sila cuba lagi.');
             }
             if (!isSilent) btn.innerText = 'Log Masuk';
@@ -742,29 +747,30 @@
         }
 
         async function loadDonations() {
-            // 1. Try to load from Cache first
-            const cached = localStorage.getItem('surau_donations_cache');
-            if (cached) {
-                const data = JSON.parse(cached);
-                donations = data.rawList; // Update the global variable
-                updateStats(); // Update stats grid
-                applyFilters(); // Render the list
-            }
+            // Show loading spinner
+            showLoading(true);
 
             try {
-                // 2. Background Sync
+                // 1. Fetch fresh data from GAS
                 const res = await fetch(SCRIPT_URL);
                 const data = await res.json();
 
-                if (data.donations && data.donations.rawList) {
-                    // 3. Save to Cache and Update UI
-                    localStorage.setItem('surau_donations_cache', JSON.stringify(data.donations));
+                if (data && data.donations) {
+                    // 2. Update the global variables
                     donations = data.donations.rawList;
+
+                    // 3. Update the cache with NEW data
+                    localStorage.setItem('surau_donations_cache', JSON.stringify(data.donations));
+
+                    // 4. Update UI
                     updateStats();
                     applyFilters();
                 }
             } catch (e) {
-                console.error('Background sync failed', e);
+                console.error('Fetch failed', e);
+                showStatus('Gagal memuatkan data segar', 'error');
+            } finally {
+                showLoading(false);
             }
         }
 
@@ -896,20 +902,31 @@
         async function deleteDonation(id) {
             if (!confirm('Adakah anda pasti?')) return;
 
-            // 1. Remove from local screen instantly
-            donations = donations.filter(d => d.id !== id);
-            updateStats();
-            applyFilters();
-
-            // 2. Request deletion from server in background
+            showLoading(true); // Show spinner while deleting
             try {
                 const res = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify({ type: 'delete_donation', id, password: currentPassword })
                 });
-                if (await res.text() !== 'Success') alert('Gagal memadam di server.');
+
+                const responseData = await res.json();
+
+                if (responseData.result === 'Success') {
+                    // 1. Clear the cache so fresh data is fetched next
+                    localStorage.removeItem('surau_donations_cache');
+
+                    // 2. Re-fetch all data from server to ensure UI is 100% correct
+                    await loadDonations();
+
+                    showStatus('Berjaya dipadam', 'success');
+                } else {
+                    alert('Gagal memadam: ' + (responseData.message || 'Ralat server'));
+                }
             } catch (e) {
                 console.error('Delete failed', e);
+                showStatus('Ralat sambungan', 'error');
+            } finally {
+                showLoading(false);
             }
         }
 
@@ -928,26 +945,30 @@
 
             try {
                 let fileData = null;
+                let fileName = null;
+                let mimeType = null;
+
                 if (file) {
-                    // Convert file to Base64 for App Script
                     const reader = new FileReader();
                     fileData = await new Promise((resolve) => {
                         reader.onload = () => resolve(reader.result.split(',')[1]);
                         reader.readAsDataURL(file);
                     });
+                    fileName = file.name;
+                    mimeType = file.type;
                 }
 
                 const payload = {
                     type: 'donation_update',
-                    password: currentPassword,
-                    id: currentEditingId, // Send existing ID if editing
+                    password: currentPassword, // Diambil dari verifyLogin
+                    id: currentEditingId,
                     donorName,
                     amount,
                     category,
                     payDate,
                     fileData: fileData,
-                    fileName: file ? file.name : null,
-                    mimeType: file ? file.type : null
+                    fileName: fileName,
+                    mimeType: mimeType
                 };
 
                 const res = await fetch(SCRIPT_URL, {
@@ -955,12 +976,18 @@
                     body: JSON.stringify(payload)
                 });
 
-                if (await res.text() === 'Success') {
+                // TUKAR DI SINI: Baca sebagai JSON
+                const responseData = await res.json();
+
+                if (responseData.result === 'Success') {
                     showStatus('Data berjaya disimpan!', 'success');
                     resetForm();
-                    await loadDonations(); // Reload fresh data from Google Sheet
+
+                    // PAKSA RELOAD: Padam cache lama supaya data baru muncul
+                    localStorage.removeItem('surau_donations_cache');
+                    await loadDonations();
                 } else {
-                    showStatus('Gagal menyimpan ke Google Sheet.', 'error');
+                    showStatus('Gagal: ' + (responseData.message || 'Ralat server'), 'error');
                 }
             } catch (e) {
                 console.error(e);

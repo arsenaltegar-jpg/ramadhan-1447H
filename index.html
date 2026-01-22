@@ -576,7 +576,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxd0TcffvvIZnKn6YlxdKbc-7QrBqjb6px9wQ4MzcdIUGGj08hHmBE_QDqLDl5QwxYf/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkKRLbbPMHZmvVw4N6iAYiVdzq0Kg56tmhRfUQABqjT92Hzfrd-YCSyKB71HczkjmI/exec';
         // Check for saved session on load
         document.addEventListener('DOMContentLoaded', () => {
             const savedPass = localStorage.getItem('adminPass');
@@ -690,32 +690,32 @@
             breakdownEl.innerHTML = html;
         }
         function renderUI(data) {
-            // --- 1. RESTORE DONATION INFO ---
+            // --- 1. INFO SUMBANGAN ---
             if (data.donations) {
                 const donationSection = document.getElementById('donationSection');
                 const totalEl = document.getElementById('totalDonation');
                 const breakdownEl = document.getElementById('donationBreakdown');
 
-                // Show the section
                 donationSection.classList.remove('hidden');
-
-                // Update Total Amount
+                // Gunakan data.donations.total daripada Supabase
                 totalEl.innerText = `RM ${data.donations.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-                // Rebuild the Category Breakdown list
-                let breakdownHtml = '<div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">';
-                data.donations.categories.forEach(cat => {
-                    breakdownHtml += `
+                // Jika anda mahu memaparkan pecahan kategori (opsional)
+                if (data.donations.categories) {
+                    let breakdownHtml = '<div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">';
+                    data.donations.categories.forEach(cat => {
+                        breakdownHtml += `
                 <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem;">
                     <span style="color: var(--text-muted); font-weight: 600;">${cat.name}</span>
                     <span style="font-weight: 800; color: var(--primary);">RM ${cat.amount.toFixed(2)}</span>
                 </div>`;
-                });
-                breakdownHtml += '</div>';
-                breakdownEl.innerHTML = breakdownHtml;
+                    });
+                    breakdownHtml += '</div>';
+                    breakdownEl.innerHTML = breakdownHtml;
+                }
             }
 
-            // --- 2. UPDATE PRAYER TIMES ---
+            // --- 2. WAKTU SOLAT ---
             if (data.prayerTimes) {
                 document.getElementById('prayerSection').classList.remove('hidden');
                 document.getElementById('hijriDisplay').innerText = data.prayerTimes.hDate || "";
@@ -729,10 +729,18 @@
                 highlightCurrentSolat(tMap);
             }
 
-            // --- 3. REBUILD SCHEDULE ---
+            // --- 3. JADUAL (SCHEDULE) ---
             slots = {};
-            data.schedule.forEach(item => { if (item.SelectedDate) slots[item.SelectedDate] = item; });
-            render();
+            if (data.schedule) {
+                data.schedule.forEach(item => {
+                    if (item.SelectedDate) {
+                        // Supabase menghantar '2026-02-18T00:00:00', kita potong kepada '2026-02-18'
+                        const dateKey = item.SelectedDate.split('T')[0];
+                        slots[dateKey] = item;
+                    }
+                });
+            }
+            render(); // Panggil fungsi render asal
         }
 
         async function loadData() {
@@ -778,14 +786,11 @@
             const dayNames = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
             const monthNames = ['JAN', 'FEB', 'MAC', 'APR', 'MEI', 'JUN', 'JUL', 'OGOS', 'SEPT', 'OKT', 'NOV', 'DIS'];
 
-            // Start from 0 to include the night before 1st Ramadhan
+            // Gelung dari 0 (18 Feb) hingga 30 Ramadhan
             for (let i = 0; i <= 30; i++) {
-                // 19 Feb is 1 Ramadhan. (19 - 1) = 18 Feb is the last day of Syaaban
                 const dObj = new Date(2026, 1, 18 + i);
                 const ds = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, '0')}-${String(dObj.getDate()).padStart(2, '0')}`;
                 const s = slots[ds] || {};
-
-                // Logical check: Is this the "Night Before" (Day 0)?
                 const isNightBefore = (i === 0);
 
                 html += `
@@ -802,7 +807,7 @@
                     <span class="moon-icon">✨</span>
                 </div>
                 <div class="program-body">
-                    ${s.KuliahSubuh && !isNightBefore ? `
+                    ${s.KuliahSubuh ? `
                         <div class="activity-item">
                             <div class="act-details">
                                 <strong>Kuliah Subuh</strong>
@@ -810,7 +815,7 @@
                             </div>
                             ${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="entry-img">` : ''}
                         </div>` : ''}
-                    
+
                     ${s.Program ? `
                         <div class="activity-item">
                             <div class="act-details">
@@ -836,10 +841,10 @@
                         <div style="font-size:0.6rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Ifthar</div>
                         <div class="host-name">${s.HostName || 'MASIH KOSONG'}</div>
                     </div>
-                    ${!s.HostName ? `<button class="book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span>🥤🍲</span>'}
+                    ${!s.HostName ? `<button class="book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span>🥤</span>'}
                 </div>` : `
                 <div class="ifthar-section" style="background: rgba(255,255,255,0.5); justify-content: center;">
-                    <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">TIADA IFTHAR (SEBELUM RAMADHAN)</div>
+                    <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">Mula Tarawih Malam Ini</div>
                 </div>`}
             </div>`;
             }
@@ -857,19 +862,22 @@
                     body: JSON.stringify({ type: "verify_login", password: pass })
                 });
 
-                if (await res.text() === "Valid") {
+                const data = await res.json();
+
+                // Change: Check data.result instead of raw string
+                if (data.result === "Valid") {
                     localStorage.setItem('adminPass', pass);
                     document.getElementById('loginStep').classList.add('hidden');
                     document.getElementById('editStep').classList.remove('hidden');
-
-                    // Populate the admin forms immediately upon login
                     populateAdminForm();
                     renderAdminDonationList();
                 } else {
                     if (!isSilent) alert("Kata laluan salah!");
                     localStorage.removeItem('adminPass');
                 }
-            } catch (e) { console.error("Ralat sambungan"); }
+            } catch (e) {
+                console.error("Ralat sambungan", e);
+            }
             btn.innerText = "Log Masuk";
         }
 
@@ -896,7 +904,10 @@
 
         async function submitAdminUpdate() {
             const btn = document.getElementById('admSubmitBtn');
+            const originalText = btn.innerText;
             btn.innerText = "Menyimpan...";
+
+            // Ambil nilai daripada form admin
             const payload = {
                 type: "admin_update",
                 password: document.getElementById('adminPassword').value,
@@ -910,30 +921,61 @@
                 kuliahSubuh: document.getElementById('admKuliahSubuh').value,
                 kuliahSubuhUrl: document.getElementById('admKuliahSubuhUrl').value
             };
+
             try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-                if (await res.text() === "Success") {
-                    alert("Berjaya disimpan!");
-                    
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json(); // Pastikan parse sebagai JSON
+
+                if (data.result === "Success") {
+                    alert("✅ Jadual berjaya dikemaskini!");
+                    // Muat semula data tanpa reload seluruh halaman
+                    await loadData();
+                } else {
+                    alert("❌ Gagal: " + (data.message || "Sila semak kata laluan atau sambungan."));
                 }
-            } catch (e) { alert("Gagal menyimpan"); }
-            btn.innerText = "Simpan Perubahan";
+            } catch (e) {
+                console.error("Ralat Admin:", e);
+                alert("❌ Ralat sambungan ke server.");
+            } finally {
+                btn.innerText = originalText;
+            }
         }
 
         document.getElementById('bookingForm').onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             btn.innerText = "Memproses...";
+
             const payload = {
-                selectedDate: document.getElementById('selectedDate').value,
+                selectedDate: document.getElementById('selectedDate').value, // Pastikan format YYYY-MM-DD
                 hostName: document.getElementById('hostName').value,
                 hostContact: document.getElementById('hostContact').value
             };
+
             try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-                if (await res.text() === "Success") { alert("Tempahan berjaya!"); location.reload(); }
-            } catch (e) { alert("Gagal memproses tempahan"); }
-            btn.innerText = "Sahkan";
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
+                const responseData = await res.json(); // Ambil respon JSON
+
+                if (responseData.result === "Success") {
+                    alert("Tempahan berjaya!");
+                    closeModal('bookingModal');
+                    loadData();
+                } else {
+                    alert("Gagal: " + (responseData.message || "Sila cuba lagi."));
+                }
+            } catch (e) {
+                alert("Ralat sambungan. Sila pastikan Apps Script telah di-deploy semula.");
+            } finally {
+                btn.innerText = "Sahkan";
+            }
         };
 
         function handleBooking(date) { document.getElementById('selectedDate').value = date; document.getElementById('displayDate').innerText = "Tarikh: " + date; document.getElementById('bookingModal').style.display = 'flex'; }
