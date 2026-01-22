@@ -747,28 +747,19 @@
         }
 
         async function loadDonations() {
-            // Show loading spinner
-            showLoading(true);
-
+            showLoading(true); // Show original loading overlay
             try {
-                // 1. Fetch fresh data from GAS
                 const res = await fetch(SCRIPT_URL);
                 const data = await res.json();
 
                 if (data && data.donations) {
-                    // 2. Update the global variables
-                    donations = data.donations.rawList;
-
-                    // 3. Update the cache with NEW data
-                    localStorage.setItem('surau_donations_cache', JSON.stringify(data.donations));
-
-                    // 4. Update UI
-                    updateStats();
-                    applyFilters();
+                    donations = data.donations.rawList; // Update global variable
+                    updateStats(); // Original function
+                    applyFilters(); // Original function
                 }
             } catch (e) {
                 console.error('Fetch failed', e);
-                showStatus('Gagal memuatkan data segar', 'error');
+                showStatus('Gagal memuatkan data terkini', 'error');
             } finally {
                 showLoading(false);
             }

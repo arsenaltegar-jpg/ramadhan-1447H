@@ -770,32 +770,22 @@
         }
 
         async function loadData() {
-            // 1. Load everything from Cache first
-            const cached = localStorage.getItem('surau_expense_cache');
-            if (cached) {
-                const data = JSON.parse(cached);
-                totalIncome = data.donations.total || 0;
-                expenses = data.expenses.rawList || [];
-                updateStats();
-                applyFilters();
-            }
-
+            showLoading(true); // Use original loading spinner
             try {
-                // 2. Background Sync for fresh data
                 const res = await fetch(SCRIPT_URL);
                 const data = await res.json();
 
                 if (data.expenses) {
-                    // 3. Update Cache and local variables
-                    localStorage.setItem('surau_expense_cache', JSON.stringify(data));
-                    totalIncome = data.donations.total;
-                    expenses = data.expenses.rawList;
-
-                    updateStats();
-                    applyFilters();
+                    totalIncome = data.donations.total; //
+                    expenses = data.expenses.rawList; //
+                    updateStats(); // Original logic
+                    applyFilters(); // Original logic
                 }
             } catch (e) {
                 console.error('Expense sync failed', e);
+                showStatus('Gagal memuatkan data live', 'error');
+            } finally {
+                showLoading(false);
             }
         }
 
