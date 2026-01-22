@@ -32,7 +32,7 @@
         .container {
             max-width: 1100px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
         }
 
         .report-paper {
@@ -42,6 +42,15 @@
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             margin-top: 20px;
+            overflow: hidden; /* Prevents bleed on export */
+        }
+
+        /* Logo Styling */
+        .report-logo {
+            display: block;
+            margin: 0 auto 15px;
+            max-height: 100px;
+            width: auto;
         }
 
         .report-header {
@@ -53,8 +62,9 @@
 
             .report-header h1 {
                 font-family: 'Georgia', serif;
-                margin: 0;
+                margin: 5px 0;
                 color: var(--primary);
+                font-size: 1.8rem;
             }
 
         .export-buttons {
@@ -86,11 +96,19 @@
             color: white;
         }
 
+        /* Mobile Fix: Table Responsiveness */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 20px 0;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
             font-size: 0.9rem;
+            min-width: 600px; /* Ensures desktop-like spacing even on mobile */
         }
 
         th {
@@ -166,6 +184,7 @@
                 color: var(--primary);
             }
 
+        /* Export & Print Optimization */
         @media print {
             .mobile-nav, .export-buttons {
                 display: none;
@@ -180,6 +199,15 @@
                 box-shadow: none;
                 width: 100%;
                 padding: 0;
+                border-radius: 0;
+            }
+
+            .table-responsive {
+                overflow: visible;
+            }
+
+            table {
+                min-width: 100%;
             }
         }
     </style>
@@ -194,42 +222,48 @@
 
         <div class="report-paper" id="reportArea">
             <div class="report-header">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRk6d5ZFsWgltl3x82ywVcjgFMZHct2LBjVQg&s" alt="Logo Surau" class="report-logo">
+
                 <h1>SURAU SERI PUTRA</h1>
                 <p>Penyata Kewangan Ihya Ramadhan 1447H</p>
                 <p id="generatedDate" style="font-size: 0.8rem; color: #666;"></p>
             </div>
 
             <h3>1. Ringkasan Keseluruhan</h3>
-            <table>
-                <tr class="row-total">
-                    <td>JUMLAH KUTIPAN DANA</td>
-                    <td class="text-right text-income" id="sumIncome">RM 0.00</td>
-                </tr>
-                <tr class="row-total">
-                    <td>JUMLAH PERBELANJAAN</td>
-                    <td class="text-right text-expense" id="sumExpense">RM 0.00</td>
-                </tr>
-                <tr class="row-total" style="font-size: 1.1rem; border-top: 2px solid var(--primary);">
-                    <td>BAKI SEMASA</td>
-                    <td class="text-right" id="sumBalance">RM 0.00</td>
-                </tr>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <tr class="row-total">
+                        <td>JUMLAH KUTIPAN DANA</td>
+                        <td class="text-right text-income" id="sumIncome">RM 0.00</td>
+                    </tr>
+                    <tr class="row-total">
+                        <td>JUMLAH PERBELANJAAN</td>
+                        <td class="text-right text-expense" id="sumExpense">RM 0.00</td>
+                    </tr>
+                    <tr class="row-total" style="font-size: 1.1rem; border-top: 2px solid var(--primary);">
+                        <td>BAKI SEMASA</td>
+                        <td class="text-right" id="sumBalance">RM 0.00</td>
+                    </tr>
+                </table>
+            </div>
 
             <h3>2. Lejer Terperinci</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tarikh</th>
-                        <th>Kategori</th>
-                        <th>Butiran / Penerima</th>
-                        <th class="text-right">Masuk (RM)</th>
-                        <th class="text-right">Keluar (RM)</th>
-                    </tr>
-                </thead>
-                <tbody id="ledgerBody">
-                    <tr><td colspan="5" style="text-align:center">Memuatkan data...</td></tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarikh</th>
+                            <th>Kategori</th>
+                            <th>Butiran / Penerima</th>
+                            <th class="text-right">Masuk (RM)</th>
+                            <th class="text-right">Keluar (RM)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ledgerBody">
+                        <tr><td colspan="5" style="text-align:center">Memuatkan data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
 
             <div class="signature-grid">
                 <div>
@@ -258,11 +292,9 @@
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkKRLbbPMHZmvVw4N6iAYiVdzq0Kg56tmhRfUQABqjT92Hzfrd-YCSyKB71HczkjmI/exec';
 
-        // Robust Date Parser
         function parseCustomDate(dateStr) {
             if (!dateStr) return new Date();
             const d = new Date(dateStr);
-            // If standard parsing fails (Invalid Date), return current date as fallback
             return isNaN(d.getTime()) ? new Date() : d;
         }
 
@@ -292,7 +324,6 @@
                 document.getElementById('sumExpense').innerText = "RM " + totalOut.toFixed(2);
                 document.getElementById('sumBalance').innerText = "RM " + (totalIn - totalOut).toFixed(2);
 
-                // Mapping with robust date handling
                 const ledger = [
                     ...donations.map(d => ({
                         date: parseCustomDate(d.payDate),
@@ -302,28 +333,28 @@
                         out: 0
                     })),
                     ...expenses.map(e => ({
-                        date: parseCustomDate(e.expense_date || e.expenseDate), // Handles both potential keys
+                        date: parseCustomDate(e.expense_date || e.expenseDate),
                         cat: e.category,
                         desc: e.vendorName,
                         in: 0,
                         out: parseFloat(e.amount)
                     }))
-                ].sort((a, b) => b.date - a.date); // Sort newest first
+                ].sort((a, b) => b.date - a.date);
 
                 const body = document.getElementById('ledgerBody');
                 body.innerHTML = ledger.map(row => `
-                        <tr>
-                            <td>${row.date.toLocaleDateString('en-GB')}</td>
-                            <td>${row.cat}</td>
-                            <td>${row.desc}</td>
-                            <td class="text-right text-income">${row.in > 0 ? row.in.toFixed(2) : '-'}</td>
-                            <td class="text-right text-expense">${row.out > 0 ? row.out.toFixed(2) : '-'}</td>
-                        </tr>
-                    `).join('');
+                            <tr>
+                                <td>${row.date.toLocaleDateString('en-GB')}</td>
+                                <td>${row.cat}</td>
+                                <td>${row.desc}</td>
+                                <td class="text-right text-income">${row.in > 0 ? row.in.toFixed(2) : '-'}</td>
+                                <td class="text-right text-expense">${row.out > 0 ? row.out.toFixed(2) : '-'}</td>
+                            </tr>
+                        `).join('');
 
             } catch (e) {
                 console.error("Data Load Error", e);
-                document.getElementById('ledgerBody').innerHTML = '<tr><td colspan="5" style="text-align:center; color:red">Ralat memuatkan data. Sila cuba lagi.</td></tr>';
+                document.getElementById('ledgerBody').innerHTML = '<tr><td colspan="5" style="text-align:center; color:red">Ralat memuatkan data.</td></tr>';
             }
         }
 
@@ -335,12 +366,20 @@
 
         function exportPDF() {
             const element = document.getElementById('reportArea');
-            html2pdf().from(element).set({
+            const opt = {
                 margin: 10,
                 filename: 'Laporan_Ramadhan_SSP.pdf',
-                html2canvas: { scale: 2 },
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true }, // useCORS allows external logo to load
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            }).save();
+            };
+            html2pdf().from(element).set(opt).save();
+        }
+
+        function logout() {
+            localStorage.removeItem('adminPass');
+            sessionStorage.removeItem('adminPass');
+            window.location.href = 'admin-donation.html';
         }
     </script>
 </body>
