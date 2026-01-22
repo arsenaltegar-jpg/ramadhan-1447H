@@ -6,7 +6,24 @@
     <title>Pengurusan Kewangan | Surau Seri Putra</title>
     <style>
 
+        .skeleton {
+            background: #e1e1e1;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 8px;
+            color: transparent !important;
+        }
 
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
 
         .nav-links {
             display: flex;
@@ -576,15 +593,15 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-label">Jumlah Kutipan</div>
-                    <div class="stat-value" id="totalAmount">RM 0.00</div>
+                    <div class="stat-value skeleton" id="totalAmount">RM 0.00</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Bilangan Transaksi</div>
-                    <div class="stat-value" id="totalTransactions">0</div>
+                    <div class="stat-value skeleton" id="totalTransactions">0</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Purata Sumbangan</div>
-                    <div class="stat-value" id="avgDonation">RM 0.00</div>
+                    <div class="stat-value skeleton" id="avgDonation">RM 0.00</div>
                 </div>
             </div>
 
@@ -747,22 +764,46 @@
         }
 
         async function loadDonations() {
-            showLoading(true); // Show original loading overlay
+            // 1. Check Cache first
+            const cached = localStorage.getItem('surau_donations_cache');
+            if (cached) {
+                try {
+                    donations = JSON.parse(cached);
+                    updateUIState(); // Show old data immediately
+                } catch (e) { console.error("Cache error", e); }
+            }
+
             try {
+                // 2. Fetch fresh data
                 const res = await fetch(SCRIPT_URL);
                 const data = await res.json();
 
-                if (data && data.donations) {
-                    donations = data.donations.rawList; // Update global variable
-                    updateStats(); // Original function
-                    applyFilters(); // Original function
+                // 3. Check if data exists in the specific structure from your GAS
+                if (data && data.donations && data.donations.rawList) {
+                    donations = data.donations.rawList;
+
+                    // Save fresh data to cache
+                    localStorage.setItem('surau_donations_cache', JSON.stringify(donations));
+
+                    updateUIState();
                 }
             } catch (e) {
                 console.error('Fetch failed', e);
-                showStatus('Gagal memuatkan data terkini', 'error');
             } finally {
+                // Always stop the full-screen spinner if it's active
                 showLoading(false);
             }
+        }
+
+        function updateUIState() {
+            // Remove the shimmer effect from all stat values
+            document.querySelectorAll('.stat-value').forEach(el => {
+                el.classList.remove('skeleton');
+            });
+
+            // Call your existing calculation and rendering functions
+            updateStats();
+            applyFilters();
         }
 
         function updateStats() {

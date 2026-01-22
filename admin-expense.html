@@ -5,7 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pengurusan Perbelanjaan | Surau Seri Putra</title>
     <style>
+        .skeleton {
+            background: #e1e1e1;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 8px;
+            color: transparent !important;
+        }
 
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
         :root {
             --primary: #4a135a;
             --secondary: #880e4f;
@@ -585,19 +602,19 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-label">Jumlah Kutipan</div>
-                    <div class="stat-value income" id="totalIncome">RM 0.00</div>
+                    <div class="stat-value income skeleton" id="totalIncome">RM 0.00</div>
                 </div>
                 <div class="stat-card expense">
                     <div class="stat-label">Jumlah Perbelanjaan</div>
-                    <div class="stat-value expense" id="totalExpense">RM 0.00</div>
+                    <div class="stat-value expense skeleton" id="totalExpense">RM 0.00</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Baki Dana</div>
-                    <div class="stat-value balance" id="balance">RM 0.00</div>
+                    <div class="stat-value balance skeleton" id="balance">RM 0.00</div>
                 </div>
                 <div class="stat-card expense">
                     <div class="stat-label">Bilangan Transaksi</div>
-                    <div class="stat-value expense" id="totalTransactions">0</div>
+                    <div class="stat-value expense skeleton" id="totalTransactions">0</div>
                 </div>
             </div>
 
@@ -770,23 +787,34 @@
         }
 
         async function loadData() {
-            showLoading(true); // Use original loading spinner
+            const cached = localStorage.getItem('surau_expense_cache');
+            if (cached) {
+                const data = JSON.parse(cached);
+                totalIncome = data.donations.total;
+                expenses = data.expenses.rawList;
+                updateUIState();
+            }
+
             try {
                 const res = await fetch(SCRIPT_URL);
                 const data = await res.json();
-
                 if (data.expenses) {
-                    totalIncome = data.donations.total; //
-                    expenses = data.expenses.rawList; //
-                    updateStats(); // Original logic
-                    applyFilters(); // Original logic
+                    localStorage.setItem('surau_expense_cache', JSON.stringify(data));
+                    totalIncome = data.donations.total;
+                    expenses = data.expenses.rawList;
+                    updateUIState();
                 }
             } catch (e) {
                 console.error('Expense sync failed', e);
-                showStatus('Gagal memuatkan data live', 'error');
             } finally {
                 showLoading(false);
             }
+        }
+
+        function updateUIState() {
+            document.querySelectorAll('.stat-value').forEach(el => el.classList.remove('skeleton'));
+            updateStats();
+            applyFilters();
         }
 
         function updateStats() {
