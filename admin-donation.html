@@ -904,72 +904,59 @@
         document.getElementById('donationForm').onsubmit = async (e) => {
             e.preventDefault();
 
-            // 1. Prepare form data
             const donorName = document.getElementById('donorName').value;
             const amount = parseFloat(document.getElementById('amount').value);
             const category = document.getElementById('category').value;
             const payDate = document.getElementById('payDate').value;
             const fileInput = document.getElementById('receiptFile');
             const file = fileInput.files[0];
+            const currentEditingId = editingId;
 
-            // 2. OPTIMISTIC UPDATE: Add to local list immediately
-            const tempId = editingId || Date.now();
-            const tempDonation = {
-                id: tempId,
-                donorName: donorName,
-                amount: amount,
-                category: category,
-                payDate: payDate,
-                isPending: true // Visual flag for syncing
-            };
-
-            if (editingId) {
-                const idx = donations.findIndex(d => d.id === editingId);
-                donations[idx] = tempDonation;
-            } else {
-                donations.unshift(tempDonation); // Add to the top of the list
-            }
-
-            // 3. Refresh UI instantly
-            updateStats();
-            applyFilters();
-            resetForm();
-            showStatus('Menyimpan ke awan...', 'success');
-
-            // 4. Background Server Request
             showLoading(true);
 
-            let fileData = null;
-            if (file) {
-                const reader = new FileReader();
-                fileData = await new Promise((resolve) => {
-                    reader.onload = (e) => resolve(e.target.result.split(',')[1]);
-                    reader.readAsDataURL(file);
-                });
-            }
-
-            const payload = {
-                type: 'donation_update',
-                id: editingId,
-                password: currentPassword,
-                category, amount, donorName, payDate,
-                fileName: file ? file.name : '',
-                mimeType: file ? file.type : '',
-                fileData: fileData
-            };
-
             try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                let fileData = null;
+                if (file) {
+                    // Convert file to Base64 for App Script
+                    const reader = new FileReader();
+                    fileData = await new Promise((resolve) => {
+                        reader.onload = () => resolve(reader.result.split(',')[1]);
+                        reader.readAsDataURL(file);
+                    });
+                }
+
+                const payload = {
+                    type: 'donation_update',
+                    password: currentPassword,
+                    id: currentEditingId, // Send existing ID if editing
+                    donorName,
+                    amount,
+                    category,
+                    payDate,
+                    fileData: fileData,
+                    fileName: file ? file.name : null,
+                    mimeType: file ? file.type : null
+                };
+
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
                 if (await res.text() === 'Success') {
-                    showStatus('Tersimpan di awan!', 'success');
-                    loadDonations(); // Full refresh to get real IDs and file URLs
+                    showStatus('Data berjaya disimpan!', 'success');
+                    resetForm();
+                    await loadDonations(); // Reload fresh data from Google Sheet
+                } else {
+                    showStatus('Gagal menyimpan ke Google Sheet.', 'error');
                 }
             } catch (e) {
-                showStatus('Gagal sync. Sila cuba lagi.', 'error');
+                console.error(e);
+                showStatus('Ralat sambungan: ' + e.message, 'error');
+            } finally {
+                showLoading(false);
             }
-            showLoading(false);
-        };
-
+        }
         function resetForm() {
             document.getElementById('donationForm').reset();
             editingId = null;
@@ -998,7 +985,7 @@
         window.onload = () => {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('payDate').value = today;
-        };
+        }
     </script>
 </body>
 </html>
