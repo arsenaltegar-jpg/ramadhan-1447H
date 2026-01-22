@@ -496,11 +496,15 @@
         <div id="donationSection" class="donation-card hidden">
             <div style="text-align:center;">
                 <span class="solat-label">Dana Ihya Ramadhan</span>
-                <div style="font-size: 2rem; font-weight: 900; color: #2e7d32;" class="skeleton" id="totalDonation">RM 0.00</div>
+                <div style="font-size: 2rem; font-weight: 900; color: #2e7d32;" class="skeleton" id="totalDonation">&nbsp;</div>
             </div>
             <div id="donationBreakdown"></div>
         </div>
-        <div id="scheduleGrid"><div class="loading-state">Memuatkan jadual...</div></div>
+        <div id="scheduleGrid">
+            <div class="day-card skeleton" style="height: 200px; margin-bottom: 20px;"></div>
+            <div class="day-card skeleton" style="height: 200px; margin-bottom: 20px;"></div>
+            <div class="day-card skeleton" style="height: 200px; margin-bottom: 20px;"></div>
+        </div>
     </div>
 
     <div class="admin-fab" onclick="openAdminLogin()">⚙️</div>
@@ -716,8 +720,10 @@
                 const breakdownEl = document.getElementById('donationBreakdown');
 
                 donationSection.classList.remove('hidden');
-                // Gunakan data.donations.total daripada Supabase
-                totalEl.innerText = `RM ${data.donations.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+          
+                if (data.donations.total !== undefined) {
+                    totalEl.innerText = `RM ${data.donations.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                }
 
                 // Jika anda mahu memaparkan pecahan kategori (opsional)
                 if (data.donations.categories) {
@@ -763,23 +769,36 @@
         }
 
         async function loadData() {
+            const donationEl = document.getElementById('totalDonation');
+            const gridEl = document.getElementById('scheduleGrid');
+
+            // 1. Try to load from Cache first
             const cached = localStorage.getItem('surau_main_cache');
             if (cached) {
-                renderUI(JSON.parse(cached));
-                // Remove skeleton once cached data is shown
-                document.getElementById('totalDonation').classList.remove('skeleton');
+                try {
+                    const data = JSON.parse(cached);
+                    renderUI(data); // This fills the scheduleGrid and Donation section
+
+                    // Remove skeletons if we have valid cached data
+                    if (data.donations) donationEl.classList.remove('skeleton');
+                } catch (e) { console.error("Cache error", e); }
             }
 
             try {
+                // 2. Fetch fresh data
                 const res = await fetch(SCRIPT_URL);
                 const freshData = await res.json();
+
+                // 3. Save to cache and refresh UI
                 localStorage.setItem('surau_main_cache', JSON.stringify(freshData));
                 renderUI(freshData);
+
+                // 4. Remove all skeletons now that fresh data is here
+                donationEl.classList.remove('skeleton');
             } catch (e) {
                 console.error("Sync failed");
-            } finally {
-                // Ensure skeleton is removed even if fetch fails
-                document.getElementById('totalDonation').classList.remove('skeleton');
+                // Remove skeletons even on failure so page isn't stuck shimmering
+                donationEl.classList.remove('skeleton');
             }
         }
         function highlightCurrentSolat(times) {

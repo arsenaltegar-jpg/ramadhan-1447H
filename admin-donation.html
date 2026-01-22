@@ -593,15 +593,15 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-label">Jumlah Kutipan</div>
-                    <div class="stat-value skeleton" id="totalAmount">RM 0.00</div>
+                    <div class="stat-value skeleton" id="totalAmount">&nbsp;</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Bilangan Transaksi</div>
-                    <div class="stat-value skeleton" id="totalTransactions">0</div>
+                    <div class="stat-value skeleton" id="totalTransactions">&nbsp;</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Purata Sumbangan</div>
-                    <div class="stat-value skeleton" id="avgDonation">RM 0.00</div>
+                    <div class="stat-value skeleton" id="avgDonation">&nbsp;</div>
                 </div>
             </div>
 
@@ -764,51 +764,49 @@
         }
 
         async function loadDonations() {
-            // 1. Check Cache first
+            // 1. Try to get cached data first
             const cached = localStorage.getItem('surau_donations_cache');
+
             if (cached) {
-                try {
-                    donations = JSON.parse(cached);
-                    updateUIState(); // Show old data immediately
-                } catch (e) { console.error("Cache error", e); }
+                const cachedData = JSON.parse(cached);
+                if (cachedData && cachedData.length > 0) {
+                    donations = cachedData;
+                    updateUIState(); // Show old data immediately (removes skeleton)
+                }
             }
 
             try {
-                // 2. Fetch fresh data
                 const res = await fetch(SCRIPT_URL);
                 const data = await res.json();
 
-                // 3. Check if data exists in the specific structure from your GAS
                 if (data && data.donations && data.donations.rawList) {
                     donations = data.donations.rawList;
-
-                    // Save fresh data to cache
+                    // Update cache with new data
                     localStorage.setItem('surau_donations_cache', JSON.stringify(donations));
-
-                    updateUIState();
+                    updateUIState(); // Refresh with latest data
                 }
             } catch (e) {
-                console.error('Fetch failed', e);
+                console.error('Fetch error:', e);
             } finally {
-                // Always stop the full-screen spinner if it's active
                 showLoading(false);
             }
         }
 
         function updateUIState() {
-            // Remove the shimmer effect from all stat values
-            document.querySelectorAll('.stat-value').forEach(el => {
-                el.classList.remove('skeleton');
-            });
-
-            // Call your existing calculation and rendering functions
-            updateStats();
-            applyFilters();
+            // Only remove skeleton if we actually have data to show
+            if (donations && donations.length > 0) {
+                document.querySelectorAll('.stat-value').forEach(el => el.classList.remove('skeleton'));
+                updateStats();
+                applyFilters();
+            }
         }
 
         function updateStats() {
+            // If there is no data yet, don't update the UI to "0"
+            if (!donations || donations.length === 0) return;
+
             const total = donations.reduce((sum, d) => sum + parseFloat(d.amount || 0), 0);
-            const avg = donations.length > 0 ? total / donations.length : 0;
+            const avg = total / donations.length;
 
             document.getElementById('totalAmount').innerText = `RM ${total.toFixed(2)}`;
             document.getElementById('totalTransactions').innerText = donations.length;
