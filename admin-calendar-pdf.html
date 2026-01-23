@@ -33,7 +33,6 @@
             overflow: hidden;
         }
 
-        /* Loading Spinner Styles */
         #loader {
             position: fixed;
             inset: 0;
@@ -72,19 +71,6 @@
             inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 0l2.5 7.5L40 5l-2.5 7.5L45 15l-7.5 2.5L40 25l-7.5-2.5L30 30l-2.5-7.5L20 25l2.5-7.5L15 15l7.5-2.5L20 5l7.5 2.5L30 0z' fill='none' stroke='%23d4af37' stroke-width='0.5' stroke-opacity='0.2'/%3E%3C/svg%3E");
             z-index: 0;
-        }
-
-        /* Animated glow effect */
-        #calendarPrintArea::after {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 70%);
-            z-index: 0;
-            pointer-events: none;
         }
 
         .content-wrapper {
@@ -178,7 +164,6 @@
 
         .day-cell {
             background-color: var(--glass);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 60 60'%3E%3Cpath d='M30 0l2.5 7.5L40 5l-2.5 7.5L45 15l-7.5 2.5L40 25l-7.5-2.5L30 30l-2.5-7.5L20 25l2.5-7.5L15 15l7.5-2.5L20 5l7.5 2.5L30 0z' fill='none' stroke='%23d4af37' stroke-width='1.2' stroke-opacity='0.15'/%3E%3C/svg%3E");
             border-radius: 5px;
             color: #333;
             padding: 1.5mm;
@@ -188,7 +173,6 @@
             border: 1px solid rgba(212,175,55,0.3);
             overflow: hidden;
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            transition: transform 0.2s ease;
         }
 
         .day-num-box {
@@ -207,7 +191,6 @@
             color: var(--secondary);
             font-size: 15px;
             line-height: 1;
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
         }
 
         .masehi-date {
@@ -225,20 +208,13 @@
             z-index: 2;
         }
 
-            .entry-slot.alt {
-                flex-direction: row-reverse;
-                text-align: right;
-            }
-
         .thumb-img {
             width: 18px;
             height: 18px;
             border-radius: 4px;
             border: 1px solid var(--gold);
             object-fit: cover;
-            background: linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%);
             flex-shrink: 0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
 
         .entry-info {
@@ -253,7 +229,6 @@
             font-weight: 900;
             text-transform: uppercase;
             display: block;
-            line-height: 1;
         }
 
         .name {
@@ -274,43 +249,34 @@
             text-align: center;
             padding: 0.8mm;
             border-radius: 3px;
-            border-top: 1px solid rgba(212,175,55,0.3);
-            position: relative;
-            z-index: 2;
         }
 
-        .empty-cell {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.12) 100%);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 0l2.5 7.5L40 5l-2.5 7.5L45 15l-7.5 2.5L40 25l-7.5-2.5L30 30l-2.5-7.5L20 25l2.5-7.5L15 15l7.5-2.5L20 5l7.5 2.5L30 0z' fill='none' stroke='white' stroke-width='0.8' stroke-opacity='0.3'/%3E%3C/svg%3E");
-            border: 1px solid rgba(255, 255, 255, 0.25);
+        /* Verse Layout across all 4 inactive columns */
+        .verse-container {
+            grid-column: span 4;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(74, 19, 90, 0.2) 100%);
+            border: 1px solid var(--gold);
             border-radius: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2mm;
-        }
-
-        .quran-verse {
-            color: var(--gold-light);
-            font-size: 7px;
+            padding: 0 20px;
             text-align: center;
-            line-height: 1.4;
-            font-style: italic;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
 
-        .verse-ref {
-            display: block;
-            font-size: 6px;
-            margin-top: 1mm;
-            color: var(--gold);
-            font-weight: bold;
+        .verse-text {
+            color: var(--gold-light);
+            font-size: 11px;
+            font-style: italic;
+            font-weight: 600;
+            line-height: 1.5;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
         }
 
         .btn-container {
             text-align: center;
             padding: 15px;
-            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            background: #1a1a1a;
         }
 
         .btn-download {
@@ -321,19 +287,7 @@
             border-radius: 50px;
             font-weight: 800;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(212,175,55,0.4);
-            transition: all 0.3s ease;
-            font-size: 14px;
         }
-
-            .btn-download:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(212,175,55,0.6);
-            }
-
-            .btn-download:active {
-                transform: translateY(0);
-            }
     </style>
 </head>
 <body>
@@ -385,7 +339,7 @@
                 document.getElementById('loader').style.display = 'none';
             } catch (e) {
                 console.error("Sync Error:", e);
-                document.getElementById('loader').innerHTML = '<p style="color:red">Gagal memuatkan data. Sila muat semula.</p>';
+                document.getElementById('loader').innerHTML = '<p style="color:red">Gagal memuatkan data.</p>';
             }
         }
 
@@ -394,14 +348,6 @@
             const months = ["JAN", "FEB", "MAC", "APR"];
             let html = grid.innerHTML;
 
-            // Ramadhan-related Quran verses in Malay
-            const quranVerses = [
-                { text: "Bulan Ramadhan adalah bulan di mana Al-Quran diturunkan", ref: "Al-Baqarah 2:185" },
-                { text: "Sesungguhnya Kami telah menurunkannya pada malam kemuliaan", ref: "Al-Qadr 97:1" },
-                { text: "Maka barangsiapa di antara kamu menyaksikan bulan itu, hendaklah dia berpuasa", ref: "Al-Baqarah 2:185" },
-                { text: "Dan apabila hamba-hamba-Ku bertanya kepadamu tentang Aku, maka Aku adalah dekat", ref: "Al-Baqarah 2:186" }
-            ];
-
             for (let i = 0; i <= 30; i++) {
                 const dObj = new Date(2026, 1, 18 + i);
                 const ds = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, '0')}-${String(dObj.getDate()).padStart(2, '0')}`;
@@ -409,29 +355,27 @@
                 const isNight0 = (i === 0);
 
                 html += `
-                            <div class="day-cell">
-                                <div class="day-num-box">
-                                    <span class="ramadhan-date">${isNight0 ? '🌙' : i}</span>
-                                    <span class="masehi-date">${dObj.getDate()} ${months[dObj.getMonth()]}</span>
-                                </div>
-                                <div class="entry-list">
-                                    ${s.Program ? `<div class="entry-slot">${s.ProgramUrl ? `<img src="${s.ProgramUrl}" class="thumb-img">` : ''}<div class="entry-info"><span class="label">Program Khas</span><span class="name">${s.Program}</span></div></div>` : ''}
-                                    ${s.KuliahSubuh ? `<div class="entry-slot alt">${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="thumb-img">` : ''}<div class="entry-info"><span class="label">Kuliah Subuh</span><span class="name">${s.KuliahSubuh}</span></div></div>` : ''}
-                                    ${s.Imam ? `<div class="entry-slot">${s.ImageUrl ? `<img src="${s.ImageUrl}" class="thumb-img">` : ''}<div class="entry-info"><span class="label">Imam Tarawih</span><span class="name">${s.Imam}</span></div></div>` : ''}
-                                </div>
-                                ${s.HostName ? `<div class="host-footer">Tajaan: ${s.HostName}</div>` : ''}
-                            </div>`;
+                        <div class="day-cell">
+                            <div class="day-num-box">
+                                <span class="ramadhan-date">${isNight0 ? '🌙' : i}</span>
+                                <span class="masehi-date">${dObj.getDate()} ${months[dObj.getMonth()]}</span>
+                            </div>
+                            <div class="entry-list">
+                                ${s.Program ? `<div class="entry-slot"><img src="${s.ProgramUrl || ''}" class="thumb-img" onerror="this.style.display='none'"><div class="entry-info"><span class="label">Program Khas</span><span class="name">${s.Program}</span></div></div>` : ''}
+                                ${s.KuliahSubuh ? `<div class="entry-slot" style="flex-direction:row-reverse; text-align:right;"><img src="${s.KuliahSubuhUrl || ''}" class="thumb-img" onerror="this.style.display='none'"><div class="entry-info"><span class="label">Kuliah Subuh</span><span class="name">${s.KuliahSubuh}</span></div></div>` : ''}
+                                ${s.Imam ? `<div class="entry-slot"><img src="${s.ImageUrl || ''}" class="thumb-img" onerror="this.style.display='none'"><div class="entry-info"><span class="label">Imam Tarawih</span><span class="name">${s.Imam}</span></div></div>` : ''}
+                            </div>
+                            ${s.HostName ? `<div class="host-footer">Tajaan: ${s.HostName}</div>` : ''}
+                        </div>`;
             }
 
-            for (let j = 0; j < (35 - 31); j++) {
-                const verse = quranVerses[j % quranVerses.length];
-                html += `<div class="day-cell empty-cell">
-                        <div class="quran-verse">
-                            "${verse.text}"
-                            <span class="verse-ref">${verse.ref}</span>
-                        </div>
+            // Verse Spanning all 4 remaining columns
+            const verse = "“Wahai orang-orang yang beriman! Kamu diwajibkan berpuasa sebagaimana diwajibkan atas orang-orang yang dahulu daripada kamu, supaya kamu bertaqwa.” (Al-Baqarah: 183)";
+            html += `
+                    <div class="verse-container">
+                        <div class="verse-text">${verse}</div>
                     </div>`;
-            }
+
             grid.innerHTML = html;
         }
 
