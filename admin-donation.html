@@ -846,23 +846,22 @@
         }
 
         function updateUIState() {
-            // Only remove skeleton if we actually have data to show
-            if (donations && donations.length > 0) {
+            
                 document.querySelectorAll('.stat-value').forEach(el => el.classList.remove('skeleton'));
                 updateStats();
                 applyFilters();
-            }
+            
         }
 
         function updateStats() {
-            // If there is no data yet, don't update the UI to "0"
-            if (!donations || donations.length === 0) return;
-
-            const total = donations.reduce((sum, d) => sum + parseFloat(d.amount || 0), 0);
-            const avg = total / donations.length;
+            // Fallback to 0 if donations is null or empty
+            const list = donations || [];
+            const total = list.reduce((sum, d) => sum + parseFloat(d.amount || 0), 0);
+            const count = list.length;
+            const avg = count > 0 ? total / count : 0;
 
             document.getElementById('totalAmount').innerText = `RM ${total.toFixed(2)}`;
-            document.getElementById('totalTransactions').innerText = donations.length;
+            document.getElementById('totalTransactions').innerText = count;
             document.getElementById('avgDonation').innerText = `RM ${avg.toFixed(2)}`;
         }
 
