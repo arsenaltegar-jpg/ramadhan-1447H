@@ -441,13 +441,96 @@
             display: block;
             margin-top: 10px;
         }
+        /* Enhanced Donation Card */
         .donation-card {
-            background: var(--glass);
-            margin-bottom: 30px;
-            padding: 22px;
-            border-radius: 28px;
-            color: var(--text-main);
-            border: 2px solid var(--gold);
+            background: linear-gradient(135deg, rgba(74, 19, 90, 0.4), rgba(136, 14, 79, 0.3));
+            backdrop-filter: blur(20px);
+            margin-bottom: 24px;
+            padding: 25px 20px;
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+            /* Islamic Geometric Background Overlay */
+            .donation-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                opacity: 0.07;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 0l10 30 30 10-30 10-10 30-10-30-30-10 30-10z' fill='%23d4af37'/%3E%3C/svg%3E");
+                pointer-events: none;
+            }
+
+        .donation-header {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .donation-label-main {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .donation-amount-big {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 10px 0;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .donation-breakdown-container {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .don-cat-pill {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+            .don-cat-pill:hover {
+                transform: translateY(-3px);
+                background: rgba(255, 255, 255, 0.15);
+            }
+
+        .don-cat-name {
+            display: block;
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            color: var(--gold-light);
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .don-cat-val {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: white;
         }
 
         .tab-btn {
@@ -519,11 +602,12 @@
             <div class="solat-item" id="item-isyak"><span class="solat-label">Isyak</span><div class="solat-time" id="t-isyak">-</div></div>
         </div>
         <div id="donationSection" class="donation-card hidden">
-            <div style="text-align:center;">
-                <span class="solat-label">Dana Ihya Ramadhan</span>
-                <div style="font-size: 2rem; font-weight: 900; color: #2e7d32;" class="skeleton" id="totalDonation">&nbsp;</div>
+            <div class="donation-header">
+                <span class="donation-label-main">Dana Ihya Ramadhan</span>
+                <div class="donation-amount-big skeleton" id="totalDonation">&nbsp;</div>
             </div>
-            <div id="donationBreakdown"></div>
+            <div id="donationBreakdown" class="donation-breakdown-container">
+            </div>
         </div>
         <div id="scheduleGrid">
             <div class="day-card skeleton" style="height: 200px; margin-bottom: 20px;"></div>
