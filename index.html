@@ -139,64 +139,89 @@
         }
 
         .solat-container {
-            background: var(--glass);
-            margin-bottom: 30px;
-            padding: 22px;
-            border-radius: 28px;
+            background: linear-gradient(135deg, rgba(74, 19, 90, 0.4), rgba(136, 14, 79, 0.3));
+            backdrop-filter: blur(20px);
+            margin-bottom: 20px;
+            padding: 16px;
+            border-radius: 20px;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            color: var(--text-main);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-            border: 2px solid rgba(212, 175, 55, 0.2);
+            gap: 8px;
+            color: white;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(212, 175, 55, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.4);
             animation: fadeInUp 0.6s ease-out;
         }
 
         .solat-title {
             grid-column: span 3;
             text-align: center;
-            font-size: 0.75rem;
-            font-weight: 900;
-            color: var(--primary);
-            border-bottom: 2px solid rgba(212, 175, 55, 0.2);
-            padding-bottom: 12px;
-            margin-bottom: 10px;
+            font-size: 0.6rem;
+            font-weight: 800;
+            color: var(--gold);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            padding-bottom: 8px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             text-transform: uppercase;
+            letter-spacing: 2px;
         }
+
+            .solat-title #hijriDisplay {
+                color: var(--gold-light) !important;
+                font-weight: 700;
+            }
 
         .solat-item {
             text-align: center;
-            padding: 14px 6px;
-            border-radius: 18px;
-            background: rgba(255, 255, 255, 0.3);
-            border: 2px solid transparent;
+            padding: 10px 4px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
         }
 
+            .solat-item:hover {
+                background: rgba(255, 255, 255, 0.15);
+                border-color: rgba(212, 175, 55, 0.4);
+                transform: translateY(-2px);
+            }
+
         .solat-label {
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             text-transform: uppercase;
-            font-weight: 800;
-            color: var(--text-muted);
+            font-weight: 700;
+            color: rgba(212, 175, 55, 0.7);
             display: block;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
         }
 
         .solat-time {
-            font-size: 1rem;
-            font-weight: 900;
-            color: var(--text-main);
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #fceabb;
         }
 
         .active-prayer {
-            background: #fff;
-            border: 2px solid var(--gold);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.4), rgba(212, 175, 55, 0.25));
+            border: 1px solid var(--gold);
             transform: scale(1.05);
-            animation: pulse-glow 2s infinite;
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
             .active-prayer .solat-label {
-                color: var(--secondary);
+                color: var(--gold);
+                font-weight: 800;
+            }
+
+            .active-prayer .solat-time {
+                color: var(--gold-light);
+                font-size: 1.05rem;
+                text-shadow: 0 2px 8px rgba(212, 175, 55, 0.4);
             }
 
         .day-card {
