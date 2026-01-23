@@ -1,0 +1,389 @@
+﻿<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengurusan Jadual | Surau Seri Putra</title>
+    <style>
+        :root {
+            --primary: #4a135a;
+            --secondary: #880e4f;
+            --gold: #d4af37;
+            --gold-light: #fceabb;
+            --glass: rgba(255, 255, 255, 0.98);
+            --text-main: #2d1b0d;
+            --text-muted: #666;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a0624 0%, #2d0b3a 25%, #4a135a 50%, #6b1b7a 75%, #880e4f 100%);
+            background-attachment: fixed;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: white;
+            padding-bottom: 100px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-section {
+            text-align: center;
+            padding: 40px 20px 30px;
+        }
+
+            .header-section h1 {
+                font-family: 'Georgia', serif;
+                font-size: 2.2rem;
+                background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, #b8941f 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+        .main-card {
+            background: var(--glass);
+            border-radius: 24px;
+            padding: 30px;
+            color: var(--text-main);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.4);
+            border: 2px solid var(--gold);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--secondary);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Enhanced Mobile Navigation Styles */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-top: 2px solid var(--gold);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+            .mobile-nav-item i {
+                font-size: 1.2rem;
+                margin-bottom: 4px;
+            }
+
+            .mobile-nav-item.active {
+                color: var(--primary);
+            }
+
+                .mobile-nav-item.active i {
+                    transform: translateY(-5px);
+                    color: var(--secondary);
+                }
+
+        .form-section-block {
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border-left: 5px solid transparent;
+        }
+
+        #syncOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 3000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+    <script>
+        (function () {
+            const savedPass = localStorage.getItem('adminPass') || sessionStorage.getItem('adminPass');
+            if (savedPass) {
+                const style = document.createElement('style');
+                style.innerHTML = `#loginScreen { display: none !important; } #mainContent { display: block !important; }`;
+                document.head.appendChild(style);
+            }
+        })();
+    </script>
+
+    <div id="syncOverlay">
+        <div style="font-size: 3rem; margin-bottom: 15px;">⏳</div>
+        <div style="font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">Menyimpan...</div>
+    </div>
+
+    <div id="loginScreen" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; position: fixed; inset: 0; z-index: 2000; background: linear-gradient(135deg, #1a0624 0%, #2d0b3a 25%, #4a135a 50%, #6b1b7a 75%, #880e4f 100%);">
+        <div style="background: white; padding: 40px; border-radius: 24px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
+            <h2 style="color: var(--primary); text-align: center; margin-bottom: 10px;">🔐 Pengurusan Jadual</h2>
+            <p style="color: var(--text-muted); text-align: center; font-size: 0.85rem; margin-bottom: 25px;">Surau Seri Putra</p>
+            <input type="password" id="loginPassword" placeholder="Kata Laluan" style="width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; margin-bottom: 15px;">
+            <button onclick="verifyLogin()" style="width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer;">Log Masuk</button>
+        </div>
+    </div>
+
+    <div id="mainContent" style="display: none;">
+        <div class="header-section">
+            <h1>Kemaskini Jadual</h1>
+        </div>
+
+        <div class="container">
+            <div class="main-card">
+                <div class="section-title">📅 Kemaskini Aktiviti</div>
+
+                <div class="form-group">
+                    <label class="form-label">Pilih Tarikh</label>
+                    <select id="adminDateSelect" class="form-select"></select>
+                </div>
+
+                <div class="form-section-block" style="background: #fdf6ff; border-color: var(--secondary);">
+                    <div class="form-group"><label class="form-label">Tajaan Ifthar</label><input type="text" id="admHost" class="form-input"></div>
+                    <div class="form-group" style="margin-bottom:0"><label class="form-label">WhatsApp</label><input type="text" id="admContact" class="form-input"></div>
+                </div>
+
+                <div class="form-section-block" style="background: #f9f9f9; border-color: var(--primary);">
+                    <div class="form-group"><label class="form-label">Imam Tarawih</label><input type="text" id="admImam" class="form-input"></div>
+                    <div class="form-group" style="margin-bottom:0"><label class="form-label">URL Gambar Imam</label><input type="text" id="admImageUrl" class="form-input"></div>
+                </div>
+
+                <div class="form-section-block" style="background: #fff9ea; border-color: var(--gold);">
+                    <div class="form-group"><label class="form-label">Program Khas</label><input type="text" id="admProgram" class="form-input"></div>
+                    <div class="form-group" style="margin-bottom:0"><label class="form-label">URL Poster</label><input type="text" id="admProgramUrl" class="form-input"></div>
+                </div>
+
+                <div class="form-section-block" style="background: #f4f4f4; border-color: #666;">
+                    <div class="form-group"><label class="form-label">Kuliah Subuh</label><input type="text" id="admKuliahSubuh" class="form-input"></div>
+                    <div class="form-group" style="margin-bottom:0"><label class="form-label">URL Gambar Penceramah</label><input type="text" id="admKuliahSubuhUrl" class="form-input"></div>
+                </div>
+
+                <button onclick="submitAdminUpdate()" id="admSubmitBtn" class="btn-primary" style="background:#2e7d32;">💾 Simpan & Kemaskini</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="mobile-nav">
+        <a href="index.html" class="mobile-nav-item">
+            <span>🏠</span>
+            <span>Index</span>
+        </a>
+        <a href="admin-schedule.html" class="mobile-nav-item active"><span>📅</span><span>Jadual</span></a>
+        <a href="admin-donation.html" class="mobile-nav-item">
+            <span>💰</span>
+            <span>Kutipan</span>
+        </a>
+        <a href="admin-expense.html" class="mobile-nav-item">
+            <span>💸</span>
+            <span>Belanja</span>
+        </a>
+        <a href="admin-report.html" class="mobile-nav-item"><span>📊</span><span>Laporan</span></a>
+        <div class="mobile-nav-item" onclick="logout()" style="cursor:pointer; color: #c62828;">
+            <span>🚪</span>
+            <span>Keluar</span>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkKRLbbPMHZmvVw4N6iAYiVdzq0Kg56tmhRfUQABqjT92Hzfrd-YCSyKB71HczkjmI/exec';
+        let slots = {};
+        let currentPassword = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedPass = localStorage.getItem('adminPass') || sessionStorage.getItem('adminPass');
+            if (savedPass) {
+                document.getElementById('loginPassword').value = savedPass;
+                verifyLogin(true);
+            }
+        });
+
+        async function verifyLogin(isSilent = false) {
+            const pass = document.getElementById('loginPassword').value;
+            if (!pass) return;
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ type: "verify_login", password: pass }) });
+                const data = await res.json();
+                if (data.result === "Valid") {
+                    currentPassword = pass;
+                    localStorage.setItem('adminPass', pass);
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('mainContent').style.display = 'block';
+
+                    const cached = localStorage.getItem('surau_schedule_cache');
+                    if (cached) renderScheduleOptions(JSON.parse(cached));
+                    loadScheduleData();
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadScheduleData() {
+            const res = await fetch(SCRIPT_URL);
+            const data = await res.json();
+            if (data.schedule) {
+                localStorage.setItem('surau_schedule_cache', JSON.stringify(data.schedule));
+                renderScheduleOptions(data.schedule);
+            }
+        }
+
+        function renderScheduleOptions(scheduleArray) {
+            const select = document.getElementById('adminDateSelect');
+            const previouslySelected = localStorage.getItem('lastEditedDate');
+            select.innerHTML = "";
+            scheduleArray.forEach(item => {
+                const dateKey = item.SelectedDate.split('T')[0];
+                slots[dateKey] = item;
+                const opt = document.createElement('option');
+                opt.value = dateKey; opt.innerText = dateKey;
+                if (dateKey === previouslySelected) opt.selected = true;
+                select.appendChild(opt);
+            });
+
+            select.onchange = () => {
+                const s = slots[select.value] || {};
+                localStorage.setItem('lastEditedDate', select.value);
+                document.getElementById('admHost').value = s.HostName || "";
+                document.getElementById('admContact').value = s.HostContact || "";
+                document.getElementById('admImam').value = s.Imam || "";
+                document.getElementById('admImageUrl').value = s.ImageUrl || "";
+                document.getElementById('admProgram').value = s.Program || "";
+                document.getElementById('admProgramUrl').value = s.ProgramUrl || "";
+                document.getElementById('admKuliahSubuh').value = s.KuliahSubuh || "";
+                document.getElementById('admKuliahSubuhUrl').value = s.KuliahSubuhUrl || "";
+            };
+            select.onchange();
+        }
+
+        async function submitAdminUpdate() {
+            const select = document.getElementById('adminDateSelect');
+            const targetDate = select.value;
+            const btn = document.getElementById('admSubmitBtn');
+            const overlay = document.getElementById('syncOverlay');
+
+            overlay.style.display = 'flex';
+            btn.disabled = true;
+
+            const payload = {
+                type: "admin_update",
+                password: currentPassword,
+                selectedDate: targetDate,
+                hostName: document.getElementById('admHost').value,
+                hostContact: document.getElementById('admContact').value,
+                imam: document.getElementById('admImam').value,
+                imageUrl: document.getElementById('admImageUrl').value,
+                program: document.getElementById('admProgram').value,
+                programUrl: document.getElementById('admProgramUrl').value,
+                kuliahSubuh: document.getElementById('admKuliahSubuh').value,
+                kuliahSubuhUrl: document.getElementById('admKuliahSubuhUrl').value
+            };
+
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const data = await res.json();
+
+                if (data.result === "Success") {
+                    // KEMASKINI LOKAL: Terus simpan data baru ke dalam slot memori tanpa reload
+                    slots[targetDate] = {
+                        ...slots[targetDate],
+                        HostName: payload.hostName,
+                        HostContact: payload.hostContact,
+                        Imam: payload.imam,
+                        ImageUrl: payload.imageUrl,
+                        Program: payload.program,
+                        ProgramUrl: payload.programUrl,
+                        KuliahSubuh: payload.kuliahSubuh,
+                        KuliahSubuhUrl: payload.kuliahSubuhUrl
+                    };
+
+                    // Kemaskini localStorage
+                    const updatedSchedule = Object.values(slots).map(s => ({ ...s, SelectedDate: s.SelectedDate }));
+                    localStorage.setItem('surau_schedule_cache', JSON.stringify(updatedSchedule));
+
+                    overlay.style.display = 'none';
+                    btn.disabled = false;
+                    alert("✅ Berjaya disimpan!");
+                }
+            } catch (e) {
+                overlay.style.display = 'none';
+                btn.disabled = false;
+                alert("❌ Ralat simpanan.");
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('adminPass');
+            sessionStorage.removeItem('adminPass');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

@@ -156,7 +156,9 @@
             font-weight: bold;
         }
 
+        /* Enhanced Mobile Navigation Styles */
         .mobile-nav {
+            display: none;
             position: fixed;
             bottom: 0;
             left: 0;
@@ -168,6 +170,7 @@
             justify-content: space-around;
             padding: 10px 0;
             z-index: 1000;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
         }
 
         .mobile-nav-item {
@@ -178,11 +181,23 @@
             text-decoration: none;
             font-size: 0.7rem;
             font-weight: 800;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
         }
+
+            .mobile-nav-item i {
+                font-size: 1.2rem;
+                margin-bottom: 4px;
+            }
 
             .mobile-nav-item.active {
                 color: var(--primary);
             }
+
+                .mobile-nav-item.active i {
+                    transform: translateY(-5px);
+                    color: var(--secondary);
+                }
 
         /* Export & Print Optimization */
         @media print {
@@ -279,7 +294,8 @@
     </div>
 
     <div class="mobile-nav">
-        <a href="index.html" class="mobile-nav-item"><span>🏠</span><span>Jadual</span></a>
+        <a href="index.html" class="mobile-nav-item"><span>🏠</span><span>Index</span></a>
+        <a href="admin-schedule.html" class="mobile-nav-item"><span>📅</span><span>Jadual</span></a>
         <a href="admin-donation.html" class="mobile-nav-item"><span>💰</span><span>Kutipan</span></a>
         <a href="admin-expense.html" class="mobile-nav-item"><span>💸</span><span>Belanja</span></a>
         <a href="admin-report.html" class="mobile-nav-item active"><span>📊</span><span>Laporan</span></a>
@@ -379,7 +395,7 @@
         function logout() {
             localStorage.removeItem('adminPass');
             sessionStorage.removeItem('adminPass');
-            window.location.href = 'admin-donation.html';
+            window.location.href = 'index.html';
         }
     </script>
 </body>

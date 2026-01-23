@@ -1066,7 +1066,6 @@
             const pass = document.getElementById('adminPassword').value;
             const btn = document.getElementById('loginBtn');
 
-            // ADD THIS CHECK:
             if (!pass || pass.trim() === "") {
                 if (!isSilent) alert('Sila masukkan kata laluan!');
                 return;
@@ -1081,13 +1080,15 @@
 
                 const data = await res.json();
 
-                // Change: Check data.result instead of raw string
                 if (data.result === "Valid") {
+                    // Simpan sesi
                     localStorage.setItem('adminPass', pass);
-                    document.getElementById('loginStep').classList.add('hidden');
-                    document.getElementById('editStep').classList.remove('hidden');
-                    populateAdminForm();
-                    renderAdminDonationList();
+                    sessionStorage.setItem('adminPass', pass);
+
+                    if (!isSilent) {
+                        // Terus ke halaman jadual selepas berjaya
+                        window.location.href = 'admin-schedule.html';
+                    }
                 } else {
                     if (!isSilent) alert("Kata laluan salah!");
                     localStorage.removeItem('adminPass');
@@ -1196,7 +1197,18 @@
         };
 
         function handleBooking(date) { document.getElementById('selectedDate').value = date; document.getElementById('displayDate').innerText = "Tarikh: " + date; document.getElementById('bookingModal').style.display = 'flex'; }
-        function openAdminLogin() { document.getElementById('adminModal').style.display = 'flex'; }
+        function openAdminLogin() {
+            // Periksa jika kata laluan sudah disimpan dalam localStorage
+            const savedPass = localStorage.getItem('adminPass') || sessionStorage.getItem('adminPass');
+
+            if (savedPass) {
+                // Jika sesi wujud, terus ke halaman pengurusan jadual
+                window.location.href = 'admin-schedule.html';
+            } else {
+                // Jika tiada sesi, buka modal log masuk seperti biasa
+                document.getElementById('adminModal').style.display = 'flex';
+            }
+        }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         // 1. Function to switch between Schedule and Finance tabs
         function switchTab(tabName) {
