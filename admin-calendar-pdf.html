@@ -298,6 +298,9 @@
     </div>
 
     <div class="btn-container">
+        <button class="btn-download" onclick="window.location.href='index.html'" style="background: transparent; border: 2px solid var(--gold); color: var(--gold); margin-right: 10px;">
+            ⬅️ KEMBALI KE UTAMA
+        </button>
         <button class="btn-download" onclick="exportCalendarPDF()">📥 DOWNLOAD PDF (STRICT 1-PAGE)</button>
     </div>
 
@@ -365,7 +368,7 @@
                                 ${s.KuliahSubuh ? `<div class="entry-slot" style="flex-direction:row-reverse; text-align:right;"><img src="${s.KuliahSubuhUrl || ''}" class="thumb-img" onerror="this.style.display='none'"><div class="entry-info"><span class="label">Kuliah Subuh</span><span class="name">${s.KuliahSubuh}</span></div></div>` : ''}
                                 ${s.Imam ? `<div class="entry-slot"><img src="${s.ImageUrl || ''}" class="thumb-img" onerror="this.style.display='none'"><div class="entry-info"><span class="label">Imam Tarawih</span><span class="name">${s.Imam}</span></div></div>` : ''}
                             </div>
-                            ${s.HostName ? `<div class="host-footer">IFTHAR Tajaan: ${s.HostName}</div>` : ''}
+                            ${s.HostName ? `<div class="host-footer">IFTHAR : ${s.HostName}</div>` : ''}
                         </div>`;
             }
 
