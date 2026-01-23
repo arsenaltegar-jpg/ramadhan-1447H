@@ -779,6 +779,12 @@
         async function verifyLogin(isSilent = false) {
             const pass = document.getElementById('loginPassword').value;
             const btn = document.getElementById('loginBtn');
+            // ADD THIS CHECK:
+            if (!pass || pass.trim() === "") {
+                if (!isSilent) alert('Sila masukkan kata laluan!');
+                return;
+            }
+
             if (!isSilent) btn.innerText = 'Mengesahkan...';
 
             try {
