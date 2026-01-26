@@ -364,45 +364,84 @@
         async function verifyLogin(isSilent = false) {
             const pass = document.getElementById('loginPassword').value;
             if (!pass) return;
+
+            // Immediate UI feedback for manual login
+            const loginBtn = document.querySelector('#loginScreen button');
+            if (!isSilent && loginBtn) loginBtn.innerText = "Mengesahkan...";
+
             try {
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ type: "verify_login", password: pass }) });
                 const data = await res.json();
+
                 if (data.result === "Valid") {
                     currentPassword = pass;
                     localStorage.setItem('adminPass', pass);
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('mainContent').style.display = 'block';
+
+                    // FAST LOAD: Check cache immediately before fetching new data
+                    const cached = localStorage.getItem('surau_schedule_cache');
+                    if (cached) {
+                        try {
+                            const cachedData = JSON.parse(cached);
+                            renderScheduleOptions(cachedData); // Populates dates instantly
+                        } catch (e) { console.error("Cache corrupted", e); }
+                    }
+
+                    // Fetch fresh data in the background
                     loadScheduleData();
+                } else {
+                    if (!isSilent) alert("Kata laluan salah!");
+                    if (loginBtn) loginBtn.innerText = "Log Masuk";
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+                if (!isSilent) alert("Ralat sambungan.");
+                if (loginBtn) loginBtn.innerText = "Log Masuk";
+            }
         }
 
         async function loadScheduleData() {
-            const res = await fetch(SCRIPT_URL);
-            const data = await res.json();
-            if (data.schedule) {
-                localStorage.setItem('surau_schedule_cache', JSON.stringify(data.schedule));
-                renderScheduleOptions(data.schedule);
+            try {
+                const res = await fetch(SCRIPT_URL);
+                const data = await res.json();
+                if (data.schedule) {
+                    // Update cache with fresh data
+                    localStorage.setItem('surau_schedule_cache', JSON.stringify(data.schedule));
+                    // Refresh the UI with the latest data
+                    renderScheduleOptions(data.schedule);
+                }
+            } catch (e) {
+                console.warn("Sync background gagal, menggunakan data sedia ada.");
             }
         }
 
         function renderScheduleOptions(scheduleArray) {
             const select = document.getElementById('adminDateSelect');
             const previouslySelected = localStorage.getItem('lastEditedDate');
+
+            // Reset local slots map
+            slots = {};
             select.innerHTML = "";
+
             scheduleArray.forEach(item => {
                 const dateKey = item.SelectedDate.split('T')[0];
                 slots[dateKey] = item;
                 const opt = document.createElement('option');
-                opt.value = dateKey; opt.innerText = dateKey;
+                opt.value = dateKey;
+                opt.innerText = dateKey;
                 if (dateKey === previouslySelected) opt.selected = true;
                 select.appendChild(opt);
             });
 
+            // Trigger the change event to populate form and preview
             select.onchange = () => {
                 const s = slots[select.value] || {};
                 const isNight0 = (select.value === "2026-02-18");
-                document.getElementById('iftharInputBlock').style.display = isNight0 ? 'none' : 'block';
+
+                // Auto-hide Ifthar block for Feb 18
+                const iftharBlock = document.getElementById('iftharInputBlock');
+                if (iftharBlock) iftharBlock.style.display = isNight0 ? 'none' : 'block';
 
                 localStorage.setItem('lastEditedDate', select.value);
                 document.getElementById('admHost').value = s.HostName || "";
@@ -413,7 +452,8 @@
                 document.getElementById('admProgramUrl').value = s.ProgramUrl || "";
                 document.getElementById('admKuliahSubuh').value = s.KuliahSubuh || "";
                 document.getElementById('admKuliahSubuhUrl').value = s.KuliahSubuhUrl || "";
-                updatePreview();
+
+                updatePreview(); // Keeps your preview logic active
             };
             select.onchange();
         }
@@ -438,31 +478,31 @@
             const subuhImg = document.getElementById('admKuliahSubuhUrl').value;
 
             container.innerHTML = `
-                    <div class="day-card" ${isNight0 ? 'style="border: 2px solid var(--gold);"' : ''}>
-                        <div class="day-header">
-                            <div class="ramadhan-info">
-                                <span class="ramadhan-num">${isNight0 ? '🌙' : ramadhanDay}</span>
-                                <div class="date-text">${dayNames[dObj.getDay()]}<br>${dObj.getDate()} ${monthNames[dObj.getMonth()]}</div>
-                            </div>
-                            <span style="font-size:1.5rem">✨</span>
+                <div class="day-card" ${isNight0 ? 'style="border: 2px solid var(--gold);"' : ''}>
+                    <div class="day-header">
+                        <div class="ramadhan-info">
+                            <span class="ramadhan-num">${isNight0 ? '🌙' : ramadhanDay}</span>
+                            <div class="date-text">${dayNames[dObj.getDay()]}<br>${dObj.getDate()} ${monthNames[dObj.getMonth()]}</div>
                         </div>
-                        <div class="program-body">
-                            ${subuh ? `<div class="activity-item"><div class="act-details"><strong>Kuliah Subuh</strong><div class="act-text">${subuh}</div></div>${subuhImg ? `<img src="${subuhImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
-                            ${prog ? `<div class="activity-item"><div class="act-details"><strong>Program Khas</strong><div class="act-text">${prog}</div></div>${progImg ? `<img src="${progImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
-                            ${imam ? `<div class="activity-item"><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${imam}</div></div>${imamImg ? `<img src="${imamImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
+                        <span style="font-size:1.5rem">✨</span>
+                    </div>
+                    <div class="program-body">
+                        ${subuh ? `<div class="activity-item"><div class="act-details"><strong>Kuliah Subuh</strong><div class="act-text">${subuh}</div></div>${subuhImg ? `<img src="${subuhImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
+                        ${prog ? `<div class="activity-item"><div class="act-details"><strong>Program Khas</strong><div class="act-text">${prog}</div></div>${progImg ? `<img src="${progImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
+                        ${imam ? `<div class="activity-item"><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${imam}</div></div>${imamImg ? `<img src="${imamImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
+                    </div>
+                    ${!isNight0 ? `
+                    <div class="ifthar-section">
+                        <div class="host-info">
+                            <div style="font-size:0.5rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Ifthar</div>
+                            <div class="host-name">${host || 'MASIH KOSONG'}</div>
                         </div>
-                        ${!isNight0 ? `
-                        <div class="ifthar-section">
-                            <div class="host-info">
-                                <div style="font-size:0.5rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Ifthar</div>
-                                <div class="host-name">${host || 'MASIH KOSONG'}</div>
-                            </div>
-                            <span>${host ? '🍛' : '🗓️'}</span>
-                        </div>` : `
-                        <div class="ifthar-section" style="background: rgba(255,255,255,0.5); justify-content: center;">
-                            <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">Mula Tarawih Malam Ini</div>
-                        </div>`}
-                    </div>`;
+                        <span>${host ? '🍛' : '🗓️'}</span>
+                    </div>` : `
+                    <div class="ifthar-section" style="background: rgba(255,255,255,0.5); justify-content: center;">
+                        <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">Mula Tarawih Malam Ini</div>
+                    </div>`}
+                </div>`;
         }
 
         async function submitAdminUpdate() {
@@ -489,8 +529,11 @@
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
                 const data = await res.json();
                 if (data.result === "Success") {
+                    // Update local memory map immediately
                     slots[payload.selectedDate] = { ...slots[payload.selectedDate], ...payload };
+                    // Update local cache so next load is also fast
                     localStorage.setItem('surau_schedule_cache', JSON.stringify(Object.values(slots)));
+
                     overlay.style.display = 'none';
                     btn.disabled = false;
                     alert("✅ Berjaya disimpan!");
@@ -502,7 +545,11 @@
             }
         }
 
-        function logout() { localStorage.removeItem('adminPass'); sessionStorage.removeItem('adminPass'); window.location.href = 'index.html'; }
+        function logout() {
+            localStorage.removeItem('adminPass');
+            sessionStorage.removeItem('adminPass');
+            window.location.href = 'index.html';
+        }
     </script>
 </body>
 </html>
