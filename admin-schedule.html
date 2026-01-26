@@ -48,6 +48,8 @@
         .header-section {
             text-align: center;
             padding: 40px 20px 30px;
+            position: relative;
+            z-index: 1;
         }
 
             .header-section h1 {
@@ -59,6 +61,14 @@
                 animation: shimmer 3s linear infinite;
                 margin-bottom: 8px;
             }
+
+        .header-subtitle {
+            color: var(--gold);
+            letter-spacing: 3px;
+            font-weight: 800;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
 
         .main-card {
             background: var(--glass);
@@ -299,6 +309,7 @@
     <div id="mainContent" style="display: none;">
         <div class="header-section">
             <h1>Kemaskini Jadual</h1>
+            <p class="header-subtitle">Ramadhan 1447H</p>
         </div>
 
         <div class="container">
