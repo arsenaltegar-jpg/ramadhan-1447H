@@ -25,11 +25,24 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 0 20px;
             position: relative;
             z-index: 1;
+        }
+
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .admin-layout {
+                grid-template-columns: 1fr;
+            }
         }
 
         .header-section {
@@ -67,6 +80,95 @@
             padding-bottom: 10px;
         }
 
+        /* REUSED STYLES FROM INDEX.HTML FOR PREVIEW */
+        .preview-sticky {
+            position: sticky;
+            top: 20px;
+        }
+
+        .day-card {
+            background: var(--glass);
+            border-radius: 24px;
+            overflow: hidden;
+            color: var(--text-main);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.4);
+        }
+
+        .day-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 18px 22px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ramadhan-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .ramadhan-num {
+            font-size: 2rem;
+            font-weight: 900;
+            border-right: 2px solid rgba(255,255,255,0.4);
+            padding-right: 14px;
+        }
+
+        .date-text {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 22px;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .act-details strong {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--secondary);
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .act-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .entry-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid var(--gold);
+            flex-shrink: 0;
+        }
+
+        .ifthar-section {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 16px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .host-name {
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
         .form-group {
             display: flex;
             flex-direction: column;
@@ -82,7 +184,7 @@
             letter-spacing: 0.5px;
         }
 
-        .form-input, .form-select {
+        .form-input {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
@@ -104,7 +206,6 @@
             letter-spacing: 1px;
         }
 
-        /* Enhanced Mobile Navigation Styles */
         .mobile-nav {
             display: none;
             position: fixed;
@@ -130,22 +231,21 @@
             font-size: 0.7rem;
             font-weight: 800;
             text-transform: uppercase;
-            transition: all 0.3s ease;
         }
-
-            .mobile-nav-item i {
-                font-size: 1.2rem;
-                margin-bottom: 4px;
-            }
 
             .mobile-nav-item.active {
                 color: var(--primary);
             }
 
-                .mobile-nav-item.active i {
-                    transform: translateY(-5px);
-                    color: var(--secondary);
-                }
+        @media (max-width: 640px) {
+            .mobile-nav {
+                display: flex;
+            }
+
+            body {
+                padding-bottom: 100px;
+            }
+        }
 
         .form-section-block {
             padding: 20px;
@@ -200,58 +300,52 @@
         </div>
 
         <div class="container">
-            <div class="main-card">
-                <div class="section-title">📅 Kemaskini Aktiviti</div>
+            <div class="admin-layout">
+                <div class="main-card">
+                    <div class="section-title">📅 Kemaskini Aktiviti</div>
+                    <div class="form-group">
+                        <label class="form-label">Pilih Tarikh</label>
+                        <select id="adminDateSelect" class="form-input"></select>
+                    </div>
 
-                <div class="form-group">
-                    <label class="form-label">Pilih Tarikh</label>
-                    <select id="adminDateSelect" class="form-select"></select>
+                    <div id="iftharInputBlock" class="form-section-block" style="background: #fdf6ff; border-color: var(--secondary);">
+                        <div class="form-group"><label class="form-label">Tajaan Ifthar</label><input type="text" id="admHost" class="form-input" oninput="updatePreview()"></div>
+                        <div class="form-group" style="margin-bottom:0"><label class="form-label">WhatsApp</label><input type="text" id="admContact" class="form-input"></div>
+                    </div>
+
+                    <div class="form-section-block" style="background: #f9f9f9; border-color: var(--primary);">
+                        <div class="form-group"><label class="form-label">Imam Tarawih</label><input type="text" id="admImam" class="form-input" oninput="updatePreview()"></div>
+                        <div class="form-group" style="margin-bottom:0"><label class="form-label">URL Gambar Imam</label><input type="text" id="admImageUrl" class="form-input" oninput="updatePreview()"></div>
+                    </div>
+
+                    <div class="form-section-block" style="background: #fff9ea; border-color: var(--gold);">
+                        <div class="form-group"><label class="form-label">Program Khas</label><input type="text" id="admProgram" class="form-input" oninput="updatePreview()"></div>
+                        <div class="form-group" style="margin-bottom:0"><label class="form-label">URL Poster</label><input type="text" id="admProgramUrl" class="form-input" oninput="updatePreview()"></div>
+                    </div>
+
+                    <div class="form-section-block" style="background: #f4f4f4; border-color: #666;">
+                        <div class="form-group"><label class="form-label">Kuliah Subuh</label><input type="text" id="admKuliahSubuh" class="form-input" oninput="updatePreview()"></div>
+                        <div class="form-group" style="margin-bottom:0"><label class="form-label">URL Gambar Penceramah</label><input type="text" id="admKuliahSubuhUrl" class="form-input" oninput="updatePreview()"></div>
+                    </div>
+
+                    <button onclick="submitAdminUpdate()" id="admSubmitBtn" class="btn-primary" style="background:#2e7d32;">💾 Simpan & Kemaskini</button>
                 </div>
 
-                <div class="form-section-block" style="background: #fdf6ff; border-color: var(--secondary);">
-                    <div class="form-group"><label class="form-label">Tajaan Ifthar</label><input type="text" id="admHost" class="form-input"></div>
-                    <div class="form-group" style="margin-bottom:0"><label class="form-label">WhatsApp</label><input type="text" id="admContact" class="form-input"></div>
+                <div class="preview-sticky">
+                    <div class="section-title" style="color: white; border-bottom-color: rgba(255,255,255,0.2);">✨ Paparan Live</div>
+                    <div id="previewCardContainer"></div>
                 </div>
-
-                <div class="form-section-block" style="background: #f9f9f9; border-color: var(--primary);">
-                    <div class="form-group"><label class="form-label">Imam Tarawih</label><input type="text" id="admImam" class="form-input"></div>
-                    <div class="form-group" style="margin-bottom:0"><label class="form-label">URL Gambar Imam</label><input type="text" id="admImageUrl" class="form-input"></div>
-                </div>
-
-                <div class="form-section-block" style="background: #fff9ea; border-color: var(--gold);">
-                    <div class="form-group"><label class="form-label">Program Khas</label><input type="text" id="admProgram" class="form-input"></div>
-                    <div class="form-group" style="margin-bottom:0"><label class="form-label">URL Poster</label><input type="text" id="admProgramUrl" class="form-input"></div>
-                </div>
-
-                <div class="form-section-block" style="background: #f4f4f4; border-color: #666;">
-                    <div class="form-group"><label class="form-label">Kuliah Subuh</label><input type="text" id="admKuliahSubuh" class="form-input"></div>
-                    <div class="form-group" style="margin-bottom:0"><label class="form-label">URL Gambar Penceramah</label><input type="text" id="admKuliahSubuhUrl" class="form-input"></div>
-                </div>
-
-                <button onclick="submitAdminUpdate()" id="admSubmitBtn" class="btn-primary" style="background:#2e7d32;">💾 Simpan & Kemaskini</button>
             </div>
         </div>
     </div>
 
     <div class="mobile-nav">
-        <a href="index.html" class="mobile-nav-item">
-            <span>🏠</span>
-            <span>Index</span>
-        </a>
+        <a href="index.html" class="mobile-nav-item"><span>🏠</span><span>Index</span></a>
         <a href="admin-schedule.html" class="mobile-nav-item active"><span>📅</span><span>Jadual</span></a>
-        <a href="admin-donation.html" class="mobile-nav-item">
-            <span>💰</span>
-            <span>Kutipan</span>
-        </a>
-        <a href="admin-expense.html" class="mobile-nav-item">
-            <span>💸</span>
-            <span>Belanja</span>
-        </a>
+        <a href="admin-donation.html" class="mobile-nav-item"><span>💰</span><span>Kutipan</span></a>
+        <a href="admin-expense.html" class="mobile-nav-item"><span>💸</span><span>Belanja</span></a>
         <a href="admin-report.html" class="mobile-nav-item"><span>📊</span><span>Laporan</span></a>
-        <div class="mobile-nav-item" onclick="logout()" style="cursor:pointer; color: #c62828;">
-            <span>🚪</span>
-            <span>Keluar</span>
-        </div>
+        <div class="mobile-nav-item" onclick="logout()" style="cursor:pointer; color: #c62828;"><span>🚪</span><span>Keluar</span></div>
     </div>
 
     <script>
@@ -278,9 +372,6 @@
                     localStorage.setItem('adminPass', pass);
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('mainContent').style.display = 'block';
-
-                    const cached = localStorage.getItem('surau_schedule_cache');
-                    if (cached) renderScheduleOptions(JSON.parse(cached));
                     loadScheduleData();
                 }
             } catch (e) { console.error(e); }
@@ -310,6 +401,9 @@
 
             select.onchange = () => {
                 const s = slots[select.value] || {};
+                const isNight0 = (select.value === "2026-02-18");
+                document.getElementById('iftharInputBlock').style.display = isNight0 ? 'none' : 'block';
+
                 localStorage.setItem('lastEditedDate', select.value);
                 document.getElementById('admHost').value = s.HostName || "";
                 document.getElementById('admContact').value = s.HostContact || "";
@@ -319,23 +413,68 @@
                 document.getElementById('admProgramUrl').value = s.ProgramUrl || "";
                 document.getElementById('admKuliahSubuh').value = s.KuliahSubuh || "";
                 document.getElementById('admKuliahSubuhUrl').value = s.KuliahSubuhUrl || "";
+                updatePreview();
             };
             select.onchange();
         }
 
+        function updatePreview() {
+            const container = document.getElementById('previewCardContainer');
+            const dateVal = document.getElementById('adminDateSelect').value;
+            if (!dateVal) return;
+
+            const dObj = new Date(dateVal);
+            const dayNames = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
+            const monthNames = ['JAN', 'FEB', 'MAC', 'APR', 'MEI', 'JUN', 'JUL', 'OGOS', 'SEPT', 'OKT', 'NOV', 'DIS'];
+            const ramadhanDay = Math.round((dObj - new Date(2026, 1, 18)) / (1000 * 60 * 60 * 24));
+            const isNight0 = (ramadhanDay === 0);
+
+            const host = document.getElementById('admHost').value;
+            const imam = document.getElementById('admImam').value;
+            const imamImg = document.getElementById('admImageUrl').value;
+            const prog = document.getElementById('admProgram').value;
+            const progImg = document.getElementById('admProgramUrl').value;
+            const subuh = document.getElementById('admKuliahSubuh').value;
+            const subuhImg = document.getElementById('admKuliahSubuhUrl').value;
+
+            container.innerHTML = `
+                    <div class="day-card" ${isNight0 ? 'style="border: 2px solid var(--gold);"' : ''}>
+                        <div class="day-header">
+                            <div class="ramadhan-info">
+                                <span class="ramadhan-num">${isNight0 ? '🌙' : ramadhanDay}</span>
+                                <div class="date-text">${dayNames[dObj.getDay()]}<br>${dObj.getDate()} ${monthNames[dObj.getMonth()]}</div>
+                            </div>
+                            <span style="font-size:1.5rem">✨</span>
+                        </div>
+                        <div class="program-body">
+                            ${subuh ? `<div class="activity-item"><div class="act-details"><strong>Kuliah Subuh</strong><div class="act-text">${subuh}</div></div>${subuhImg ? `<img src="${subuhImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
+                            ${prog ? `<div class="activity-item"><div class="act-details"><strong>Program Khas</strong><div class="act-text">${prog}</div></div>${progImg ? `<img src="${progImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
+                            ${imam ? `<div class="activity-item"><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${imam}</div></div>${imamImg ? `<img src="${imamImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
+                        </div>
+                        ${!isNight0 ? `
+                        <div class="ifthar-section">
+                            <div class="host-info">
+                                <div style="font-size:0.5rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Ifthar</div>
+                                <div class="host-name">${host || 'MASIH KOSONG'}</div>
+                            </div>
+                            <span>${host ? '🍛' : '🗓️'}</span>
+                        </div>` : `
+                        <div class="ifthar-section" style="background: rgba(255,255,255,0.5); justify-content: center;">
+                            <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">Mula Tarawih Malam Ini</div>
+                        </div>`}
+                    </div>`;
+        }
+
         async function submitAdminUpdate() {
-            const select = document.getElementById('adminDateSelect');
-            const targetDate = select.value;
             const btn = document.getElementById('admSubmitBtn');
             const overlay = document.getElementById('syncOverlay');
-
             overlay.style.display = 'flex';
             btn.disabled = true;
 
             const payload = {
                 type: "admin_update",
                 password: currentPassword,
-                selectedDate: targetDate,
+                selectedDate: document.getElementById('adminDateSelect').value,
                 hostName: document.getElementById('admHost').value,
                 hostContact: document.getElementById('admContact').value,
                 imam: document.getElementById('admImam').value,
@@ -349,25 +488,9 @@
             try {
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
                 const data = await res.json();
-
                 if (data.result === "Success") {
-                    // KEMASKINI LOKAL: Terus simpan data baru ke dalam slot memori tanpa reload
-                    slots[targetDate] = {
-                        ...slots[targetDate],
-                        HostName: payload.hostName,
-                        HostContact: payload.hostContact,
-                        Imam: payload.imam,
-                        ImageUrl: payload.imageUrl,
-                        Program: payload.program,
-                        ProgramUrl: payload.programUrl,
-                        KuliahSubuh: payload.kuliahSubuh,
-                        KuliahSubuhUrl: payload.kuliahSubuhUrl
-                    };
-
-                    // Kemaskini localStorage
-                    const updatedSchedule = Object.values(slots).map(s => ({ ...s, SelectedDate: s.SelectedDate }));
-                    localStorage.setItem('surau_schedule_cache', JSON.stringify(updatedSchedule));
-
+                    slots[payload.selectedDate] = { ...slots[payload.selectedDate], ...payload };
+                    localStorage.setItem('surau_schedule_cache', JSON.stringify(Object.values(slots)));
                     overlay.style.display = 'none';
                     btn.disabled = false;
                     alert("✅ Berjaya disimpan!");
@@ -379,11 +502,7 @@
             }
         }
 
-        function logout() {
-            localStorage.removeItem('adminPass');
-            sessionStorage.removeItem('adminPass');
-            window.location.href = 'index.html';
-        }
+        function logout() { localStorage.removeItem('adminPass'); sessionStorage.removeItem('adminPass'); window.location.href = 'index.html'; }
     </script>
 </body>
 </html>
