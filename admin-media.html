@@ -347,21 +347,21 @@
                 const fullUrl = item.fileUrl;
 
                 return `
-            <div class="media-item">
-                <img src="${thumbnailUrl}"
-                     class="media-preview"
-                     alt="${item.label}"
-                     onclick="openModal('${fullUrl}')"
-                     onerror="this.src='https://via.placeholder.com/200x150?text=Imej+Error'">
-                <div class="media-info">
-                    <div class="media-label" style="font-weight:800; font-size:0.8rem;">${item.label}</div>
-                    <div class="action-buttons">
-                        <button class="copy-btn" onclick="copyImageUrl('${fullUrl}', event)" title="Salin URL Gambar">📋</button>
-                        <button class="delete-btn" onclick="deleteMedia(${item.id})" style="border:none; background:none; cursor:pointer;">🗑️</button>
-                    </div>
+        <div class="media-item">
+            <img src="${thumbnailUrl}" 
+                 class="media-preview" 
+                 alt="${item.label}" 
+                 onclick="openModal('${fullUrl}')"
+                 onerror="this.src='https://via.placeholder.com/200x150?text=Imej+Error'">
+            <div class="media-info">
+                <div class="media-label" style="font-weight:800; font-size:0.8rem;">${item.label}</div>
+                <div class="action-buttons">
+                    <button class="copy-btn" onclick="copyImageUrl('${thumbnailUrl}', event)" title="Salin URL Thumbnail">📋</button>
+                    <button class="delete-btn" onclick="deleteMedia(${item.id})" style="border:none; background:none; cursor:pointer;">🗑️</button>
                 </div>
             </div>
-        `}).join('');
+        </div>
+    `}).join('');
         }
 
         // Copy image URL to clipboard
