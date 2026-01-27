@@ -366,7 +366,16 @@
                             <div class="entry-list">
                                 ${s.Program ? `<div class="entry-slot"><img src="${s.ProgramUrl || ''}" class="thumb-img" onerror="this.style.display='none'"><div class="entry-info"><span class="label">Program Khas</span><span class="name">${s.Program}</span></div></div>` : ''}
                                 ${s.KuliahSubuh ? `<div class="entry-slot" style="flex-direction:row-reverse; text-align:right;"><img src="${s.KuliahSubuhUrl || ''}" class="thumb-img" onerror="this.style.display='none'"><div class="entry-info"><span class="label">Kuliah Subuh</span><span class="name">${s.KuliahSubuh}</span></div></div>` : ''}
-                                ${s.Imam ? `<div class="entry-slot"><img src="${s.ImageUrl || ''}" class="thumb-img" onerror="this.style.display='none'"><div class="entry-info"><span class="label">Imam Tarawih</span><span class="name">${s.Imam}</span></div></div>` : ''}
+                                ${s.Imam ? `
+  <div class="entry-slot">
+    <img src="${s.ImageUrl || ''}" class="thumb-img" onerror="this.style.display='none'">
+    <div class="entry-info">
+      <span class="label">Imam Tarawih</span>
+      <span class="name">${s.Imam} ${s.bilal ? `</br>Bilal: ${s.bilal}` : ''}</span>
+      
+    </div>
+  </div>`
+                        : ''}
                             </div>
                             ${s.HostName ? `<div class="host-footer">IFTHAR : ${s.HostName}</div>` : ''}
                         </div>`;
