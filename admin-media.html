@@ -385,24 +385,27 @@
 
         // 1. Load Media with Cache Buster (Forces fresh data)
         async function loadMedia() {
+            const container = document.getElementById('mediaContainer');
+
+            // 1. Show cached data immediately
+            const cached = localStorage.getItem('media_cache');
+            if (cached) {
+                renderMedia(JSON.parse(cached));
+            } else {
+                container.innerHTML = "<p>Memuatkan...</p>";
+            }
+
             try {
+                // 2. Fetch fresh data in the background
                 const res = await fetch(`${SCRIPT_URL}?t=${new Date().getTime()}`);
                 const data = await res.json();
-                // 1. Instant Load from Cache
-                const cached = localStorage.getItem('media_cache');
-                if (cached) {
-                    renderMedia(JSON.parse(cached));
-                }
 
                 if (data.mediaGallery && Array.isArray(data.mediaGallery)) {
                     localStorage.setItem('media_cache', JSON.stringify(data.mediaGallery));
-                    renderMedia(data.mediaGallery);
-                } else {
-                    document.getElementById('mediaContainer').innerHTML = "<p style='color:white;'>Tiada media dijumpai.</p>";
+                    renderMedia(data.mediaGallery); // Update UI with fresh data
                 }
             } catch (e) {
                 console.error("Load failed", e);
-                document.getElementById('mediaContainer').innerHTML = "<p style='color:white;'>Gagal memuatkan media.</p>";
             }
         }
 
