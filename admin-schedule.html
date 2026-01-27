@@ -670,6 +670,31 @@
                     picker.appendChild(option);
                 });
             });
+            runGlobalSync();
+        }
+        function runGlobalSync() {
+            const syncPicker = (inputId, pickerId) => {
+                const urlInput = document.getElementById(inputId);
+                const picker = document.getElementById(pickerId);
+                if (!urlInput || !picker) return;
+
+                const urlValue = urlInput.value.trim();
+
+                // Reset to default
+                picker.value = "";
+
+                // Match the URL to the picker option
+                for (let i = 0; i < picker.options.length; i++) {
+                    if (picker.options[i].value === urlValue && urlValue !== "") {
+                        picker.selectedIndex = i;
+                        break;
+                    }
+                }
+            };
+
+            syncPicker('admImageUrl', 'imamImagePicker');
+            syncPicker('admProgramUrl', 'programImagePicker');
+            syncPicker('admKuliahSubuhUrl', 'kuliahImagePicker');
         }
 
         // Select image from picker and populate URL field
@@ -735,6 +760,10 @@
                 document.getElementById('admImageUrl').value = s.ImageUrl || "";
                 document.getElementById('admProgramUrl').value = s.ProgramUrl || "";
                 document.getElementById('admKuliahSubuhUrl').value = s.KuliahSubuhUrl || "";
+
+                // Call the global sync
+                runGlobalSync();
+
 
                 // 3. Sync Dropdowns with URLs
                 const syncPicker = (inputId, pickerId) => {
