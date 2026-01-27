@@ -1,1 +1,512 @@
-﻿
+﻿<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeri Media | Surau Seri Putra</title>
+    <style>
+        /* Reusing your root variables and base styles */
+        :root {
+            --primary: #4a135a;
+            --secondary: #880e4f;
+            --gold: #d4af37;
+            --gold-light: #fceabb;
+            --glass: rgba(255, 255, 255, 0.98);
+            --text-main: #2d1b0d;
+            --text-muted: #666;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a0624 0%, #2d0b3a 25%, #4a135a 50%, #6b1b7a 75%, #880e4f 100%);
+            background-attachment: fixed;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: white;
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Form Styling */
+        .main-card {
+            background: var(--glass);
+            border-radius: 24px;
+            padding: 25px;
+            color: var(--text-main);
+            border: 2px solid var(--gold);
+            margin-bottom: 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--secondary);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        /* Gallery Grid */
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .media-item {
+            background: var(--glass);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+            .media-item:hover {
+                transform: translateY(-5px);
+            }
+
+        .media-preview {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            background: #eee;
+            cursor: pointer;
+        }
+
+        .media-info {
+            padding: 12px;
+            color: var(--text-main);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .media-label {
+            font-weight: 800;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .delete-btn {
+            background: #ffeded;
+            color: #c62828;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        /* Nav and Overlay */
+        #syncOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 3000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 2px solid var(--gold);
+        }
+
+        .mobile-nav-item {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .active {
+            color: var(--primary);
+        }
+
+        /* Image Modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 4000;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+            .image-modal img {
+                max-width: 90%;
+                max-height: 90vh;
+                object-fit: contain;
+            }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .header-section {
+            text-align: center;
+            padding: 40px 20px 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+            .header-section h1 {
+                font-family: 'Georgia', serif;
+                font-size: 2.2rem;
+                background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, #b8941f 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                animation: shimmer 3s linear infinite;
+                margin-bottom: 8px;
+            }
+
+        .header-subtitle {
+            color: var(--gold);
+            letter-spacing: 3px;
+            font-weight: 800;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="syncOverlay">
+        <div style="font-size: 2rem;">🔄</div>
+        <p>Memproses Media...</p>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal" onclick="closeModal()">
+        <span class="close-modal">&times;</span>
+        <img id="modalImage" src="" alt="Full size image">
+    </div>
+
+    <div class="container">
+        <div style="text-align: center; padding: 30px 0;" class="header-section">
+            <h1 style="color: var(--gold-light);">Pengurusan Galeri</h1>
+            <p style="letter-spacing: 2px; font-size: 0.7rem; color: var(--gold);">MEDIA & POSTER RAMADHAN</p>
+        </div>
+
+        <div class="main-card">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Label Gambar</label>
+                    <input type="text" id="mediaLabel" class="form-input" placeholder="Contoh: Poster Iftar">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fail Gambar</label>
+                    <input type="file" id="mediaFile" class="form-input" accept="image/*">
+                </div>
+                <button onclick="uploadMedia()" class="btn-primary">Muat Naik</button>
+            </div>
+        </div>
+
+        <div class="media-grid" id="mediaContainer">
+        </div>
+    </div>
+    <div class="mobile-nav">
+        <a href="index.html" class="mobile-nav-item"><span>🏠</span><span>Index</span></a>
+        <a href="admin-schedule.html" class="mobile-nav-item"><span>📅</span><span>Jadual</span></a>
+        <a href="admin-donation.html" class="mobile-nav-item"><span>💰</span><span>Kutipan</span></a>
+        <a href="admin-expense.html" class="mobile-nav-item"><span>💸</span><span>Belanja</span></a>
+        <a href="admin-report.html" class="mobile-nav-item"><span>📊</span><span>Laporan</span></a>
+        <a href="admin-media.html" class="mobile-nav-item active"><span>🖼️</span><span>Media</span></a>
+        <div class="mobile-nav-item" onclick="logout()" style="cursor:pointer; color: #c62828;"><span>🚪</span><span>Keluar</span></div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkKRLbbPMHZmvVw4N6iAYiVdzq0Kg56tmhRfUQABqjT92Hzfrd-YCSyKB71HczkjmI/exec';
+        let currentPassword = localStorage.getItem('adminPass');
+
+        if (!currentPassword) {
+            window.location.href = 'index.html';
+        }
+
+        // Convert Google Drive URL to proper thumbnail format
+        function convertToThumbnail(url) {
+            // Extract file ID from various Google Drive URL formats
+            let fileId = null;
+
+            // Format: https://docs.google.com/uc?export=view&id=FILE_ID
+            if (url.includes('docs.google.com/uc')) {
+                const match = url.match(/[?&]id=([^&]+)/);
+                if (match) fileId = match[1];
+            }
+
+            // Format: https://drive.google.com/file/d/FILE_ID/
+            if (url.includes('drive.google.com/file')) {
+                const match = url.match(/\/d\/([^\/]+)/);
+                if (match) fileId = match[1];
+            }
+
+            // Format: https://drive.google.com/open?id=FILE_ID
+            if (url.includes('drive.google.com/open')) {
+                const match = url.match(/[?&]id=([^&]+)/);
+                if (match) fileId = match[1];
+            }
+
+            // If we found a file ID, return the thumbnail URL
+            if (fileId) {
+                return `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
+            }
+
+            // Return original URL if we couldn't parse it
+            return url;
+        }
+
+        // 1. Load Media with Cache Buster (Forces fresh data)
+        async function loadMedia() {
+            try {
+                const res = await fetch(`${SCRIPT_URL}?t=${new Date().getTime()}`);
+                const data = await res.json();
+
+                if (data.mediaGallery && Array.isArray(data.mediaGallery)) {
+                    renderMedia(data.mediaGallery);
+                } else {
+                    document.getElementById('mediaContainer').innerHTML = "<p style='color:white;'>Tiada media dijumpai.</p>";
+                }
+            } catch (e) {
+                console.error("Load failed", e);
+                document.getElementById('mediaContainer').innerHTML = "<p style='color:white;'>Gagal memuatkan media.</p>";
+            }
+        }
+
+        function renderMedia(items) {
+            const container = document.getElementById('mediaContainer');
+            container.innerHTML = items.map(item => {
+                const thumbnailUrl = convertToThumbnail(item.fileUrl);
+                const fullUrl = item.fileUrl;
+
+                return `
+            <div class="media-item">
+                <img src="${thumbnailUrl}"
+                     class="media-preview"
+                     alt="${item.label}"
+                     onclick="openModal('${fullUrl}')"
+                     onerror="this.src='https://via.placeholder.com/200x150?text=Imej+Error'">
+                <div class="media-info">
+                    <div class="media-label" style="font-weight:800; font-size:0.8rem;">${item.label}</div>
+                    <div class="action-buttons">
+                        <button class="copy-btn" onclick="copyImageUrl('${fullUrl}', event)" title="Salin URL Gambar">📋</button>
+                        <button class="delete-btn" onclick="deleteMedia(${item.id})" style="border:none; background:none; cursor:pointer;">🗑️</button>
+                    </div>
+                </div>
+            </div>
+        `}).join('');
+        }
+
+        // Copy image URL to clipboard
+        async function copyImageUrl(url, event) {
+            event.stopPropagation(); // Prevent modal from opening
+
+            try {
+                await navigator.clipboard.writeText(url);
+
+                // Show feedback
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = '✓';
+                button.style.background = '#c8e6c9';
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '#e3f2fd';
+                }, 1500);
+
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+
+                try {
+                    document.execCommand('copy');
+                    alert('URL disalin!');
+                } catch (err) {
+                    alert('Gagal menyalin URL');
+                }
+
+                document.body.removeChild(textArea);
+            }
+        }
+
+        // Open image in modal
+        function openModal(imageUrl) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+
+            // Convert to full size view
+            const fullSizeUrl = convertToFullSize(imageUrl);
+
+            modal.style.display = 'flex';
+            modalImg.src = fullSizeUrl;
+        }
+
+        // Convert to full size image
+        function convertToFullSize(url) {
+            let fileId = null;
+
+            if (url.includes('docs.google.com/uc')) {
+                const match = url.match(/[?&]id=([^&]+)/);
+                if (match) fileId = match[1];
+            }
+
+            if (url.includes('drive.google.com/thumbnail')) {
+                const match = url.match(/[?&]id=([^&]+)/);
+                if (match) fileId = match[1];
+            }
+
+            if (fileId) {
+                return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+            }
+
+            return url;
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        // 3. Upload Media (Fixed Variable Scoping & Added Delay)
+        async function uploadMedia() {
+            const fileInput = document.getElementById('mediaFile');
+            const labelInput = document.getElementById('mediaLabel');
+            const overlay = document.getElementById('syncOverlay');
+
+            if (!fileInput.files[0] || !labelInput.value) return alert("Sila isi label dan pilih fail!");
+
+            overlay.style.display = 'flex';
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = async (e) => {
+                const base64Data = e.target.result.split(',')[1];
+                const payload = {
+                    type: "add_media",
+                    password: currentPassword,
+                    label: labelInput.value,
+                    fileName: file.name,
+                    mimeType: file.type,
+                    fileData: base64Data
+                };
+
+                try {
+                    const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                    const result = await res.json();
+
+                    if (result.result === "Success") {
+                        labelInput.value = '';
+                        fileInput.value = '';
+
+                        // Wait 2 seconds for Supabase/Google to sync before reloading
+                        setTimeout(() => {
+                            loadMedia();
+                            overlay.style.display = 'none';
+                        }, 2000);
+                    } else {
+                        alert("Gagal: " + (result.message || "Ralat tidak diketahui"));
+                        overlay.style.display = 'none';
+                    }
+                } catch (err) {
+                    alert("Muat naik gagal bersambung ke pelayan.");
+                    overlay.style.display = 'none';
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function deleteMedia(id) {
+            if (!confirm("Padam gambar ini?")) return;
+            document.getElementById('syncOverlay').style.display = 'flex';
+            try {
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ type: "delete_media", id: id, password: currentPassword })
+                });
+                setTimeout(() => loadMedia(), 1500); // Small delay for deletion sync
+            } catch (e) { alert("Gagal memadam"); }
+            document.getElementById('syncOverlay').style.display = 'none';
+        }
+
+        function logout() {
+            localStorage.removeItem('adminPass');
+            window.location.href = 'index.html';
+        }
+
+        loadMedia();
+    </script>
+</body>
+</html>
