@@ -722,37 +722,45 @@
                 if (iftharBlock) iftharBlock.style.display = isNight0 ? 'none' : 'block';
 
                 localStorage.setItem('lastEditedDate', select.value);
-                // 1. Ensure Bilal is filled
-                document.getElementById('admBilal').value = s.bilal || "";
 
-                // 2. Auto-select Image Pickers if URL exists
-                const syncPicker = (inputId, pickerId) => {
-                    const val = document.getElementById(inputId).value;
-                    const picker = document.getElementById(pickerId);
-                    // Find option with matching value
-                    const match = Array.from(picker.options).find(opt => opt.value === val);
-                    picker.value = match ? val : "";
-                };
+                // 1. Fill Text Fields
                 document.getElementById('admHost').value = s.HostName || "";
                 document.getElementById('admContact').value = s.HostContact || "";
                 document.getElementById('admImam').value = s.Imam || "";
-                document.getElementById('admBilal').value = s.bilal || ""; // NEW
-                document.getElementById('admImageUrl').value = s.ImageUrl || "";
+                document.getElementById('admBilal').value = s.bilal || ""; // Match GS lowercase 'bilal'
                 document.getElementById('admProgram').value = s.Program || "";
-                document.getElementById('admProgramUrl').value = s.ProgramUrl || "";
                 document.getElementById('admKuliahSubuh').value = s.KuliahSubuh || "";
+
+                // 2. Fill URL Fields
+                document.getElementById('admImageUrl').value = s.ImageUrl || "";
+                document.getElementById('admProgramUrl').value = s.ProgramUrl || "";
                 document.getElementById('admKuliahSubuhUrl').value = s.KuliahSubuhUrl || "";
 
-                // Reset image pickers
-                document.getElementById('imamImagePicker').value = "";
-                document.getElementById('kuliahImagePicker').value = "";
-                document.getElementById('programImagePicker').value = "";
+                // 3. Sync Dropdowns with URLs
+                const syncPicker = (inputId, pickerId) => {
+                    const urlValue = document.getElementById(inputId).value;
+                    const picker = document.getElementById(pickerId);
 
-                // Show URL previews
+                    // Reset to default first
+                    picker.value = "";
+
+                    // Loop through options to find a match
+                    for (let i = 0; i < picker.options.length; i++) {
+                        if (picker.options[i].value === urlValue && urlValue !== "") {
+                            picker.selectedIndex = i;
+                            break;
+                        }
+                    }
+                };
+
+                syncPicker('admImageUrl', 'imamImagePicker');
+                syncPicker('admProgramUrl', 'programImagePicker');
+                syncPicker('admKuliahSubuhUrl', 'kuliahImagePicker');
+
+                // 4. Update Previews
                 showUrlPreview('admImageUrl');
                 showUrlPreview('admProgramUrl');
                 showUrlPreview('admKuliahSubuhUrl');
-
                 updatePreview();
             };
             select.onchange();
