@@ -331,6 +331,24 @@
             word-break: break-all;
             font-style: italic;
         }
+        .btn-manage-media {
+            background: var(--gold);
+            color: var(--primary);
+            padding: 8px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+            .btn-manage-media:hover {
+                background: var(--gold-light);
+            }
     </style>
 </head>
 <body>
@@ -375,6 +393,9 @@
             <div class="admin-layout">
                 <div>
                     <div class="main-card">
+                        <a href="admin-media.html" class="btn-manage-media">
+                            🖼️ Urus Media (Muat Naik Gambar)
+                        </a>
                         <div class="section-title">
                             <span>📅</span>
                             <span>Pilih Tarikh</span>
@@ -403,15 +424,23 @@
                     <div class="main-card">
                         <div class="section-title">
                             <span>🕌</span>
-                            <span>Imam Tarawih</span>
+                            <span>Petugas Solat</span>
                         </div>
+
+            
+
                         <div class="form-group">
                             <label class="form-label">Nama Imam</label>
                             <input type="text" id="admImam" class="form-input" placeholder="Cth: Ustaz Muhammad">
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Pilih Gambar Imam (atau masukkan URL manual)</label>
+                            <label class="form-label">Nama Bilal</label>
+                            <input type="text" id="admBilal" class="form-input" placeholder="Cth: Encik Yusuf">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Pilih Gambar Imam/Bilal (atau masukkan URL manual)</label>
                             <div class="image-picker-section">
                                 <select id="imamImagePicker" class="form-select" onchange="selectImage('admImageUrl', 'imamImagePicker')">
                                     <option value="">-- Pilih dari galeri --</option>
@@ -420,7 +449,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">URL Gambar Imam</label>
+                            <label class="form-label">URL Gambar</label>
                             <input type="text" id="admImageUrl" class="form-input" placeholder="https://..." oninput="showUrlPreview('admImageUrl')">
                             <div id="admImageUrl-preview" class="url-preview"></div>
                         </div>
@@ -696,6 +725,7 @@
                 document.getElementById('admHost').value = s.HostName || "";
                 document.getElementById('admContact').value = s.HostContact || "";
                 document.getElementById('admImam').value = s.Imam || "";
+                document.getElementById('admBilal').value = s.Bilal || ""; // NEW
                 document.getElementById('admImageUrl').value = s.ImageUrl || "";
                 document.getElementById('admProgram').value = s.Program || "";
                 document.getElementById('admProgramUrl').value = s.ProgramUrl || "";
@@ -730,6 +760,7 @@
 
             const host = document.getElementById('admHost').value;
             const imam = document.getElementById('admImam').value;
+            const bilal = document.getElementById('admBilal').value; // NEW
             const imamImg = document.getElementById('admImageUrl').value;
             const prog = document.getElementById('admProgram').value;
             const progImg = document.getElementById('admProgramUrl').value;
@@ -748,7 +779,15 @@
                                 <div class="program-body">
                                     ${subuh ? `<div class="activity-item"><div class="act-details"><strong>Kuliah Subuh</strong><div class="act-text">${subuh}</div></div>${subuhImg ? `<img src="${subuhImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
                                     ${prog ? `<div class="activity-item"><div class="act-details"><strong>Program Khas</strong><div class="act-text">${prog}</div></div>${progImg ? `<img src="${progImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
-                                    ${imam ? `<div class="activity-item"><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${imam}</div></div>${imamImg ? `<img src="${imamImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
+                                    ${imam ? `
+        <div class="activity-item">
+            <div class="act-details">
+                <strong>Imam & Bilal</strong>
+                <div class="act-text">${imam} ${bilal ? `<br><small style="color:#666">Bilal: ${bilal}</small>` : ''}</div>
+            </div>
+            ${imamImg ? `<img src="${imamImg}" class="entry-img" onerror="this.style.display='none'">` : ''}
+        </div>` : ''
+    }
                                 </div>
                                 ${!isNight0 ? `
                                 <div class="ifthar-section">
@@ -777,6 +816,7 @@
                 hostName: document.getElementById('admHost').value,
                 hostContact: document.getElementById('admContact').value,
                 imam: document.getElementById('admImam').value,
+                bilal: document.getElementById('admBilal').value, // NEW
                 imageUrl: document.getElementById('admImageUrl').value,
                 program: document.getElementById('admProgram').value,
                 programUrl: document.getElementById('admProgramUrl').value,
