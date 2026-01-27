@@ -722,6 +722,17 @@
                 if (iftharBlock) iftharBlock.style.display = isNight0 ? 'none' : 'block';
 
                 localStorage.setItem('lastEditedDate', select.value);
+                // 1. Ensure Bilal is filled
+                document.getElementById('admBilal').value = s.Bilal || "";
+
+                // 2. Auto-select Image Pickers if URL exists
+                const syncPicker = (inputId, pickerId) => {
+                    const val = document.getElementById(inputId).value;
+                    const picker = document.getElementById(pickerId);
+                    // Find option with matching value
+                    const match = Array.from(picker.options).find(opt => opt.value === val);
+                    picker.value = match ? val : "";
+                };
                 document.getElementById('admHost').value = s.HostName || "";
                 document.getElementById('admContact').value = s.HostContact || "";
                 document.getElementById('admImam').value = s.Imam || "";
