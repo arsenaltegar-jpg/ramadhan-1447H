@@ -334,7 +334,21 @@
     </style>
 </head>
 <body>
-
+    <script>
+        // Immediate check to prevent login screen flicker
+        (function () {
+            const savedPass = localStorage.getItem('adminPass');
+            if (savedPass) {
+                // Injects CSS to hide login and show content before rendering
+                const style = document.createElement('style');
+                style.innerHTML = `
+                        #loginScreen { display: none !important; }
+                        #mainContent { display: block !important; }
+                    `;
+                document.head.appendChild(style);
+            }
+        })();
+    </script>
     <div id="syncOverlay">
         <div style="font-size:2rem; margin-bottom:10px;">⏳</div>
         <div style="font-size:1rem; color:white;">Memproses...</div>
@@ -402,10 +416,6 @@
                                 <select id="imamImagePicker" class="form-select" onchange="selectImage('admImageUrl', 'imamImagePicker')">
                                     <option value="">-- Pilih dari galeri --</option>
                                 </select>
-                                <a href="admin-media.html" class="btn-link" target="_blank">
-                                    <span>➕</span>
-                                    <span>Tambah Gambar</span>
-                                </a>
                             </div>
                         </div>
 
@@ -432,10 +442,7 @@
                                 <select id="kuliahImagePicker" class="form-select" onchange="selectImage('admKuliahSubuhUrl', 'kuliahImagePicker')">
                                     <option value="">-- Pilih dari galeri --</option>
                                 </select>
-                                <a href="admin-media.html" class="btn-link" target="_blank">
-                                    <span>➕</span>
-                                    <span>Tambah Gambar</span>
-                                </a>
+
                             </div>
                         </div>
 
@@ -462,10 +469,7 @@
                                 <select id="programImagePicker" class="form-select" onchange="selectImage('admProgramUrl', 'programImagePicker')">
                                     <option value="">-- Pilih dari galeri --</option>
                                 </select>
-                                <a href="admin-media.html" class="btn-link" target="_blank">
-                                    <span>➕</span>
-                                    <span>Tambah Gambar</span>
-                                </a>
+
                             </div>
                         </div>
 
@@ -477,6 +481,7 @@
                     </div>
 
                     <button id="admSubmitBtn" onclick="submitAdminUpdate()" class="btn-primary" style="width:100%;">💾 SIMPAN PERUBAHAN</button>
+
                 </div>
 
                 <div class="preview-sticky">
@@ -732,31 +737,31 @@
             const subuhImg = document.getElementById('admKuliahSubuhUrl').value;
 
             container.innerHTML = `
-                        <div class="day-card" ${isNight0 ? 'style="border: 2px solid var(--gold);"' : ''}>
-                            <div class="day-header">
-                                <div class="ramadhan-info">
-                                    <span class="ramadhan-num">${isNight0 ? '🌙' : ramadhanDay}</span>
-                                    <div class="date-text">${dayNames[dObj.getDay()]}<br>${dObj.getDate()} ${monthNames[dObj.getMonth()]}</div>
+                            <div class="day-card" ${isNight0 ? 'style="border: 2px solid var(--gold);"' : ''}>
+                                <div class="day-header">
+                                    <div class="ramadhan-info">
+                                        <span class="ramadhan-num">${isNight0 ? '🌙' : ramadhanDay}</span>
+                                        <div class="date-text">${dayNames[dObj.getDay()]}<br>${dObj.getDate()} ${monthNames[dObj.getMonth()]}</div>
+                                    </div>
+                                    <span style="font-size:1.5rem">✨</span>
                                 </div>
-                                <span style="font-size:1.5rem">✨</span>
-                            </div>
-                            <div class="program-body">
-                                ${subuh ? `<div class="activity-item"><div class="act-details"><strong>Kuliah Subuh</strong><div class="act-text">${subuh}</div></div>${subuhImg ? `<img src="${subuhImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
-                                ${prog ? `<div class="activity-item"><div class="act-details"><strong>Program Khas</strong><div class="act-text">${prog}</div></div>${progImg ? `<img src="${progImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
-                                ${imam ? `<div class="activity-item"><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${imam}</div></div>${imamImg ? `<img src="${imamImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
-                            </div>
-                            ${!isNight0 ? `
-                            <div class="ifthar-section">
-                                <div class="host-info">
-                                    <div style="font-size:0.5rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Ifthar</div>
-                                    <div class="host-name">${host || 'MASIH KOSONG'}</div>
+                                <div class="program-body">
+                                    ${subuh ? `<div class="activity-item"><div class="act-details"><strong>Kuliah Subuh</strong><div class="act-text">${subuh}</div></div>${subuhImg ? `<img src="${subuhImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
+                                    ${prog ? `<div class="activity-item"><div class="act-details"><strong>Program Khas</strong><div class="act-text">${prog}</div></div>${progImg ? `<img src="${progImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
+                                    ${imam ? `<div class="activity-item"><div class="act-details"><strong>Imam Tarawih</strong><div class="act-text">${imam}</div></div>${imamImg ? `<img src="${imamImg}" class="entry-img" onerror="this.style.display='none'">` : ''}</div>` : ''}
                                 </div>
-                                <span>${host ? '🍛' : '🗓️'}</span>
-                            </div>` : `
-                            <div class="ifthar-section" style="background: rgba(255,255,255,0.5); justify-content: center;">
-                                <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">Mula Tarawih Malam Ini</div>
-                            </div>`}
-                        </div>`;
+                                ${!isNight0 ? `
+                                <div class="ifthar-section">
+                                    <div class="host-info">
+                                        <div style="font-size:0.5rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Ifthar</div>
+                                        <div class="host-name">${host || 'MASIH KOSONG'}</div>
+                                    </div>
+                                    <span>${host ? '🍛' : '🗓️'}</span>
+                                </div>` : `
+                                <div class="ifthar-section" style="background: rgba(255,255,255,0.5); justify-content: center;">
+                                    <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">Mula Tarawih Malam Ini</div>
+                                </div>`}
+                            </div>`;
         }
 
         async function submitAdminUpdate() {
