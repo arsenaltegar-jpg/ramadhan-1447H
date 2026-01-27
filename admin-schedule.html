@@ -723,7 +723,7 @@
 
                 localStorage.setItem('lastEditedDate', select.value);
                 // 1. Ensure Bilal is filled
-                document.getElementById('admBilal').value = s.Bilal || "";
+                document.getElementById('admBilal').value = s.bilal || "";
 
                 // 2. Auto-select Image Pickers if URL exists
                 const syncPicker = (inputId, pickerId) => {
@@ -736,7 +736,7 @@
                 document.getElementById('admHost').value = s.HostName || "";
                 document.getElementById('admContact').value = s.HostContact || "";
                 document.getElementById('admImam').value = s.Imam || "";
-                document.getElementById('admBilal').value = s.Bilal || ""; // NEW
+                document.getElementById('admBilal').value = s.bilal || ""; // NEW
                 document.getElementById('admImageUrl').value = s.ImageUrl || "";
                 document.getElementById('admProgram').value = s.Program || "";
                 document.getElementById('admProgramUrl').value = s.ProgramUrl || "";
