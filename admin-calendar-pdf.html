@@ -364,11 +364,11 @@
                                 <span class="masehi-date">${dObj.getDate()} ${months[dObj.getMonth()]}</span>
                             </div>
                             <div class="entry-list">
-                                ${s.Program ? `<div class="entry-slot"><img src="${s.ProgramUrl || ''}" class="thumb-img" onerror="this.style.display='none'"><div class="entry-info"><span class="label">Program Khas</span><span class="name">${s.Program}</span></div></div>` : ''}
-                                ${s.KuliahSubuh ? `<div class="entry-slot" style="flex-direction:row-reverse; text-align:right;"><img src="${s.KuliahSubuhUrl || ''}" class="thumb-img" onerror="this.style.display='none'"><div class="entry-info"><span class="label">Kuliah Subuh</span><span class="name">${s.KuliahSubuh}</span></div></div>` : ''}
+                                ${s.Program ? `<div class="entry-slot"><img src="${fixGoogleDriveUrl(s.ProgramUrl) || ''}" class="thumb-img" onerror="this.style.display='none'"><div class="entry-info"><span class="label">Program Khas</span><span class="name">${s.Program}</span></div></div>` : ''}
+                                ${s.KuliahSubuh ? `<div class="entry-slot" style="flex-direction:row-reverse; text-align:right;"><img src="${fixGoogleDriveUrl(s.KuliahSubuhUrl) || ''}" class="thumb-img" onerror="this.style.display='none'"><div class="entry-info"><span class="label">Kuliah Subuh</span><span class="name">${s.KuliahSubuh}</span></div></div>` : ''}
                                 ${s.Imam ? `
   <div class="entry-slot">
-    <img src="${s.ImageUrl || ''}" class="thumb-img" onerror="this.style.display='none'">
+    <img src="${fixGoogleDriveUrl(s.ImageUrl) || ''}" class="thumb-img" onerror="this.style.display='none'">
     <div class="entry-info">
       <span class="label">Imam Tarawih</span>
       <span class="name">${s.Imam} ${s.bilal ? `</br>Bilal: ${s.bilal}` : ''}</span>
@@ -389,6 +389,19 @@
                     </div>`;
 
             grid.innerHTML = html;
+        }
+
+        function fixGoogleDriveUrl(url) {
+            if (!url) return '';
+            if (url.includes('drive.google.com/thumbnail') || url.includes('drive.google.com/file')) {
+                const match = url.match(/id=([^&]+)/) || url.match(/\/d\/([^\/]+)/);
+                if (match) {
+                    const fileId = match[1];
+                    // Use lh3.googleusercontent.com which is more reliable for embedding
+                    return `https://lh3.googleusercontent.com/d/${fileId}`;
+                }
+            }
+            return url;
         }
 
         function exportCalendarPDF() {
