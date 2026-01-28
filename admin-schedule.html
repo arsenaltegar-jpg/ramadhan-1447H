@@ -702,11 +702,10 @@
             const picker = document.getElementById(pickerId);
             const targetInput = document.getElementById(targetInputId);
 
-            if (picker.value) {
-                targetInput.value = picker.value;
-                showUrlPreview(targetInputId);
-                updatePreview();
-            }
+            targetInput.value = picker.value ? picker.value : "";
+
+            showUrlPreview(targetInputId);
+            updatePreview();
         }
 
         // Show URL preview
