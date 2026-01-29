@@ -1074,10 +1074,10 @@
         <div class="status-item ${isOccupied ? 'occupied' : 'available'}">
             <div class="status-info">
                 <div class="status-date">
-                    <span style="color:var(--secondary)">${i} Ramadhan</span> 
+                    <span style="color:var(--secondary)">${i} Ramadhan</span> <br>
                     <span style="color:var(--text-muted); font-weight:normal;">• ${dayLabel}, ${dObj.getDate()} ${monthNames[dObj.getMonth()]}</span>
                 </div>
-                <div class="status-host">${isOccupied ? '✅ ' + s.HostName : '❌ Masih Kosong'}</div>
+                <div class="status-host">${isOccupied ? '✅ ' + s.HostName : '  Masih Kosong'}</div>
             </div>
             <div>
                 ${isOccupied ?
