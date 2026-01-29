@@ -5,6 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ihya Ramadhan 1447H | Surau Seri Putra</title>
     <style>
+        /* Pulsing effect for the clickable stats */
+        .clickable-stats {
+            cursor: pointer;
+            position: relative;
+            padding: 4px 10px;
+            background: rgba(212, 175, 55, 0.15);
+            border-radius: 8px;
+            border: 1px solid var(--gold);
+            transition: all 0.3s ease;
+            animation: pulse-border 2s infinite;
+        }
+
+            .clickable-stats:hover {
+                background: var(--gold);
+                color: var(--primary) !important;
+            }
+
+        @keyframes pulse-border {
+            0% {
+                box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(212, 175, 55, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+            }
+        }
+
+        /* Themed Status Grid */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .status-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 15px;
+            padding: 12px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+            .status-item.occupied {
+                border-left: 5px solid var(--primary);
+            }
+
+            .status-item.available {
+                border-left: 5px solid var(--gold);
+                background: rgba(212, 175, 55, 0.05);
+            }
+
+        .status-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .status-date {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .status-host {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .status-btn-small {
+            padding: 6px 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        /* Ensure the status modal scroll area doesn't have a white background */
+        #statusGridContainer.admin-scroll-area {
+            background: transparent;
+            padding-right: 10px;
+        }
+
+        .status-item:hover {
+            background: rgba(74, 19, 90, 0.05);
+            transform: translateX(5px);
+            transition: 0.2s all;
+        }
 
         /* Progress Bar Styling */
         .progress-container {
@@ -661,6 +758,20 @@
         🖨️
     </div>
     <div class="admin-fab" onclick="openAdminLogin()">⚙️</div>
+    <div id="statusModal" class="modal">
+        <div class="modal-content" style="max-width: 480px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 style="color: var(--primary); font-size: 1.2rem;">🌙 Status Tajaan</h2>
+                <span style="font-size: 1.5rem; cursor: pointer;" onclick="closeModal('statusModal')">×</span>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">Sila pilih tarikh untuk menyemak kekosongan tajaan Ifthar.</p>
+
+            <div id="statusGridContainer" class="admin-scroll-area" style="max-height: 50vh;">
+            </div>
+
+            <button type="button" onclick="closeModal('statusModal')" class="secondary-btn" style="margin-top:20px;">Tutup</button>
+        </div>
+    </div>
 
     <div id="bookingModal" class="modal">
         <div class="modal-content">
@@ -783,20 +894,20 @@
             let html = '';
             adminDonationList.forEach(item => {
                 html += `
-            <div class="don-item-row" style="flex-direction: column; align-items: flex-start;">
-                <div style="width: 100%; display: flex; justify-content: space-between;">
-                    <strong>${item.donorName || 'Penyumbang Am'}</strong>
-                    <span style="color: green; font-weight: bold;">RM${parseFloat(item.amount).toFixed(2)}</span>
-                </div>
-                <div style="font-size: 0.65rem; color: #666;">
-                    ${item.category} • ${item.payDate || 'Tiada Tarikh'}
-                </div>
-                <div class="don-actions" style="margin-top: 5px;">
-                    <button onclick="editDonationEntry(${item.id})">✏️</button>
-                    <button onclick="deleteDonationEntry(${item.id})" style="color:red;">🗑️</button>
-                    ${item.fileUrl ? `<a href="${item.fileUrl}" target="_blank" style="text-decoration:none; font-size:1rem;">📄</a>` : ''}
-                </div>
-            </div>`;
+                <div class="don-item-row" style="flex-direction: column; align-items: flex-start;">
+                    <div style="width: 100%; display: flex; justify-content: space-between;">
+                        <strong>${item.donorName || 'Penyumbang Am'}</strong>
+                        <span style="color: green; font-weight: bold;">RM${parseFloat(item.amount).toFixed(2)}</span>
+                    </div>
+                    <div style="font-size: 0.65rem; color: #666;">
+                        ${item.category} • ${item.payDate || 'Tiada Tarikh'}
+                    </div>
+                    <div class="don-actions" style="margin-top: 5px;">
+                        <button onclick="editDonationEntry(${item.id})">✏️</button>
+                        <button onclick="deleteDonationEntry(${item.id})" style="color:red;">🗑️</button>
+                        ${item.fileUrl ? `<a href="${item.fileUrl}" target="_blank" style="text-decoration:none; font-size:1rem;">📄</a>` : ''}
+                    </div>
+                </div>`;
             });
             listArea.innerHTML = html;
         }
@@ -854,10 +965,10 @@
                 const amt = parseFloat(don.Amount) || 0;
                 total += amt;
                 html += `
-                <div style="display:flex; justify-content:between; border-bottom:1px solid #eee; padding:5px 0;">
-                    <span style="flex:1">${don.Category}</span>
-                    <span style="font-weight:bold">RM ${amt.toFixed(2)}</span>
-                </div>`;
+                    <div style="display:flex; justify-content:between; border-bottom:1px solid #eee; padding:5px 0;">
+                        <span style="flex:1">${don.Category}</span>
+                        <span style="font-weight:bold">RM ${amt.toFixed(2)}</span>
+                    </div>`;
             });
 
             html += '</div>';
@@ -883,10 +994,10 @@
                     let breakdownHtml = '<div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">';
                     data.donations.categories.forEach(cat => {
                         breakdownHtml += `
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem;">
-                        <span style="color: var(--text-muted); font-weight: 600;">${cat.name}</span>
-                        <span style="font-weight: 800; color: var(--primary);">RM ${cat.amount.toFixed(2)}</span>
-                    </div>`;
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem;">
+                            <span style="color: var(--text-muted); font-weight: 600;">${cat.name}</span>
+                            <span style="font-weight: 800; color: var(--primary);">RM ${cat.amount.toFixed(2)}</span>
+                        </div>`;
                     });
                     breakdownHtml += '</div>';
                     breakdownEl.innerHTML = breakdownHtml;
@@ -935,9 +1046,45 @@
                 if (bar && text) {
                     bar.style.width = `${percentage}%`;
                     text.innerText = `${sponsoredDays} / ${totalDays} HARI DITAJA`;
+                    text.className = "clickable-stats"; // Apply the new pulsing style
+                    text.onclick = openStatusModal;
                 }
             }
             render(); // Panggil fungsi render asal
+        }
+
+        function openStatusModal() {
+            const container = document.getElementById('statusGridContainer');
+            let html = '';
+            // Correct month names for the 2026 period
+            const monthNames = ['Jan', 'Feb', 'Mac', 'Apr'];
+
+            for (let i = 1; i <= 30; i++) {
+                // Start from Feb 19, 2026 (1 Ramadhan)
+                // Date(year, monthIndex, day) -> Month index 1 is February
+                const dObj = new Date(2026, 1, 18 + i);
+
+                const ds = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, '0')}-${String(dObj.getDate()).padStart(2, '0')}`;
+                const s = slots[ds] || {};
+                const isOccupied = s.HostName && s.HostName.trim() !== "";
+
+                html += `
+        <div class="status-item ${isOccupied ? 'occupied' : 'available'}">
+            <div class="status-info">
+                <div class="status-date">${i} Ramadhan (${dObj.getDate()} ${monthNames[dObj.getMonth()]})</div>
+                <div class="status-host">${isOccupied ? s.HostName : 'Masih Kosong'}</div>
+            </div>
+            <div>
+                ${isOccupied ?
+                        '<span style="font-size: 1.2rem;">🍛</span>' :
+                        `<button class="status-btn-small" onclick="closeModal('statusModal'); handleBooking('${ds}')">Tempah</button>`
+                    }
+            </div>
+        </div>`;
+            }
+
+            container.innerHTML = html;
+            document.getElementById('statusModal').style.display = 'flex';
         }
 
         async function loadData() {
@@ -1005,59 +1152,59 @@
                 const isNightBefore = (i === 0);
 
                 html += `
-                <div class="day-card" ${isNightBefore ? 'style="border: 2px solid var(--gold);"' : ''}>
-                    <div class="day-header">
-                        <div class="ramadhan-info">
-                            <span class="ramadhan-num">${isNightBefore ? '🌙' : i}</span>
-                            <div class="date-text">
-                                ${dayNames[dObj.getDay()]}<br>
-                                ${dObj.getDate()} ${monthNames[dObj.getMonth()]}
-                                ${isNightBefore ? '<br><small>Malam Tarawih Pertama</small>' : ''}
+                    <div class="day-card" ${isNightBefore ? 'style="border: 2px solid var(--gold);"' : ''}>
+                        <div class="day-header">
+                            <div class="ramadhan-info">
+                                <span class="ramadhan-num">${isNightBefore ? '🌙' : i}</span>
+                                <div class="date-text">
+                                    ${dayNames[dObj.getDay()]}<br>
+                                    ${dObj.getDate()} ${monthNames[dObj.getMonth()]}
+                                    ${isNightBefore ? '<br><small>Malam Tarawih Pertama</small>' : ''}
+                                </div>
                             </div>
+                            <span class="moon-icon">✨</span>
                         </div>
-                        <span class="moon-icon">✨</span>
-                    </div>
-                    <div class="program-body">
-                        ${s.KuliahSubuh ? `
-                            <div class="activity-item">
-                                <div class="act-details">
-                                    <strong>Kuliah Subuh</strong>
-                                    <div class="act-text">${s.KuliahSubuh}</div>
-                                </div>
-                                ${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="entry-img">` : ''}
-                            </div>` : ''}
+                        <div class="program-body">
+                            ${s.KuliahSubuh ? `
+                                <div class="activity-item">
+                                    <div class="act-details">
+                                        <strong>Kuliah Subuh</strong>
+                                        <div class="act-text">${s.KuliahSubuh}</div>
+                                    </div>
+                                    ${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="entry-img">` : ''}
+                                </div>` : ''}
 
-                        ${s.Program ? `
-                            <div class="activity-item">
-                                <div class="act-details">
-                                    <strong>Program Khas</strong>
-                                    <div class="act-text">${s.Program}</div>
-                                </div>
-                                ${s.ProgramUrl ? `<img src="${s.ProgramUrl}" class="entry-img">` : ''}
-                            </div>` : ''}
+                            ${s.Program ? `
+                                <div class="activity-item">
+                                    <div class="act-details">
+                                        <strong>Program Khas</strong>
+                                        <div class="act-text">${s.Program}</div>
+                                    </div>
+                                    ${s.ProgramUrl ? `<img src="${s.ProgramUrl}" class="entry-img">` : ''}
+                                </div>` : ''}
 
-                        ${s.Imam ? `
-                            <div class="activity-item">
-                                <div class="act-details">
-                                    <strong>Imam & Bilal</strong>
-                <div class="act-text">${s.Imam} ${s.bilal ? `<br><small style="color:#666">Bilal: ${s.bilal}</small>` : ''}</div>
-                                </div>
-                                ${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img">` : ''}
-                            </div>` : ''}
-                    </div>
-
-                    ${!isNightBefore ? `
-                    <div class="ifthar-section">
-                        <div class="host-info">
-                            <div style="font-size:0.6rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Ifthar</div>
-                            <div class="host-name">${s.HostName || 'MASIH KOSONG'}</div>
+                            ${s.Imam ? `
+                                <div class="activity-item">
+                                    <div class="act-details">
+                                        <strong>Imam & Bilal</strong>
+                    <div class="act-text">${s.Imam} ${s.bilal ? `<br><small style="color:#666">Bilal: ${s.bilal}</small>` : ''}</div>
+                                    </div>
+                                    ${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img">` : ''}
+                                </div>` : ''}
                         </div>
-                        ${!s.HostName ? `<button class="book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span>🍛</span>'}
-                    </div>` : `
-                    <div class="ifthar-section" style="background: rgba(255,255,255,0.5); justify-content: center;">
-                        <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">Mula Tarawih Malam Ini</div>
-                    </div>`}
-                </div>`;
+
+                        ${!isNightBefore ? `
+                        <div class="ifthar-section">
+                            <div class="host-info">
+                                <div style="font-size:0.6rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Ifthar</div>
+                                <div class="host-name">${s.HostName || 'MASIH KOSONG'}</div>
+                            </div>
+                            ${!s.HostName ? `<button class="book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span>🍛</span>'}
+                        </div>` : `
+                        <div class="ifthar-section" style="background: rgba(255,255,255,0.5); justify-content: center;">
+                            <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">Mula Tarawih Malam Ini</div>
+                        </div>`}
+                    </div>`;
             }
             grid.innerHTML = html;
         }
