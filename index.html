@@ -1056,23 +1056,28 @@
         function openStatusModal() {
             const container = document.getElementById('statusGridContainer');
             let html = '';
-            // Correct month names for the 2026 period
+
+            // Arrays to match your main UI language and 2026 calendar
+            const dayNames = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
             const monthNames = ['Jan', 'Feb', 'Mac', 'Apr'];
 
             for (let i = 1; i <= 30; i++) {
                 // Start from Feb 19, 2026 (1 Ramadhan)
-                // Date(year, monthIndex, day) -> Month index 1 is February
                 const dObj = new Date(2026, 1, 18 + i);
 
                 const ds = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, '0')}-${String(dObj.getDate()).padStart(2, '0')}`;
                 const s = slots[ds] || {};
                 const isOccupied = s.HostName && s.HostName.trim() !== "";
+                const dayLabel = dayNames[dObj.getDay()]; // Get the day name (e.g., Khamis)
 
                 html += `
         <div class="status-item ${isOccupied ? 'occupied' : 'available'}">
             <div class="status-info">
-                <div class="status-date">${i} Ramadhan (${dObj.getDate()} ${monthNames[dObj.getMonth()]})</div>
-                <div class="status-host">${isOccupied ? s.HostName : 'Masih Kosong'}</div>
+                <div class="status-date">
+                    <span style="color:var(--secondary)">${i} Ramadhan</span> 
+                    <span style="color:var(--text-muted); font-weight:normal;">• ${dayLabel}, ${dObj.getDate()} ${monthNames[dObj.getMonth()]}</span>
+                </div>
+                <div class="status-host">${isOccupied ? '✅ ' + s.HostName : '❌ Masih Kosong'}</div>
             </div>
             <div>
                 ${isOccupied ?
