@@ -17,20 +17,25 @@
         }
 
         :root {
-            --primary: #4a135a;
-            --secondary: #880e4f;
-            --gold: #d4af37;
-            --gold-light: #fceabb;
-            --glass: rgba(255, 255, 255, 0.98);
-            --text-main: #2d1b0d;
-            --text-muted: #666;
+            --primary: #1a5c38;
+            --secondary: #2e7d52;
+            --gold: #c9922a;
+            --gold-light: #f5e0b0;
+            --glass: rgba(255, 252, 245, 0.98);
+            --text-main: #1a1a1a;
+            --text-muted: #555;
         }
 
         body {
-            background: linear-gradient(135deg, #1a0624 0%, #2d0b3a 25%, #4a135a 50%, #6b1b7a 75%, #880e4f 100%);
+            background-color: #f5f0e8;
+            background-image: url("pattern.webp");
+            background-repeat: repeat;
+            background-position: top left;
+            background-color: rgba(255, 255, 255, 0.8); /* adjust */
+            background-blend-mode: lighten;
             background-attachment: fixed;
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            color: white;
+            color: var(--text-main);
             padding-bottom: 100px;
             min-height: 100vh;
         }
@@ -66,7 +71,7 @@
             .header-section h1 {
                 font-family: 'Georgia', serif;
                 font-size: 2.2rem;
-                background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, #b8941f 100%);
+                background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, #1a5c38 100%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 animation: shimmer 3s linear infinite;
@@ -86,8 +91,8 @@
             border-radius: 24px;
             padding: 30px;
             color: var(--text-main);
-            box-shadow: 0 15px 45px rgba(0,0,0,0.4);
-            border: 2px solid var(--gold);
+            box-shadow: 0 8px 30px rgba(26, 92, 56, 0.12), 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid rgba(201, 146, 42, 0.35);
             margin-bottom: 30px;
         }
 
@@ -114,7 +119,8 @@
             border-radius: 24px;
             overflow: hidden;
             color: var(--text-main);
-            box-shadow: 0 15px 45px rgba(0,0,0,0.4);
+            box-shadow: 0 8px 30px rgba(26, 92, 56, 0.12), 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid rgba(26, 92, 56, 0.1);
         }
 
         .day-header {
@@ -178,12 +184,12 @@
         }
 
         .ifthar-section {
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(201, 146, 42, 0.08);
             padding: 16px 22px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            border-top: 1px solid rgba(201, 146, 42, 0.2);
         }
 
         .host-name {
@@ -208,21 +214,34 @@
 
         .form-input {
             padding: 12px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #d4e8da;
             border-radius: 12px;
             font-size: 0.9rem;
             font-family: inherit;
+            background: #fafdf8;
+            color: var(--text-main);
         }
+
+            .form-input:focus {
+                outline: none;
+                border-color: var(--primary);
+            }
 
         .form-select {
             padding: 12px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #d4e8da;
             border-radius: 12px;
             font-size: 0.9rem;
             font-family: inherit;
-            background: white;
+            background: #fafdf8;
+            color: var(--text-main);
             cursor: pointer;
         }
+
+            .form-select:focus {
+                outline: none;
+                border-color: var(--primary);
+            }
 
         .btn-primary {
             background: var(--primary);
@@ -304,10 +323,10 @@
         }
 
         .btn-link {
-            background: #e3f2fd;
-            color: #1976d2;
+            background: rgba(26, 92, 56, 0.08);
+            color: var(--primary);
             padding: 12px 20px;
-            border: 2px solid #90caf9;
+            border: 2px solid rgba(26, 92, 56, 0.25);
             border-radius: 12px;
             font-weight: 700;
             cursor: pointer;
@@ -321,7 +340,7 @@
         }
 
             .btn-link:hover {
-                background: #bbdefb;
+                background: rgba(26, 92, 56, 0.15);
             }
 
         .url-preview {
@@ -331,6 +350,7 @@
             word-break: break-all;
             font-style: italic;
         }
+
         .btn-manage-media {
             background: var(--gold);
             color: var(--primary);

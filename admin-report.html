@@ -10,20 +10,25 @@
 
     <style>
         :root {
-            --primary: #4a135a;
-            --secondary: #880e4f;
-            --gold: #d4af37;
-            --gold-light: #fceabb;
-            --glass: rgba(255, 255, 255, 0.98);
-            --text-main: #2d1b0d;
-            --text-muted: #666;
+            --primary: #1a5c38;
+            --secondary: #2e7d52;
+            --gold: #c9922a;
+            --gold-light: #f5e0b0;
+            --glass: rgba(255, 252, 245, 0.98);
+            --text-main: #1a1a1a;
+            --text-muted: #555;
         }
 
         body {
-            background: linear-gradient(135deg, #1a0624 0%, #4a135a 100%);
+            background-color: #f5f0e8;
+            background-image: url("pattern.webp");
+            background-repeat: repeat;
+            background-position: top left;
+            background-color: rgba(255, 255, 255, 0.8); /* adjust */
+            background-blend-mode: lighten;
             background-attachment: fixed;
             font-family: 'Segoe UI', system-ui, sans-serif;
-            color: white;
+            color: var(--text-main);
             margin: 0;
             padding-bottom: 80px;
             min-height: 100vh;
@@ -36,13 +41,14 @@
         }
 
         .report-paper {
-            background: white;
+            background: rgba(255, 252, 245, 0.99);
             color: var(--text-main);
             padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(26, 92, 56, 0.12), 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid rgba(201, 146, 42, 0.35);
             margin-top: 20px;
-            overflow: hidden; /* Prevents bleed on export */
+            overflow: hidden;
         }
 
         /* Logo Styling */
@@ -108,24 +114,24 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.9rem;
-            min-width: 600px; /* Ensures desktop-like spacing even on mobile */
+            min-width: 600px;
         }
 
         th {
-            background: #f4f4f4;
+            background: rgba(26, 92, 56, 0.07);
             color: var(--primary);
             padding: 12px;
-            border: 1px solid #ddd;
+            border: 1px solid rgba(26, 92, 56, 0.15);
             text-align: left;
         }
 
         td {
             padding: 10px;
-            border: 1px solid #eee;
+            border: 1px solid rgba(26, 92, 56, 0.08);
         }
 
         .row-total {
-            background: #fff9e6;
+            background: rgba(201, 146, 42, 0.08);
             font-weight: bold;
         }
 
@@ -170,7 +176,7 @@
             justify-content: space-around;
             padding: 10px 0;
             z-index: 1000;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 -5px 20px rgba(26, 92, 56, 0.1);
         }
 
         .mobile-nav-item {
@@ -215,6 +221,7 @@
                 width: 100%;
                 padding: 0;
                 border-radius: 0;
+                border: none;
             }
 
             .table-responsive {
