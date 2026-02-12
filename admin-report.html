@@ -247,7 +247,7 @@
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRk6d5ZFsWgltl3x82ywVcjgFMZHct2LBjVQg&s" alt="Logo Surau" class="report-logo">
 
                 <h1>SURAU SERI PUTRA</h1>
-                <p>Penyata Kewangan Ihya Ramadhan 1447H</p>
+                <p>Penyata Kewangan Ihya Ramadan 1447H</p>
                 <p id="generatedDate" style="font-size: 0.8rem; color: #666;"></p>
             </div>
 
@@ -384,14 +384,14 @@
         function exportExcel() {
             const table = document.getElementById("reportArea");
             const wb = XLSX.utils.table_to_book(table);
-            XLSX.writeFile(wb, "Laporan_Ramadhan_SSP.xlsx");
+            XLSX.writeFile(wb, "Laporan_Ramadan_SSP.xlsx");
         }
 
         function exportPDF() {
             const element = document.getElementById('reportArea');
             const opt = {
                 margin: 10,
-                filename: 'Laporan_Ramadhan_SSP.pdf',
+                filename: 'Laporan_Ramadan_SSP.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true }, // useCORS allows external logo to load
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }

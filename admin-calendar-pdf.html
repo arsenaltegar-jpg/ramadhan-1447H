@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalendar Ramadhan 1447H | Surau Seri Putra</title>
+    <title>Kalendar Ramadan 1447H | Surau Seri Putra</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
@@ -308,7 +308,7 @@
 
     <div id="loader">
         <div class="spinner"></div>
-        <p>Memuatkan Data Ramadhan...</p>
+        <p>Memuatkan Data Ramadan...</p>
     </div>
 
     <div class="btn-container">
@@ -324,7 +324,7 @@
                 <div class="header-left">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRk6d5ZFsWgltl3x82ywVcjgFMZHct2LBjVQg&s" class="logo-img">
                     <div class="header-titles">
-                        <h1>Jadual Ramadhan 1447H</h1>
+                        <h1>Jadual Ramadan 1447H</h1>
                         <p style="color: var(--gold); margin: 0; font-size: 10px; font-weight: bold;">SURAU SERI PUTRA</p>
                     </div>
                 </div>
@@ -391,7 +391,7 @@
   </div>`
                         : ''}
                             </div>
-                            ${s.HostName ? `<div class="host-footer">IFTHAR : ${s.HostName}</div>` : ''}
+                            ${s.HostName ? `<div class="host-footer">IFTAR : ${s.HostName}</div>` : ''}
                         </div>`;
             }
 
@@ -422,7 +422,7 @@
             const element = document.getElementById('calendarPrintArea');
             const opt = {
                 margin: 0,
-                filename: 'Kalendar_Ramadhan_SSP.pdf',
+                filename: 'Kalendar_Ramadan_SSP.pdf',
                 image: { type: 'jpeg', quality: 1 },
                 html2canvas: { scale: 3, useCORS: true, backgroundColor: '#1a0624' },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }

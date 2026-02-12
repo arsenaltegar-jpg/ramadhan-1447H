@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ihya Ramadhan 1447H | Surau Seri Putra</title>
+    <title>Ihya Ramadan 1447H | Surau Seri Putra</title>
     <style>
         /* Pulsing effect for the clickable stats */
         .clickable-stats {
@@ -734,7 +734,7 @@
 <body>
 
     <div class="header-section">
-        <h1>Ramadhan 1447H</h1>
+        <h1>Ramadan 1447H</h1>
         <p class="header-subtitle">Surau Seri Putra</p>
 
     </div>
@@ -751,13 +751,13 @@
         </div>
         <div id="donationSection" class="donation-card hidden">
             <div class="donation-header">
-                <span class="donation-label-main">Dana Ihya Ramadhan</span>
+                <span class="donation-label-main">Dana Ihya Ramadan</span>
                 <div class="donation-amount-big skeleton" id="totalDonation">&nbsp;</div>
             </div>
 
             <div class="donation-breakdown-container">
                 <div class="progress-stats">
-                    <span>Tajaan Ifthar</span>
+                    <span>Tajaan Iftar</span>
                     <span id="iftharCount">0 / 30 HARI</span>
                 </div>
                 <div class="progress-container">
@@ -782,7 +782,7 @@
                 <h2 style="color: var(--primary); font-size: 1.2rem;">🌙 Status Tajaan</h2>
                 <span style="font-size: 1.5rem; cursor: pointer;" onclick="closeModal('statusModal')">×</span>
             </div>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">Sila pilih tarikh untuk menempah tajaan Ifthar.</p>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">Sila pilih tarikh untuk menempah tajaan Iftar.</p>
 
             <div id="statusGridContainer" class="admin-scroll-area" style="max-height: 50vh;">
             </div>
@@ -793,7 +793,7 @@
 
     <div id="bookingModal" class="modal">
         <div class="modal-content">
-            <h2>🌙 Tempahan Ifthar</h2>
+            <h2>🌙 Tempahan Iftar</h2>
             <p id="displayDate" style="margin: 10px 0; font-weight: bold; color: var(--secondary);"></p>
             <form id="bookingForm">
                 <input type="hidden" id="selectedDate">
@@ -826,7 +826,7 @@
                         <label class="admin-label">Pilih Tarikh</label>
                         <select id="adminDateSelect" class="form-input"></select>
 
-                        <label class="admin-label">Maklumat Ifthar</label>
+                        <label class="admin-label">Maklumat Iftar</label>
                         <input type="text" id="admHost" class="form-input" placeholder="Nama Host">
                         <input type="text" id="admContact" class="form-input" placeholder="WhatsApp (6012...)">
 
@@ -849,8 +849,8 @@
                     <div class="admin-scroll-area">
                         <label class="admin-label">Kategori</label>
                         <select id="donCategory" class="form-input">
-                            <option value="Ifthar & Jamuan">Ifthar & Jamuan</option>
-                            <option value="Imarah Ramadhan">Imarah Ramadhan</option>
+                            <option value="Iftar & Jamuan">Iftar & Jamuan</option>
+                            <option value="Imarah Ramadan">Imarah Ramadan</option>
                             <option value="Penyelenggaraan">Penyelenggaraan</option>
                             <option value="Zakat & Sedekah">Zakat & Sedekah</option>
                         </select>
@@ -1092,7 +1092,7 @@
         <div class="status-item ${isOccupied ? 'occupied' : 'available'}">
             <div class="status-info">
                 <div class="status-date">
-                    <span style="color:var(--secondary)">${i} Ramadhan</span> 
+                    <span style="color:var(--secondary)">${i} Ramadan</span> 
                     <span style="color:var(--text-muted); font-weight:normal;">• ${dayLabel}, ${dObj.getDate()} ${monthNames[dObj.getMonth()]}</span>
                 </div>
                 <div class="status-host">${isOccupied ? '✅ ' + s.HostName : '❌ Masih Kosong'}</div>
@@ -1219,7 +1219,7 @@
                         ${!isNightBefore ? `
                         <div class="ifthar-section">
                             <div class="host-info">
-                                <div style="font-size:0.6rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Ifthar</div>
+                                <div style="font-size:0.6rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Iftar</div>
                                 <div class="host-name">${s.HostName || 'MASIH KOSONG'}</div>
                             </div>
                             ${!s.HostName ? `<button class="book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span>🍛</span>'}
