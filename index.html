@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
@@ -62,6 +62,11 @@
             .status-item.available {
                 border-left: 5px solid var(--gold);
                 background: rgba(201, 146, 42, 0.05);
+            }
+
+            /* Hide past dates */
+            .status-item.past-date {
+                display: none;
             }
 
         .status-info {
@@ -158,6 +163,80 @@
 
             100% {
                 background-position: -200% 0;
+            }
+        }
+
+        /* NEW: Floating Gold Notification Banner */
+        .notification-banner {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-150%);
+            background: linear-gradient(135deg, var(--gold) 0%, #e8b84d 100%);
+            color: var(--primary);
+            padding: 20px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(201, 146, 42, 0.6);
+            z-index: 10000;
+            font-weight: 800;
+            font-size: 1.2rem;
+            text-align: center;
+            transition: transform 0.5s ease-in-out;
+            animation: banner-pulse 2s infinite;
+        }
+
+            .notification-banner.show {
+                transform: translateX(-50%) translateY(0);
+            }
+
+        @keyframes banner-pulse {
+            0%, 100% {
+                box-shadow: 0 10px 40px rgba(201, 146, 42, 0.6);
+            }
+
+            50% {
+                box-shadow: 0 10px 60px rgba(201, 146, 42, 0.9);
+            }
+        }
+
+        /* NEW: Live Countdown Pulsing Effect */
+        .prayer-time.countdown-active {
+            animation: countdown-pulse 1s infinite;
+            background: rgba(201, 146, 42, 0.25) !important;
+            border: 3px solid var(--gold) !important;
+            box-shadow: 0 0 30px rgba(201, 146, 42, 0.5);
+        }
+
+        @keyframes countdown-pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(201, 146, 42, 0.5);
+            }
+
+            50% {
+                transform: scale(1.03);
+                box-shadow: 0 0 50px rgba(201, 146, 42, 0.8);
+            }
+        }
+
+        .countdown-text {
+            font-size: 1.1rem;
+            color: var(--gold);
+            font-weight: 900;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(201, 146, 42, 0.5);
+            animation: text-pulse 1s infinite;
+        }
+
+        @keyframes text-pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
             }
         }
 
@@ -733,6 +812,11 @@
 </head>
 <body>
 
+    <!-- NEW: Floating Notification Banner -->
+    <div id="notificationBanner" class="notification-banner">
+        <div id="bannerText">🕌 Tiba Masa Solat!</div>
+    </div>
+
     <div class="header-section">
         <h1>Ramadan 1447H</h1>
         <p class="header-subtitle">Surau Seri Putra</p>
@@ -880,6 +964,7 @@
         </div>
     </div>
 
+
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkKRLbbPMHZmvVw4N6iAYiVdzq0Kg56tmhRfUQABqjT92Hzfrd-YCSyKB71HczkjmI/exec';
         // Check for saved session on load
@@ -912,20 +997,20 @@
             let html = '';
             adminDonationList.forEach(item => {
                 html += `
-                <div class="don-item-row" style="flex-direction: column; align-items: flex-start;">
-                    <div style="width: 100%; display: flex; justify-content: space-between;">
-                        <strong>${item.donorName || 'Penyumbang Am'}</strong>
-                        <span style="color: green; font-weight: bold;">RM${parseFloat(item.amount).toFixed(2)}</span>
-                    </div>
-                    <div style="font-size: 0.65rem; color: #666;">
-                        ${item.category} • ${item.payDate || 'Tiada Tarikh'}
-                    </div>
-                    <div class="don-actions" style="margin-top: 5px;">
-                        <button onclick="editDonationEntry(${item.id})">✏️</button>
-                        <button onclick="deleteDonationEntry(${item.id})" style="color:red;">🗑️</button>
-                        ${item.fileUrl ? `<a href="${item.fileUrl}" target="_blank" style="text-decoration:none; font-size:1rem;">📄</a>` : ''}
-                    </div>
-                </div>`;
+                    <div class="don-item-row" style="flex-direction: column; align-items: flex-start;">
+                        <div style="width: 100%; display: flex; justify-content: space-between;">
+                            <strong>${item.donorName || 'Penyumbang Am'}</strong>
+                            <span style="color: green; font-weight: bold;">RM${parseFloat(item.amount).toFixed(2)}</span>
+                        </div>
+                        <div style="font-size: 0.65rem; color: #666;">
+                            ${item.category} • ${item.payDate || 'Tiada Tarikh'}
+                        </div>
+                        <div class="don-actions" style="margin-top: 5px;">
+                            <button onclick="editDonationEntry(${item.id})">✏️</button>
+                            <button onclick="deleteDonationEntry(${item.id})" style="color:red;">🗑️</button>
+                            ${item.fileUrl ? `<a href="${item.fileUrl}" target="_blank" style="text-decoration:none; font-size:1rem;">📄</a>` : ''}
+                        </div>
+                    </div>`;
             });
             listArea.innerHTML = html;
         }
@@ -983,10 +1068,10 @@
                 const amt = parseFloat(don.Amount) || 0;
                 total += amt;
                 html += `
-                    <div style="display:flex; justify-content:between; border-bottom:1px solid #eee; padding:5px 0;">
-                        <span style="flex:1">${don.Category}</span>
-                        <span style="font-weight:bold">RM ${amt.toFixed(2)}</span>
-                    </div>`;
+                        <div style="display:flex; justify-content:between; border-bottom:1px solid #eee; padding:5px 0;">
+                            <span style="flex:1">${don.Category}</span>
+                            <span style="font-weight:bold">RM ${amt.toFixed(2)}</span>
+                        </div>`;
             });
 
             html += '</div>';
@@ -1012,10 +1097,10 @@
                     let breakdownHtml = '<div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">';
                     data.donations.categories.forEach(cat => {
                         breakdownHtml += `
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem;">
-                            <span style="color: var(--text-muted); font-weight: 600;">${cat.name}</span>
-                            <span style="font-weight: 800; color: var(--primary);">RM ${cat.amount.toFixed(2)}</span>
-                        </div>`;
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem;">
+                                <span style="color: var(--text-muted); font-weight: 600;">${cat.name}</span>
+                                <span style="font-weight: 800; color: var(--primary);">RM ${cat.amount.toFixed(2)}</span>
+                            </div>`;
                     });
                     breakdownHtml += '</div>';
                     breakdownEl.innerHTML = breakdownHtml;
@@ -1034,6 +1119,8 @@
                     if (el) el.innerText = time || "-";
                 }
                 highlightCurrentSolat(tMap);
+                // NEW: Start countdown checking
+                startCountdownChecker();
             }
 
             // --- 3. JADUAL (SCHEDULE) ---
@@ -1079,6 +1166,10 @@
             const dayNames = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
             const monthNames = ['Jan', 'Feb', 'Mac', 'Apr'];
 
+            // NEW: Get today's date for comparison
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
             for (let i = 1; i <= 30; i++) {
                 // Start from Feb 19, 2026 (1 Ramadhan)
                 const dObj = new Date(2026, 1, 18 + i);
@@ -1088,22 +1179,25 @@
                 const isOccupied = s.HostName && s.HostName.trim() !== "";
                 const dayLabel = dayNames[dObj.getDay()]; // Get the day name (e.g., Khamis)
 
+                // NEW: Check if this date is in the past
+                const isPast = dObj < today;
+
                 html += `
-        <div class="status-item ${isOccupied ? 'occupied' : 'available'}">
-            <div class="status-info">
-                <div class="status-date">
-                    <span style="color:var(--secondary)">${i} Ramadan</span> 
-                    <span style="color:var(--text-muted); font-weight:normal;">• ${dayLabel}, ${dObj.getDate()} ${monthNames[dObj.getMonth()]}</span>
+            <div class="status-item ${isOccupied ? 'occupied' : 'available'}${isPast ? ' past-date' : ''}">
+                <div class="status-info">
+                    <div class="status-date">
+                        <span style="color:var(--secondary)">${i} Ramadan</span>
+                        <span style="color:var(--text-muted); font-weight:normal;">• ${dayLabel}, ${dObj.getDate()} ${monthNames[dObj.getMonth()]}</span>
+                    </div>
+                    <div class="status-host">${isOccupied ? '✅ ' + s.HostName : '❌ Masih Kosong'}</div>
                 </div>
-                <div class="status-host">${isOccupied ? '✅ ' + s.HostName : '❌ Masih Kosong'}</div>
-            </div>
-            <div>
-                ${isOccupied ?
+                <div>
+                    ${isOccupied ?
                         '<span style="font-size: 1.2rem;">🍛</span>' :
                         `<button class="status-btn-small" onclick="closeModal('statusModal'); handleBooking('${ds}')">Tempah</button>`
                     }
-            </div>
-        </div>`;
+                </div>
+            </div>`;
             }
 
             container.innerHTML = html;
@@ -1145,21 +1239,174 @@
         }
         function highlightCurrentSolat(times) {
             const now = new Date();
+
             const parseT = (tStr) => {
                 if (!tStr || tStr === "-") return new Date(0);
                 const [t, mod] = tStr.split(' ');
                 let [h, m] = t.split(':');
                 if (h === '12') h = '00';
                 if (mod === 'PM') h = parseInt(h) + 12;
-                const d = new Date(); d.setHours(h, m, 0, 0);
+                const d = new Date();
+                d.setHours(h, m, 0, 0);
                 return d;
             };
+
             const order = ['imsak', 'subuh', 'zohor', 'asar', 'maghrib', 'isyak'];
             let current = '';
-            for (let i = 0; i < order.length; i++) { if (now >= parseT(times[order[i]])) current = order[i]; }
+
+            // Determine current solat
+            for (let i = 0; i < order.length; i++) {
+                if (now >= parseT(times[order[i]])) current = order[i];
+            }
+
+            // 🕓 Remove highlight if Subuh > 2 hours ago
+            if (current === 'subuh') {
+                const subuhTime = parseT(times['subuh']);
+                const msSinceSubuh = now - subuhTime;
+                if (msSinceSubuh > 2 * 60 * 60 * 1000) {
+                    current = '';
+                }
+            }
+
+            // Update DOM highlight
             document.querySelectorAll('.solat-item').forEach(el => el.classList.remove('active-prayer'));
-            if (current) document.getElementById(`item-${current}`).classList.add('active-prayer');
+            if (current) {
+                document.getElementById(`item-${current}`).classList.add('active-prayer');
+            }
         }
+
+        // NEW: Countdown and notification state
+        let countdownInterval = null;
+        let notificationShown = {};
+
+        function startCountdownChecker() {
+            if (countdownInterval) clearInterval(countdownInterval);
+
+            countdownInterval = setInterval(() => {
+                checkPrayerCountdowns();
+            }, 1000);
+        }
+
+        function checkPrayerCountdowns() {
+            const now = new Date();
+
+            // Get prayer times from current display
+            const times = {
+                imsak: document.getElementById('t-imsak')?.innerText,
+                subuh: document.getElementById('t-subuh')?.innerText,
+                zohor: document.getElementById('t-zohor')?.innerText,
+                asar: document.getElementById('t-asar')?.innerText,
+                maghrib: document.getElementById('t-maghrib')?.innerText,
+                isyak: document.getElementById('t-isyak')?.innerText
+            };
+
+            const prayerOrder = ['imsak', 'subuh', 'zohor', 'asar', 'maghrib', 'isyak'];
+
+            prayerOrder.forEach(prayer => {
+                const timeStr = times[prayer];
+                if (!timeStr || timeStr === '-') return;
+
+                // Parse time (handle both 12hr and 24hr formats)
+                const parseTime = (tStr) => {
+                    if (!tStr || tStr === '-') return null;
+                    const [t, mod] = tStr.split(' ');
+                    let [h, m] = t.split(':').map(Number);
+                    if (mod === 'PM' && h !== 12) h += 12;
+                    if (mod === 'AM' && h === 12) h = 0;
+                    const d = new Date(now);
+                    d.setHours(h, m, 0, 0);
+                    return d;
+                };
+
+                const prayerTime = parseTime(timeStr);
+                if (!prayerTime) return;
+
+                const diffMs = prayerTime - now;
+                const diffMins = Math.floor(diffMs / 60000);
+
+                const card = document.getElementById(`item-${prayer}`);
+
+                if (!card) return;
+
+                // Remove any existing countdown display
+                let countdownEl = card.querySelector('.countdown-display');
+                if (!countdownEl) {
+                    countdownEl = document.createElement('div');
+                    countdownEl.className = 'countdown-display countdown-text';
+                    const timeDiv = card.querySelector('.solat-time');
+                    if (timeDiv) {
+                        timeDiv.parentNode.insertBefore(countdownEl, timeDiv.nextSibling);
+                    }
+                }
+
+                // Within 10 minutes before prayer time
+                if (diffMins >= 0 && diffMins < 10) {
+                    card.classList.add('countdown-active');
+                    const mins = Math.floor(diffMs / 60000);
+                    const secs = Math.floor((diffMs % 60000) / 1000);
+                    countdownEl.textContent = `⏰${mins}:${secs}s`;
+                    countdownEl.style.display = 'block';
+                } else {
+                    card.classList.remove('countdown-active');
+                    countdownEl.style.display = 'none';
+                }
+
+                // Exactly at prayer time (within 2 second tolerance for better detection)
+                if (diffMs >= -1000 && diffMs <= 1000 && !notificationShown[prayer]) {
+                    showNotification(prayer);
+                 
+                    notificationShown[prayer] = true;
+
+                    setTimeout(() => {
+                        location.reload();
+                    }, 15000);
+
+                    // Reset after 2 minutes
+                    setTimeout(() => {
+                        notificationShown[prayer] = false;
+                    }, 120000);
+                }
+            });
+        }
+
+        function showNotification(prayer) {
+            const banner = document.getElementById('notificationBanner');
+            const text = document.getElementById('bannerText');
+
+            const prayerNames = {
+                imsak: 'Imsak',
+                subuh: 'Subuh',
+                zohor: 'Zohor',
+                asar: 'Asar',
+                maghrib: 'Maghrib',
+                isyak: 'Isyak'
+            };
+
+            text.textContent = `🕌 Telah masuk waktu  ${prayerNames[prayer]}!`;
+            banner.classList.add('show');
+
+            console.log(`Notification shown for ${prayerNames[prayer]}`);
+
+            // Auto-hide after 15 seconds
+            setTimeout(() => {
+                banner.classList.remove('show');
+            }, 15000);
+        }
+
+
+        // Add click handler to enable audio on first user interaction
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.addEventListener('click', function enableAudio() {
+                const audio = document.getElementById('azanAudio');
+                if (audio) {
+                    audio.load();
+                    console.log('Audio enabled after user interaction');
+                }
+                // Remove this listener after first click
+                document.body.removeEventListener('click', enableAudio);
+            }, { once: true });
+        });
+
 
         function render() {
             const grid = document.getElementById('scheduleGrid');
@@ -1173,61 +1420,64 @@
                 const ds = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, '0')}-${String(dObj.getDate()).padStart(2, '0')}`;
                 const s = slots[ds] || {};
                 const isNightBefore = (i === 0);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (dObj < today) continue;  // ← skips the card entirely
 
                 html += `
-                    <div class="day-card" ${isNightBefore ? 'style="border: 2px solid var(--gold);"' : ''}>
-                        <div class="day-header">
-                            <div class="ramadhan-info">
-                                <span class="ramadhan-num">${isNightBefore ? '🌙' : i}</span>
-                                <div class="date-text">
-                                    ${dayNames[dObj.getDay()]}<br>
-                                    ${dObj.getDate()} ${monthNames[dObj.getMonth()]}
-                                    ${isNightBefore ? '<br><small>Malam Tarawih Pertama</small>' : ''}
+                        <div class="day-card" ${isNightBefore ? 'style="border: 2px solid var(--gold);"' : ''}>
+                            <div class="day-header">
+                                <div class="ramadhan-info">
+                                    <span class="ramadhan-num">${isNightBefore ? '🌙' : i}</span>
+                                    <div class="date-text">
+                                        ${dayNames[dObj.getDay()]}<br>
+                                        ${dObj.getDate()} ${monthNames[dObj.getMonth()]}
+                                        ${isNightBefore ? '<br><small>Malam Tarawih Pertama</small>' : ''}
+                                    </div>
                                 </div>
+                                <span class="moon-icon">✨</span>
                             </div>
-                            <span class="moon-icon">✨</span>
-                        </div>
-                        <div class="program-body">
-                            ${s.KuliahSubuh ? `
-                                <div class="activity-item">
-                                    <div class="act-details">
-                                        <strong>Kuliah Subuh</strong>
-                                        <div class="act-text">${s.KuliahSubuh}</div>
-                                    </div>
-                                    ${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="entry-img">` : ''}
-                                </div>` : ''}
+                            <div class="program-body">
+                                ${s.KuliahSubuh ? `
+                                    <div class="activity-item">
+                                        <div class="act-details">
+                                            <strong>Kuliah Subuh</strong>
+                                            <div class="act-text">${s.KuliahSubuh}</div>
+                                        </div>
+                                        ${s.KuliahSubuhUrl ? `<img src="${s.KuliahSubuhUrl}" class="entry-img">` : ''}
+                                    </div>` : ''}
 
-                            ${s.Program ? `
-                                <div class="activity-item">
-                                    <div class="act-details">
-                                        <strong>Program Khas</strong>
-                                        <div class="act-text">${s.Program}</div>
-                                    </div>
-                                    ${s.ProgramUrl ? `<img src="${s.ProgramUrl}" class="entry-img">` : ''}
-                                </div>` : ''}
+                                ${s.Program ? `
+                                    <div class="activity-item">
+                                        <div class="act-details">
+                                            <strong>Program Khas</strong>
+                                            <div class="act-text">${s.Program}</div>
+                                        </div>
+                                        ${s.ProgramUrl ? `<img src="${s.ProgramUrl}" class="entry-img">` : ''}
+                                    </div>` : ''}
 
-                            ${s.Imam ? `
-                                <div class="activity-item">
-                                    <div class="act-details">
-                                        <strong>Imam & Bilal</strong>
-                    <div class="act-text">${s.Imam} ${s.bilal ? `<br><small style="color:#666">Bilal: ${s.bilal}</small>` : ''}</div>
-                                    </div>
-                                    ${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img">` : ''}
-                                </div>` : ''}
-                        </div>
-
-                        ${!isNightBefore ? `
-                        <div class="ifthar-section">
-                            <div class="host-info">
-                                <div style="font-size:0.6rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Iftar</div>
-                                <div class="host-name">${s.HostName || 'MASIH KOSONG'}</div>
+                                ${s.Imam ? `
+                                    <div class="activity-item">
+                                        <div class="act-details">
+                                            <strong>Imam & Bilal</strong>
+                        <div class="act-text">${s.Imam} ${s.bilal ? `<br><small style="color:#666">Bilal: ${s.bilal}</small>` : ''}</div>
+                                        </div>
+                                        ${s.ImageUrl ? `<img src="${s.ImageUrl}" class="entry-img">` : ''}
+                                    </div>` : ''}
                             </div>
-                            ${!s.HostName ? `<button class="book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span>🍛</span>'}
-                        </div>` : `
-                        <div class="ifthar-section" style="background: rgba(255,255,255,0.5); justify-content: center;">
-                            <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">Mula Tarawih Malam Ini</div>
-                        </div>`}
-                    </div>`;
+
+                            ${!isNightBefore ? `
+                            <div class="ifthar-section">
+                                <div class="host-info">
+                                    <div style="font-size:0.6rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Iftar</div>
+                                    <div class="host-name">${s.HostName || 'MASIH KOSONG'}</div>
+                                </div>
+                                ${!s.HostName ? `<button class="book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span>🍛</span>'}
+                            </div>` : `
+                            <div class="ifthar-section" style="background: rgba(255,255,255,0.5); justify-content: center;">
+                                <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">Mula Tarawih Malam Ini</div>
+                            </div>`}
+                        </div>`;
             }
             grid.innerHTML = html;
         }
