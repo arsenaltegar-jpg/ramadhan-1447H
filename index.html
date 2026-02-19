@@ -10,7 +10,7 @@
         .amil-zakat-float {
             position: absolute;
             top: 5px;
-            right: 15px;
+            right: 10px;
             background: linear-gradient(135deg, #25D366, #128C7E);
             color: white;
             padding: 10px 18px;
@@ -1322,7 +1322,12 @@
                         <span style="color:var(--secondary)">${i} Ramadan</span>
                         <span style="color:var(--text-muted); font-weight:normal;">• ${dayLabel}, ${dObj.getDate()} ${monthNames[dObj.getMonth()]}</span>
                     </div>
-                    <div class="status-host">${isOccupied ? '✅ ' + s.HostName : '❌ Masih Kosong'}</div>
+                   <div class="status-host">
+  ${(i === 29 || i === 30)
+                        ? ''
+                        : (isOccupied ? '✅ ' + s.HostName : '❌ Masih Kosong')}
+</div>
+
                 </div>
                 <div>
                      ${isOccupied ?
@@ -1610,7 +1615,7 @@
                                 ${!s.HostName ? `<button class="book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span>🍛</span>'}
                             </div>` : (i === 29 || i === 30) ? `
 <div class="ifthar-section" style="background: rgba(255,255,255,0.5); justify-content: center;">
-    <div style="font-weight:bold; color:var(--text-muted);">Tiada Iftar</div>
+    <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">Tiada Iftar</div>
 </div>` : `
                             <div class="ifthar-section" style="background: rgba(255,255,255,0.5); justify-content: center;">
                                 <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">Mula Tarawih Malam Ini</div>
