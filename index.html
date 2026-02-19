@@ -16,7 +16,7 @@
             padding: 10px 18px;
             border-radius: 50px;
             text-decoration: none;
-            font-size: 0.72rem;
+            font-size: 0.52rem;
             font-weight: 800;
             display: flex;
             align-items: center;
@@ -1325,10 +1325,12 @@
                     <div class="status-host">${isOccupied ? '✅ ' + s.HostName : '❌ Masih Kosong'}</div>
                 </div>
                 <div>
-                    ${isOccupied ?
+                     ${isOccupied ?
                         '<span style="font-size: 1.2rem;">🍛</span>' :
-                        `<button class="status-btn-small" onclick="closeModal('statusModal'); handleBooking('${ds}')">Tempah</button>`
-                    }
+                        (i === 29 || i === 30) ?
+                            '<span style="font-size:0.7rem; color:#999;">Tiada Iftar</span>' :
+                            `<button class="status-btn-small" onclick="closeModal('statusModal'); handleBooking('${ds}')">Tempah</button>`
+    }
                 </div>
             </div>`;
             }
@@ -1599,14 +1601,17 @@
                                     </div>` : ''}
                             </div>
 
-                            ${!isNightBefore ? `
+                           ${!isNightBefore && i !== 29 && i !== 30 ? `
                             <div class="ifthar-section">
                                 <div class="host-info">
                                     <div style="font-size:0.6rem; color:#666; text-transform:uppercase; font-weight:800;">Tajaan Iftar</div>
                                     <div class="host-name">${s.HostName || 'MASIH KOSONG'}</div>
                                 </div>
                                 ${!s.HostName ? `<button class="book-btn" onclick="handleBooking('${ds}')">Tempah</button>` : '<span>🍛</span>'}
-                            </div>` : `
+                            </div>` : (i === 29 || i === 30) ? `
+<div class="ifthar-section" style="background: rgba(255,255,255,0.5); justify-content: center;">
+    <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">Tiada Tajaan Iftar</div>
+</div>` : `
                             <div class="ifthar-section" style="background: rgba(255,255,255,0.5); justify-content: center;">
                                 <div style="font-size:0.7rem; font-weight:bold; color:var(--text-muted);">Mula Tarawih Malam Ini</div>
                             </div>`}
