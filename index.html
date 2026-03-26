@@ -1562,7 +1562,7 @@
                 const isNightBefore = (i === 0);
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
-              //  if (dObj < today) continue;  // ← skips the card entirely
+                //if (dObj < today) continue;  // ← skips the card entirely
 
                 html += `
                         <div class="day-card" ${isNightBefore ? 'style="border: 2px solid var(--gold);"' : ''}>
